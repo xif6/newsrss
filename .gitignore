@@ -1,6 +1,6 @@
 web/bundles/
 app/bootstrap*
 app/cache/*
-pp/logs/*
+app/logs/*
 vendor/
 app/config/parameters.yml
