@@ -25,6 +25,11 @@ twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
 
+    # personnalisé l'affichage des formulaires pour tout le projet
+    form:
+        resources:
+            - 'AcmeTaskBundle:Form:fields.html.twig'
+
 # Assetic Configuration
 assetic:
     debug:          %kernel.debug%
