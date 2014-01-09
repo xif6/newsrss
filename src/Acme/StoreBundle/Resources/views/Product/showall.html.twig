@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}All product{% endblock %}
+
+{% block body %}
+    {% for product in products %}
+		<hr/>
+        {{ product.id }}<br/>
+        {{ product.name }}<br/>
+        {{ product.price }}<br/>
+        {{ product.description }}<br/>
+        {{ product.category.name|default('') }}<br/>
+    {% endfor %}
+{% endblock %}
