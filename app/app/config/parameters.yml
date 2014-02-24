@@ -1,0 +1,13 @@
+parameters:
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: newsrss_sf2
+    database_user: newsrss
+    database_password: megumi66
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: fr
+    secret: 68c6197095441d2192429b81cfd4231b27b05852

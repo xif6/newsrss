@@ -1,3 +1,0 @@
-acme_security_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: AcmeSecurityBundle:Default:index }
