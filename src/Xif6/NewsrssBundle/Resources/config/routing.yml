@@ -1,0 +1,28 @@
+xif6_newsrss_homepage:
+    pattern:  /
+    defaults: { _controller: Xif6NewsrssBundle:Default:index }
+
+xif6_newsrss_flux:
+    pattern: /actualite-{id}-{title}.html
+    defaults: { _controller: Xif6NewsrssBundle:Flux:index }
+    requirements:
+        id: \d+
+        title: ".+"
+
+xif6_newsrss_flux_add:
+    pattern: /actualite-{id}ajout-{title}.html
+    defaults: { _controller: Xif6NewsrssBundle:Flux:add }
+    requirements:
+        id: \d+
+        title: ".+"
+
+xif6_newsrss_flux_del:
+    pattern: /actualite-{id}suppr-{title}.html
+    defaults: { _controller: Xif6NewsrssBundle:Flux:del }
+    requirements:
+        id: \d+
+        title: ".+"
+
+xif6_newsrss_hello:
+    pattern:  /hello/{name}
+    defaults: { _controller: Xif6NewsrssBundle:Default:hello }
