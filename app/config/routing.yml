@@ -1,0 +1,4 @@
+xif6_newsrss:
+    resource: "@Xif6NewsrssBundle/Resources/config/routing.yml"
+    prefix:   /
+
