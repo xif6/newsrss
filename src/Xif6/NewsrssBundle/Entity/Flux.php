@@ -51,6 +51,13 @@ class Flux
      */
     private $description;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="flux_display", type="boolean")
+     */
+    private $display;
+
 	/**
 	 * @var ArrayCollection
 	 *
@@ -61,6 +68,13 @@ class Flux
 	 *		)
 	 */
 	private $categories;
+
+	/**
+	 * @var ArrayCollection
+	 *
+	 * @ORM\ManyToMany(targetEntity="User", mappedBy="flux")
+	 */
+	private $users;
 
     /**
      * @var \DateTime
@@ -265,5 +279,61 @@ class Flux
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Add users
+     *
+     * @param \Xif6\NewsrssBundle\Entity\User $users
+     * @return Flux
+     */
+    public function addUser(\Xif6\NewsrssBundle\Entity\User $users)
+    {
+        $this->users[] = $users;
+
+        return $this;
+    }
+
+    /**
+     * Remove users
+     *
+     * @param \Xif6\NewsrssBundle\Entity\User $users
+     */
+    public function removeUser(\Xif6\NewsrssBundle\Entity\User $users)
+    {
+        $this->users->removeElement($users);
+    }
+
+    /**
+     * Get users
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
+
+    /**
+     * Set display
+     *
+     * @param boolean $display
+     * @return Flux
+     */
+    public function setDisplay($display)
+    {
+        $this->display = $display;
+
+        return $this;
+    }
+
+    /**
+     * Get display
+     *
+     * @return boolean 
+     */
+    public function getDisplay()
+    {
+        return $this->display;
     }
 }
