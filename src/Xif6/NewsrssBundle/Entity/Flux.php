@@ -3,11 +3,12 @@
 namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Flux
  *
- * @ORM\Table()
+ * @ORM\Table(name="flux")
  * @ORM\Entity(repositoryClass="Xif6\NewsrssBundle\Entity\FluxRepository")
  */
 class Flux
@@ -15,172 +16,107 @@ class Flux
     /**
      * @var integer
      *
-     * @ORM\Column(name="idflux", type="integer")
+     * @ORM\Column(name="flux_id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $idflux;
+    private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="site", type="string", length=50)
+     * @ORM\Column(name="flux_name", type="string", length=255, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var Site
+	 *
+	 * @ORM\ManyToOne(targetEntity="Site", inversedBy="flux")
+     * @ORM\JoinColumn(name="flux_site_id", referencedColumnName="site_id")
      */
     private $site;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="nom", type="string", length=255)
-     */
-    private $nom;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="url", type="string", length=255)
+     * @ORM\Column(name="flux_url", type="string", length=255)
      */
     private $url;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="desc", type="text")
+     * @ORM\Column(name="flux_description", type="text", nullable=true)
      */
-    private $desc;
+    private $description;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="nb", type="integer")
-     */
-    private $nb;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="abonnes", type="integer")
-     */
-    private $abonnes;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="statut", type="string", length=100)
-     */
-    private $statut;
+	/**
+	 * @var ArrayCollection
+	 *
+	 * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux")
+	 * @ORM\JoinTable(name="flux_category",
+	 *		joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id")},
+	 *		inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="category_id")}
+	 *		)
+	 */
+	private $categories;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime")
+	 * @ORM\Column(name="flux_created", type="datetime")
+	 * @Gedmo\Timestampable(on="create")
      */
-    private $date;
+    private $created;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_insert", type="datetime")
+	 * @ORM\Column(name="flux_updated", type="datetime")
+	 * @Gedmo\Timestampable(on="update")
      */
-    private $date_insert;
+    private $updated;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="url_destination", type="string", length=255)
+     * Constructor
      */
-    private $url_destination;
+    public function __construct()
+    {
+        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="statut_init", type="string", length=100)
-     */
-    private $statut_init;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="code_reponde", type="string", length=255)
-     */
-    private $code_reponde;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="erreur", type="string", length=255)
-     */
-    private $erreur;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="IfNoneMatch", type="string", length=255)
-     */
-    private $IfNoneMatch;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="IfModifiedSince", type="string", length=255)
-     */
-    private $IfModifiedSince;
-
-
-    /**
-     * Get idflux
+     * Get id
      *
      * @return integer 
      */
-    public function getIdflux()
+    public function getId()
     {
-        return $this->idflux;
+        return $this->id;
     }
 
     /**
-     * Set site
+     * Set name
      *
-     * @param string $site
+     * @param string $name
      * @return Flux
      */
-    public function setSite($site)
+    public function setName($name)
     {
-        $this->site = $site;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get site
+     * Get name
      *
      * @return string 
      */
-    public function getSite()
+    public function getName()
     {
-        return $this->site;
-    }
-
-    /**
-     * Set nom
-     *
-     * @param string $nom
-     * @return Flux
-     */
-    public function setNom($nom)
-    {
-        $this->nom = $nom;
-
-        return $this;
-    }
-
-    /**
-     * Get nom
-     *
-     * @return string 
-     */
-    public function getNom()
-    {
-        return $this->nom;
+        return $this->name;
     }
 
     /**
@@ -207,278 +143,127 @@ class Flux
     }
 
     /**
-     * Set desc
+     * Set description
      *
-     * @param string $desc
+     * @param string $description
      * @return Flux
      */
-    public function setDesc($desc)
+    public function setDescription($description)
     {
-        $this->desc = $desc;
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * Get desc
+     * Get description
      *
      * @return string 
      */
-    public function getDesc()
+    public function getDescription()
     {
-        return $this->desc;
+        return $this->description;
     }
 
     /**
-     * Set nb
+     * Set created
      *
-     * @param integer $nb
+     * @param \DateTime $created
      * @return Flux
      */
-    public function setNb($nb)
+    public function setCreated($created)
     {
-        $this->nb = $nb;
+        $this->created = $created;
 
         return $this;
     }
 
     /**
-     * Get nb
-     *
-     * @return integer 
-     */
-    public function getNb()
-    {
-        return $this->nb;
-    }
-
-    /**
-     * Set abonnes
-     *
-     * @param integer $abonnes
-     * @return Flux
-     */
-    public function setAbonnes($abonnes)
-    {
-        $this->abonnes = $abonnes;
-
-        return $this;
-    }
-
-    /**
-     * Get abonnes
-     *
-     * @return integer 
-     */
-    public function getAbonnes()
-    {
-        return $this->abonnes;
-    }
-
-    /**
-     * Set statut
-     *
-     * @param string $statut
-     * @return Flux
-     */
-    public function setStatut($statut)
-    {
-        $this->statut = $statut;
-
-        return $this;
-    }
-
-    /**
-     * Get statut
-     *
-     * @return string 
-     */
-    public function getStatut()
-    {
-        return $this->statut;
-    }
-
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     * @return Flux
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
+     * Get created
      *
      * @return \DateTime 
      */
-    public function getDate()
+    public function getCreated()
     {
-        return $this->date;
+        return $this->created;
     }
 
     /**
-     * Set date_insert
+     * Set updated
      *
-     * @param \DateTime $dateInsert
+     * @param \DateTime $updated
      * @return Flux
      */
-    public function setDateInsert($dateInsert)
+    public function setUpdated($updated)
     {
-        $this->date_insert = $dateInsert;
+        $this->updated = $updated;
 
         return $this;
     }
 
     /**
-     * Get date_insert
+     * Get updated
      *
      * @return \DateTime 
      */
-    public function getDateInsert()
+    public function getUpdated()
     {
-        return $this->date_insert;
+        return $this->updated;
     }
 
     /**
-     * Set url_destination
+     * Set site
      *
-     * @param string $urlDestination
+     * @param \Xif6\NewsrssBundle\Entity\Site $site
      * @return Flux
      */
-    public function setUrlDestination($urlDestination)
+    public function setSite(\Xif6\NewsrssBundle\Entity\Site $site = null)
     {
-        $this->url_destination = $urlDestination;
+        $this->site = $site;
 
         return $this;
     }
 
     /**
-     * Get url_destination
+     * Get site
      *
-     * @return string 
+     * @return \Xif6\NewsrssBundle\Entity\Site 
      */
-    public function getUrlDestination()
+    public function getSite()
     {
-        return $this->url_destination;
+        return $this->site;
     }
 
     /**
-     * Set statut_init
+     * Add categories
      *
-     * @param string $statutInit
+     * @param \Xif6\NewsrssBundle\Entity\Category $categories
      * @return Flux
      */
-    public function setStatutInit($statutInit)
+    public function addCategory(\Xif6\NewsrssBundle\Entity\Category $categories)
     {
-        $this->statut_init = $statutInit;
+        $this->categories[] = $categories;
 
         return $this;
     }
 
     /**
-     * Get statut_init
+     * Remove categories
      *
-     * @return string 
+     * @param \Xif6\NewsrssBundle\Entity\Category $categories
      */
-    public function getStatutInit()
+    public function removeCategory(\Xif6\NewsrssBundle\Entity\Category $categories)
     {
-        return $this->statut_init;
+        $this->categories->removeElement($categories);
     }
 
     /**
-     * Set code_reponde
+     * Get categories
      *
-     * @param string $codeReponde
-     * @return Flux
+     * @return \Doctrine\Common\Collections\Collection 
      */
-    public function setCodeReponde($codeReponde)
+    public function getCategories()
     {
-        $this->code_reponde = $codeReponde;
-
-        return $this;
-    }
-
-    /**
-     * Get code_reponde
-     *
-     * @return string 
-     */
-    public function getCodeReponde()
-    {
-        return $this->code_reponde;
-    }
-
-    /**
-     * Set erreur
-     *
-     * @param string $erreur
-     * @return Flux
-     */
-    public function setErreur($erreur)
-    {
-        $this->erreur = $erreur;
-
-        return $this;
-    }
-
-    /**
-     * Get erreur
-     *
-     * @return string 
-     */
-    public function getErreur()
-    {
-        return $this->erreur;
-    }
-
-    /**
-     * Set IfNoneMatch
-     *
-     * @param string $ifNoneMatch
-     * @return Flux
-     */
-    public function setIfNoneMatch($ifNoneMatch)
-    {
-        $this->IfNoneMatch = $ifNoneMatch;
-
-        return $this;
-    }
-
-    /**
-     * Get IfNoneMatch
-     *
-     * @return string 
-     */
-    public function getIfNoneMatch()
-    {
-        return $this->IfNoneMatch;
-    }
-
-    /**
-     * Set IfModifiedSince
-     *
-     * @param string $ifModifiedSince
-     * @return Flux
-     */
-    public function setIfModifiedSince($ifModifiedSince)
-    {
-        $this->IfModifiedSince = $ifModifiedSince;
-
-        return $this;
-    }
-
-    /**
-     * Get IfModifiedSince
-     *
-     * @return string 
-     */
-    public function getIfModifiedSince()
-    {
-        return $this->IfModifiedSince;
+        return $this->categories;
     }
 }
