@@ -22,40 +22,40 @@ class User extends BaseUser
      */
     protected $id;
 
-	/**
-	 * @var ArrayCollection
-	 *
-	 * @ORM\ManyToMany(targetEntity="Flux", inversedBy="users")
-	 * @ORM\JoinTable(name="user_flux",
-	 *		joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="user_id", onDelete="cascade")},
-	 *		inverseJoinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id")}
-	 *		)
-	 */
-	private $flux;
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Flux", inversedBy="users")
+     * @ORM\JoinTable(name="user_flux",
+     *		joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="user_id", onDelete="cascade")},
+     *		inverseJoinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id")}
+     *		)
+     */
+    private $flux;
 
-   	/**
+    /**
      * Constructor
      */
     public function __construct()
-	{
-		parent::__construct();
+    {
+        parent::__construct();
         $this->flux = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-	/**
+    /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
     }
-	
+
     /**
      * Add flux
      *
-     * @param \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @param  \Xif6\NewsrssBundle\Entity\Flux $flux
      * @return User
      */
     public function addFlux(\Xif6\NewsrssBundle\Entity\Flux $flux)
@@ -78,7 +78,7 @@ class User extends BaseUser
     /**
      * Get flux
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getFlux()
     {

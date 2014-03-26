@@ -25,38 +25,38 @@ class Site
     /**
      * @var string
      *
-     * @ORM\Column(name="site_name", type="string", length=255)
+     * @ORM\Column(name="site_name", type="string", length=255, unique=true)
      */
     private $name;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="site_url", type="string", length=255)
+     * @ORM\Column(name="site_url", type="string", length=255, unique=true)
      */
     private $url;
 
-	/**
-	 * @var ArrayCollection
-	 *
-	 * @ORM\OneToMany(targetEntity="Flux", mappedBy="fluxSite")
-	 * @ORM\OrderBy({"flux_name" = "ASC"})
-	 */
-	private $flux;
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Flux", mappedBy="site")
+     * @ORM\OrderBy({"name" = "ASC"})
+     */
+    private $flux;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="site_created", type="datetime")
-	 * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="site_created", type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
     private $created;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="site_updated", type="datetime")
-	 * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="site_updated", type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
     private $updated;
 
@@ -71,7 +71,7 @@ class Site
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -81,7 +81,7 @@ class Site
     /**
      * Set name
      *
-     * @param string $name
+     * @param  string $name
      * @return Site
      */
     public function setName($name)
@@ -94,7 +94,7 @@ class Site
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -104,7 +104,7 @@ class Site
     /**
      * Set url
      *
-     * @param string $url
+     * @param  string $url
      * @return Site
      */
     public function setUrl($url)
@@ -117,7 +117,7 @@ class Site
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -127,7 +127,7 @@ class Site
     /**
      * Set created
      *
-     * @param \DateTime $created
+     * @param  \DateTime $created
      * @return Site
      */
     public function setCreated($created)
@@ -140,7 +140,7 @@ class Site
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -150,7 +150,7 @@ class Site
     /**
      * Set updated
      *
-     * @param \DateTime $updated
+     * @param  \DateTime $updated
      * @return Site
      */
     public function setUpdated($updated)
@@ -163,7 +163,7 @@ class Site
     /**
      * Get updated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdated()
     {
@@ -173,7 +173,7 @@ class Site
     /**
      * Add flux
      *
-     * @param \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @param  \Xif6\NewsrssBundle\Entity\Flux $flux
      * @return Site
      */
     public function addFlux(\Xif6\NewsrssBundle\Entity\Flux $flux)
@@ -196,7 +196,7 @@ class Site
     /**
      * Get flux
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getFlux()
     {

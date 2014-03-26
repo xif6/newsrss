@@ -8,7 +8,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * Flux
  *
- * @ORM\Table(name="flux")
+ * @ORM\Table(name="flux",
+ *		indexes={@ORM\Index(columns={"flux_id", "flux_display"})}
+ * )
  * @ORM\Entity(repositoryClass="Xif6\NewsrssBundle\Entity\FluxRepository")
  */
 class Flux
@@ -30,9 +32,17 @@ class Flux
     private $name;
 
     /**
+     * $var string
+     *
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(name="flux_slug", type="string", length=255, nullable=true)
+     */
+    private $slug;
+
+    /**
      * @var Site
-	 *
-	 * @ORM\ManyToOne(targetEntity="Site", inversedBy="flux")
+     *
+     * @ORM\ManyToOne(targetEntity="Site", inversedBy="flux")
      * @ORM\JoinColumn(name="flux_site_id", referencedColumnName="site_id")
      */
     private $site;
@@ -40,7 +50,7 @@ class Flux
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_url", type="string", length=255)
+     * @ORM\Column(name="flux_url", type="string", length=255, unique=true)
      */
     private $url;
 
@@ -54,43 +64,50 @@ class Flux
     /**
      * @var boolean
      *
-     * @ORM\Column(name="flux_display", type="boolean")
+     * @ORM\Column(name="flux_display", type="boolean", options={"default"=false})
      */
-    private $display;
+    private $display = false;
 
-	/**
-	 * @var ArrayCollection
-	 *
-	 * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux")
-	 * @ORM\JoinTable(name="flux_category",
-	 *		joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id")},
-	 *		inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="category_id")}
-	 *		)
-	 */
-	private $categories;
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux")
+     * @ORM\JoinTable(name="flux_category",
+     *		joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id")},
+     *		inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="category_id")}
+     * )
+     */
+    private $categories;
 
-	/**
-	 * @var ArrayCollection
-	 *
-	 * @ORM\ManyToMany(targetEntity="User", mappedBy="flux")
-	 */
-	private $users;
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="flux")
+     */
+    private $users;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="flux_created", type="datetime")
-	 * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="flux_created", type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
     private $created;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="flux_updated", type="datetime")
-	 * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="flux_updated", type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
     private $updated;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @Gedmo\ReferenceMany(class="Xif6\NewsrssBundle\Document\Item", mappedBy="flux")
+     */
+    private $items;
 
     /**
      * Constructor
@@ -98,12 +115,13 @@ class Flux
     public function __construct()
     {
         $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->sites = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -113,7 +131,7 @@ class Flux
     /**
      * Set name
      *
-     * @param string $name
+     * @param  string $name
      * @return Flux
      */
     public function setName($name)
@@ -126,7 +144,7 @@ class Flux
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -136,7 +154,7 @@ class Flux
     /**
      * Set url
      *
-     * @param string $url
+     * @param  string $url
      * @return Flux
      */
     public function setUrl($url)
@@ -149,7 +167,7 @@ class Flux
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -159,7 +177,7 @@ class Flux
     /**
      * Set description
      *
-     * @param string $description
+     * @param  string $description
      * @return Flux
      */
     public function setDescription($description)
@@ -172,7 +190,7 @@ class Flux
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -182,7 +200,7 @@ class Flux
     /**
      * Set created
      *
-     * @param \DateTime $created
+     * @param  \DateTime $created
      * @return Flux
      */
     public function setCreated($created)
@@ -195,7 +213,7 @@ class Flux
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -205,7 +223,7 @@ class Flux
     /**
      * Set updated
      *
-     * @param \DateTime $updated
+     * @param  \DateTime $updated
      * @return Flux
      */
     public function setUpdated($updated)
@@ -218,7 +236,7 @@ class Flux
     /**
      * Get updated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdated()
     {
@@ -228,7 +246,7 @@ class Flux
     /**
      * Set site
      *
-     * @param \Xif6\NewsrssBundle\Entity\Site $site
+     * @param  \Xif6\NewsrssBundle\Entity\Site $site
      * @return Flux
      */
     public function setSite(\Xif6\NewsrssBundle\Entity\Site $site = null)
@@ -241,7 +259,7 @@ class Flux
     /**
      * Get site
      *
-     * @return \Xif6\NewsrssBundle\Entity\Site 
+     * @return \Xif6\NewsrssBundle\Entity\Site
      */
     public function getSite()
     {
@@ -251,7 +269,7 @@ class Flux
     /**
      * Add categories
      *
-     * @param \Xif6\NewsrssBundle\Entity\Category $categories
+     * @param  \Xif6\NewsrssBundle\Entity\Category $categories
      * @return Flux
      */
     public function addCategory(\Xif6\NewsrssBundle\Entity\Category $categories)
@@ -274,7 +292,7 @@ class Flux
     /**
      * Get categories
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCategories()
     {
@@ -284,7 +302,7 @@ class Flux
     /**
      * Add users
      *
-     * @param \Xif6\NewsrssBundle\Entity\User $users
+     * @param  \Xif6\NewsrssBundle\Entity\User $users
      * @return Flux
      */
     public function addUser(\Xif6\NewsrssBundle\Entity\User $users)
@@ -307,7 +325,7 @@ class Flux
     /**
      * Get users
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getUsers()
     {
@@ -317,7 +335,7 @@ class Flux
     /**
      * Set display
      *
-     * @param boolean $display
+     * @param  boolean $display
      * @return Flux
      */
     public function setDisplay($display)
@@ -330,10 +348,66 @@ class Flux
     /**
      * Get display
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getDisplay()
     {
         return $this->display;
+    }
+
+    /**
+     * Add items
+     *
+     * @param  \Xif6\NewsrssBundle\Document\Item $items
+     * @return Flux
+     */
+    public function addItem(\Xif6\NewsrssBundle\Document\Item $items)
+    {
+        $this->items[] = $items;
+
+        return $this;
+    }
+
+    /**
+     * Remove items
+     *
+     * @param \Xif6\NewsrssBundle\Document\Item $items
+     */
+    public function removeItem(\Xif6\NewsrssBundle\Document\Item $items)
+    {
+        $this->items->removeElement($items);
+    }
+
+    /**
+     * Get items
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param  string $slug
+     * @return Flux
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

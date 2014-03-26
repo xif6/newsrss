@@ -18,7 +18,7 @@ class Category
      *
      * @ORM\Column(name="category_id", type="integer")
      * @ORM\Id
-	 * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -30,43 +30,51 @@ class Category
     private $name;
 
     /**
+     * $var string
+     *
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(name="category_slug", type="string", length=50)
+     */
+    private $slug;
+
+    /**
      * @var Category
      *
-	 * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
-	 * @ORM\JoinColumn(name="category_parent_id", referencedColumnName="category_id")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
+     * @ORM\JoinColumn(name="category_parent_id", referencedColumnName="category_id")
      */
-	private $parent;
+    private $parent;
 
-	/**
-	 * @var ArrayCollection
-	 *
-	 * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")
-	 * @ORM\OrderBy({"category_name" = "ASC"})
-	 */
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")
+     * @ORM\OrderBy({"name" = "ASC"})
+     */
     private $children;
 
-	/**
-	 * @var ArrayCollection
-	 *
-	 * @ORM\ManyToMany(targetEntity="Flux", mappedBy="categories")
-	 */
-	private $flux;
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Flux", mappedBy="categories")
+     */
+    private $flux;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="category_created", type="datetime")
-	 * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="category_created", type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
     private $created;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="category_updated", type="datetime")
-	 * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="category_updated", type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
-	private $updated;
+    private $updated;
 
     /**
      * Constructor
@@ -80,7 +88,7 @@ class Category
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -90,7 +98,7 @@ class Category
     /**
      * Set name
      *
-     * @param string $name
+     * @param  string   $name
      * @return Category
      */
     public function setName($name)
@@ -103,7 +111,7 @@ class Category
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -113,7 +121,7 @@ class Category
     /**
      * Set created
      *
-     * @param \DateTime $created
+     * @param  \DateTime $created
      * @return Category
      */
     public function setCreated($created)
@@ -126,7 +134,7 @@ class Category
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -136,7 +144,7 @@ class Category
     /**
      * Set updated
      *
-     * @param \DateTime $updated
+     * @param  \DateTime $updated
      * @return Category
      */
     public function setUpdated($updated)
@@ -149,7 +157,7 @@ class Category
     /**
      * Get updated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdated()
     {
@@ -159,7 +167,7 @@ class Category
     /**
      * Set parent
      *
-     * @param \Xif6\NewsrssBundle\Entity\Category $parent
+     * @param  \Xif6\NewsrssBundle\Entity\Category $parent
      * @return Category
      */
     public function setParent(\Xif6\NewsrssBundle\Entity\Category $parent = null)
@@ -172,7 +180,7 @@ class Category
     /**
      * Get parent
      *
-     * @return \Xif6\NewsrssBundle\Entity\Category 
+     * @return \Xif6\NewsrssBundle\Entity\Category
      */
     public function getParent()
     {
@@ -182,7 +190,7 @@ class Category
     /**
      * Add children
      *
-     * @param \Xif6\NewsrssBundle\Entity\Category $children
+     * @param  \Xif6\NewsrssBundle\Entity\Category $children
      * @return Category
      */
     public function addChild(\Xif6\NewsrssBundle\Entity\Category $children)
@@ -205,7 +213,7 @@ class Category
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getChildren()
     {
@@ -215,7 +223,7 @@ class Category
     /**
      * Add flux
      *
-     * @param \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @param  \Xif6\NewsrssBundle\Entity\Flux $flux
      * @return Category
      */
     public function addFlux(\Xif6\NewsrssBundle\Entity\Flux $flux)
@@ -238,10 +246,33 @@ class Category
     /**
      * Get flux
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getFlux()
     {
         return $this->flux;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param  string   $slug
+     * @return Category
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
