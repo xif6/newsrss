@@ -16,19 +16,20 @@ class FluxHttp
     /**
      * @var integer
      *
-     * @ORM\Column(name="flux_http_id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\OneToOne(targetEntity="Flux")
+     * @ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id", onDelete="CASCADE")
      */
     private $id;
 
-    /**
+    /* *
      * @var integer
      *
-	 * @ORM\OneToOne(targetEntity="Flux")
-	 * @ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id", onDelete="CASCADE")
-     */
+     * @ORM\OneToOne(targetEntity="Flux")
+     * @ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id", onDelete="CASCADE")
+     * /
     private $flux;
+*/
 
     /**
      * @var integer
@@ -77,39 +78,28 @@ class FluxHttp
      *
      * @ORM\Column(name="flux_http_if_modified_since", type="string", length=255)
      */
-	private $ifModifiedSince;
+    private $ifModifiedSince;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="flux_http_created", type="datetime")
-	 * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="flux_http_created", type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
     private $created;
 
     /**
      * @var \DateTime
      *
-	 * @ORM\Column(name="flux_http_updated", type="datetime")
-	 * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="flux_http_updated", type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
     private $updated;
-
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set statusCode
      *
-     * @param integer $statusCode
+     * @param  integer  $statusCode
      * @return FluxHttp
      */
     public function setStatusCode($statusCode)
@@ -122,7 +112,7 @@ class FluxHttp
     /**
      * Get statusCode
      *
-     * @return integer 
+     * @return integer
      */
     public function getStatusCode()
     {
@@ -132,7 +122,7 @@ class FluxHttp
     /**
      * Set urlRedirection
      *
-     * @param string $urlRedirection
+     * @param  string   $urlRedirection
      * @return FluxHttp
      */
     public function setUrlRedirection($urlRedirection)
@@ -145,7 +135,7 @@ class FluxHttp
     /**
      * Get urlRedirection
      *
-     * @return string 
+     * @return string
      */
     public function getUrlRedirection()
     {
@@ -155,7 +145,7 @@ class FluxHttp
     /**
      * Set statusCodeOrig
      *
-     * @param integer $statusCodeOrig
+     * @param  integer  $statusCodeOrig
      * @return FluxHttp
      */
     public function setStatusCodeOrig($statusCodeOrig)
@@ -168,7 +158,7 @@ class FluxHttp
     /**
      * Get statusCodeOrig
      *
-     * @return integer 
+     * @return integer
      */
     public function getStatusCodeOrig()
     {
@@ -178,7 +168,7 @@ class FluxHttp
     /**
      * Set statusCodeResponse
      *
-     * @param string $statusCodeResponse
+     * @param  string   $statusCodeResponse
      * @return FluxHttp
      */
     public function setStatusCodeResponse($statusCodeResponse)
@@ -191,7 +181,7 @@ class FluxHttp
     /**
      * Get statusCodeResponse
      *
-     * @return string 
+     * @return string
      */
     public function getStatusCodeResponse()
     {
@@ -201,7 +191,7 @@ class FluxHttp
     /**
      * Set error
      *
-     * @param string $error
+     * @param  string   $error
      * @return FluxHttp
      */
     public function setError($error)
@@ -214,7 +204,7 @@ class FluxHttp
     /**
      * Get error
      *
-     * @return string 
+     * @return string
      */
     public function getError()
     {
@@ -224,7 +214,7 @@ class FluxHttp
     /**
      * Set ifNoneMatch
      *
-     * @param string $ifNoneMatch
+     * @param  string   $ifNoneMatch
      * @return FluxHttp
      */
     public function setIfNoneMatch($ifNoneMatch)
@@ -237,7 +227,7 @@ class FluxHttp
     /**
      * Get ifNoneMatch
      *
-     * @return string 
+     * @return string
      */
     public function getIfNoneMatch()
     {
@@ -247,7 +237,7 @@ class FluxHttp
     /**
      * Set ifModifiedSince
      *
-     * @param string $ifModifiedSince
+     * @param  string   $ifModifiedSince
      * @return FluxHttp
      */
     public function setIfModifiedSince($ifModifiedSince)
@@ -260,7 +250,7 @@ class FluxHttp
     /**
      * Get ifModifiedSince
      *
-     * @return string 
+     * @return string
      */
     public function getIfModifiedSince()
     {
@@ -270,7 +260,7 @@ class FluxHttp
     /**
      * Set created
      *
-     * @param \DateTime $created
+     * @param  \DateTime $created
      * @return FluxHttp
      */
     public function setCreated($created)
@@ -283,7 +273,7 @@ class FluxHttp
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -293,7 +283,7 @@ class FluxHttp
     /**
      * Set updated
      *
-     * @param \DateTime $updated
+     * @param  \DateTime $updated
      * @return FluxHttp
      */
     public function setUpdated($updated)
@@ -306,7 +296,7 @@ class FluxHttp
     /**
      * Get updated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdated()
     {
@@ -314,25 +304,25 @@ class FluxHttp
     }
 
     /**
-     * Set flux
+     * Set id
      *
-     * @param \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @param  \Xif6\NewsrssBundle\Entity\Flux $id
      * @return FluxHttp
      */
-    public function setFlux(\Xif6\NewsrssBundle\Entity\Flux $flux = null)
+    public function setId(\Xif6\NewsrssBundle\Entity\Flux $id)
     {
-        $this->flux = $flux;
+        $this->id = $id;
 
         return $this;
     }
 
     /**
-     * Get flux
+     * Get id
      *
-     * @return \Xif6\NewsrssBundle\Entity\Flux 
+     * @return \Xif6\NewsrssBundle\Entity\Flux
      */
-    public function getFlux()
+    public function getId()
     {
-        return $this->flux;
+        return $this->id;
     }
 }
