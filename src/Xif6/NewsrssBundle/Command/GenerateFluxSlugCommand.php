@@ -11,8 +11,7 @@ class GenerateFluxSlugCommand extends ContainerAwareCommand
     {
         $this
             ->setName('newsrss:generate:flux:slug')
-            ->setDescription('Generate slug from flux')
-        ;
+            ->setDescription('Generate slug from flux');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

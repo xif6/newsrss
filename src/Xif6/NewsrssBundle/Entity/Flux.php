@@ -9,7 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * Flux
  *
  * @ORM\Table(name="flux",
- *		indexes={@ORM\Index(columns={"id", "display"})}
+ *        indexes={@ORM\Index(columns={"id", "display"})}
  * )
  * @ORM\Entity(repositoryClass="Xif6\NewsrssBundle\Entity\FluxRepository")
  */
@@ -73,8 +73,8 @@ class Flux
      *
      * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux")
      * @ORM\JoinTable(name="flux_category",
-     *		joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")},
-     *		inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
+     *        joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")},
+     *        inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
      * )
      */
     private $categories;

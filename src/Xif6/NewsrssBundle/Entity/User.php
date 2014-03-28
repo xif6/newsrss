@@ -27,9 +27,9 @@ class User extends BaseUser
      *
      * @ORM\ManyToMany(targetEntity="Flux", inversedBy="users")
      * @ORM\JoinTable(name="user_flux",
-     *		joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="cascade")},
-     *		inverseJoinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")}
-     *		)
+     *        joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="cascade")},
+     *        inverseJoinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")}
+     *        )
      */
     private $flux;
 
