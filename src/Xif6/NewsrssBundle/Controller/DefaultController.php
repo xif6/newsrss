@@ -10,8 +10,8 @@ class DefaultController extends Controller
     {
         return $this->render('Xif6NewsrssBundle:Default:index.html.twig', array('name' => 'bienvenue'));
     }
-	
-	public function helloAction($name)
+
+    public function helloAction($name)
     {
         return $this->render('Xif6NewsrssBundle:Default:hello.html.twig', array('name' => $name));
     }
