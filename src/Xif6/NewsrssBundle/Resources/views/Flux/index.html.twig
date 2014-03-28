@@ -1,7 +1,26 @@
-<html>
-<head>
-</head>
-<body>
-Hello {{ name }}!
-</body>
-</html>
+{% extends 'Xif6NewsrssBundle::layout.html.twig' %}
+
+{% block body %}
+    Hello !
+    <br>
+    <a href="{{ path('xif6_newsrss_flux', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
+    <br>
+    {#{ dump(flux.site) }#}
+    {#{ dump(flux.categories) }#}
+    <ul>
+    {% for category in flux.categories %}
+        <li>{{ category.name }}</li>
+    {% endfor %}
+    </ul>
+    <ol>
+    {% for item in flux.items %}
+        {#{ dump(item) }#}
+        <li>
+        {{ item.title }} -
+        {% if item.itemDate %}
+            {{ item.itemDate|date('c') }}
+        {% endif %}
+        </li>
+    {% endfor %}
+    </ol>
+{% endblock %}
