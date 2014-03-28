@@ -8,19 +8,19 @@
     {#{ dump(flux.site) }#}
     {#{ dump(flux.categories) }#}
     <ul>
-    {% for category in flux.categories %}
-        <li>{{ category.name }}</li>
-    {% endfor %}
+        {% for category in flux.categories %}
+            <li>{{ category.name }}</li>
+        {% endfor %}
     </ul>
     <ol>
-    {% for item in flux.items %}
-        {#{ dump(item) }#}
-        <li>
-        {{ item.title }} -
-        {% if item.itemDate %}
-            {{ item.itemDate|date('c') }}
-        {% endif %}
-        </li>
-    {% endfor %}
+        {% for item in flux.items %}
+            {#{ dump(item) }#}
+            <li>
+                {{ item.title }} -
+                {% if item.itemDate %}
+                    {{ item.itemDate|date('c') }}
+                {% endif %}
+            </li>
+        {% endfor %}
     </ol>
 {% endblock %}

@@ -98,7 +98,7 @@ class Category
     /**
      * Set name
      *
-     * @param  string   $name
+     * @param  string $name
      * @return Category
      */
     public function setName($name)
@@ -256,7 +256,7 @@ class Category
     /**
      * Set slug
      *
-     * @param  string   $slug
+     * @param  string $slug
      * @return Category
      */
     public function setSlug($slug)

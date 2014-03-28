@@ -7,11 +7,11 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ODM\Document(
- *		collection="item",
- *		indexes={
+ *        collection="item",
+ *        indexes={
  *			@ODM\Index(keys={"flux_id"="asc", "url"="asc"}, options={"unique"=true}),
  *			@ODM\Index(keys={"flux_id"="asc", "date"="desc"})
- *		}
+ *        }
  * )
  */
 class Item
@@ -235,7 +235,7 @@ class Item
     /**
      * Set fluxId
      *
-     * @param  int  $fluxId
+     * @param  int $fluxId
      * @return self
      */
     public function setFluxId($fluxId)

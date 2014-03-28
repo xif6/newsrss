@@ -99,7 +99,7 @@ class FluxHttp
     /**
      * Set statusCode
      *
-     * @param  integer  $statusCode
+     * @param  integer $statusCode
      * @return FluxHttp
      */
     public function setStatusCode($statusCode)
@@ -122,7 +122,7 @@ class FluxHttp
     /**
      * Set urlRedirection
      *
-     * @param  string   $urlRedirection
+     * @param  string $urlRedirection
      * @return FluxHttp
      */
     public function setUrlRedirection($urlRedirection)
@@ -145,7 +145,7 @@ class FluxHttp
     /**
      * Set statusCodeOrig
      *
-     * @param  integer  $statusCodeOrig
+     * @param  integer $statusCodeOrig
      * @return FluxHttp
      */
     public function setStatusCodeOrig($statusCodeOrig)
@@ -168,7 +168,7 @@ class FluxHttp
     /**
      * Set statusCodeResponse
      *
-     * @param  string   $statusCodeResponse
+     * @param  string $statusCodeResponse
      * @return FluxHttp
      */
     public function setStatusCodeResponse($statusCodeResponse)
@@ -191,7 +191,7 @@ class FluxHttp
     /**
      * Set error
      *
-     * @param  string   $error
+     * @param  string $error
      * @return FluxHttp
      */
     public function setError($error)
@@ -214,7 +214,7 @@ class FluxHttp
     /**
      * Set ifNoneMatch
      *
-     * @param  string   $ifNoneMatch
+     * @param  string $ifNoneMatch
      * @return FluxHttp
      */
     public function setIfNoneMatch($ifNoneMatch)
@@ -237,7 +237,7 @@ class FluxHttp
     /**
      * Set ifModifiedSince
      *
-     * @param  string   $ifModifiedSince
+     * @param  string $ifModifiedSince
      * @return FluxHttp
      */
     public function setIfModifiedSince($ifModifiedSince)
