@@ -18,7 +18,7 @@ class FluxHttp
      *
      * @ORM\Id
      * @ORM\OneToOne(targetEntity="Flux")
-     * @ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $id;
 
@@ -26,7 +26,7 @@ class FluxHttp
      * @var integer
      *
      * @ORM\OneToOne(targetEntity="Flux")
-     * @ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")
      * /
     private $flux;
 */

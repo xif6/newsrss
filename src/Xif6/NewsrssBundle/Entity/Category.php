@@ -16,7 +16,7 @@ class Category
     /**
      * @var integer
      *
-     * @ORM\Column(name="category_id", type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -25,7 +25,7 @@ class Category
     /**
      * @var string
      *
-     * @ORM\Column(name="category_name", type="string", length=50)
+     * @ORM\Column(name="name", type="string", length=50)
      */
     private $name;
 
@@ -33,7 +33,7 @@ class Category
      * $var string
      *
      * @Gedmo\Slug(fields={"name"})
-     * @ORM\Column(name="category_slug", type="string", length=50)
+     * @ORM\Column(name="slug", type="string", length=50)
      */
     private $slug;
 
@@ -41,7 +41,7 @@ class Category
      * @var Category
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
-     * @ORM\JoinColumn(name="category_parent_id", referencedColumnName="category_id")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
     private $parent;
 
@@ -63,7 +63,7 @@ class Category
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="category_created", type="datetime")
+     * @ORM\Column(name="created", type="datetime")
      * @Gedmo\Timestampable(on="create")
      */
     private $created;
@@ -71,7 +71,7 @@ class Category
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="category_updated", type="datetime")
+     * @ORM\Column(name="updated", type="datetime")
      * @Gedmo\Timestampable(on="update")
      */
     private $updated;

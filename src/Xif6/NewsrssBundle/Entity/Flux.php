@@ -9,7 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * Flux
  *
  * @ORM\Table(name="flux",
- *		indexes={@ORM\Index(columns={"flux_id", "flux_display"})}
+ *		indexes={@ORM\Index(columns={"id", "display"})}
  * )
  * @ORM\Entity(repositoryClass="Xif6\NewsrssBundle\Entity\FluxRepository")
  */
@@ -18,7 +18,7 @@ class Flux
     /**
      * @var integer
      *
-     * @ORM\Column(name="flux_id", type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -27,7 +27,7 @@ class Flux
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_name", type="string", length=255, nullable=true)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
     private $name;
 
@@ -35,7 +35,7 @@ class Flux
      * $var string
      *
      * @Gedmo\Slug(fields={"name"})
-     * @ORM\Column(name="flux_slug", type="string", length=255, nullable=true)
+     * @ORM\Column(name="slug", type="string", length=255, nullable=true)
      */
     private $slug;
 
@@ -43,28 +43,28 @@ class Flux
      * @var Site
      *
      * @ORM\ManyToOne(targetEntity="Site", inversedBy="flux")
-     * @ORM\JoinColumn(name="flux_site_id", referencedColumnName="site_id")
+     * @ORM\JoinColumn(name="site_id", referencedColumnName="id")
      */
     private $site;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_url", type="string", length=255, unique=true)
+     * @ORM\Column(name="url", type="string", length=255, unique=true)
      */
     private $url;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_description", type="text", nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="flux_display", type="boolean", options={"default"=false})
+     * @ORM\Column(name="display", type="boolean", options={"default"=false})
      */
     private $display = false;
 
@@ -73,8 +73,8 @@ class Flux
      *
      * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux")
      * @ORM\JoinTable(name="flux_category",
-     *		joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="flux_id")},
-     *		inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="category_id")}
+     *		joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")},
+     *		inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
      * )
      */
     private $categories;
@@ -89,7 +89,7 @@ class Flux
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="flux_created", type="datetime")
+     * @ORM\Column(name="created", type="datetime")
      * @Gedmo\Timestampable(on="create")
      */
     private $created;
@@ -97,7 +97,7 @@ class Flux
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="flux_updated", type="datetime")
+     * @ORM\Column(name="updated", type="datetime")
      * @Gedmo\Timestampable(on="update")
      */
     private $updated;
