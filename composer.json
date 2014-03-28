@@ -6,6 +6,12 @@
     "autoload": {
         "psr-0": { "": "src/" }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/xif6/DoctrineExtensions.git"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "~2.4",
@@ -19,8 +25,11 @@
         "sensio/framework-extra-bundle": "~3.0",
         "sensio/generator-bundle": "~2.3",
         "incenteev/composer-parameter-handler": "~2.0",
-		"gedmo/doctrine-extensions": "dev-master",
-		"friendsofsymfony/user-bundle": "~2.0@dev"
+        "gedmo/doctrine-extensions": "dev-wip-v2.4.0",
+        "friendsofsymfony/user-bundle": "~2.0@dev",
+        "doctrine/mongodb-odm": "1.0.*@dev",
+        "doctrine/mongodb-odm-bundle": "3.0.*@dev",
+        "symfony/console": "2.5.*@dev"
     },
     "scripts": {
         "post-install-cmd": [
