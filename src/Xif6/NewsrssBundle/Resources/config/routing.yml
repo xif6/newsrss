@@ -3,25 +3,25 @@ xif6_newsrss_homepage:
     defaults: { _controller: Xif6NewsrssBundle:Default:index }
 
 xif6_newsrss_flux:
-    pattern: /actualite-{id}-{title}.html
-    defaults: { _controller: Xif6NewsrssBundle:Flux:index }
+    pattern: /actualite-{id}-{slug}.html
+    defaults: { _controller: Xif6NewsrssBundle:Flux:index, display: true }
     requirements:
         id: \d+
-        title: ".+"
+        slug: ".+"
 
 xif6_newsrss_flux_add:
-    pattern: /actualite-{id}ajout-{title}.html
+    pattern: /actualite-{id}ajout-{slug}.html
     defaults: { _controller: Xif6NewsrssBundle:Flux:add }
     requirements:
         id: \d+
-        title: ".+"
+        slug: ".+"
 
 xif6_newsrss_flux_del:
-    pattern: /actualite-{id}suppr-{title}.html
+    pattern: /actualite-{id}suppr-{slug}.html
     defaults: { _controller: Xif6NewsrssBundle:Flux:del }
     requirements:
         id: \d+
-        title: ".+"
+        slug: ".+"
 
 xif6_newsrss_hello:
     pattern:  /hello/{name}
