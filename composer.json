@@ -28,8 +28,7 @@
         "gedmo/doctrine-extensions": "dev-wip-v2.4.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "doctrine/mongodb-odm": "1.0.*@dev",
-        "doctrine/mongodb-odm-bundle": "3.0.*@dev",
-        "symfony/console": "2.5.*@dev"
+        "doctrine/mongodb-odm-bundle": "3.0.*@dev"
     },
     "scripts": {
         "post-install-cmd": [
