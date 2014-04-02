@@ -16,7 +16,7 @@ class Site
     /**
      * @var integer
      *
-     * @ORM\Column(name="site_id", type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -25,21 +25,21 @@ class Site
     /**
      * @var string
      *
-     * @ORM\Column(name="site_name", type="string", length=255, unique=true)
+     * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="site_url", type="string", length=255, unique=true)
+     * @ORM\Column(name="url", type="string", length=255, unique=true)
      */
     private $url;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Flux", mappedBy="site")
+     * @ORM\OneToMany(targetEntity="Flux", mappedBy="site", cascade={"persist", "merge"})
      * @ORM\OrderBy({"name" = "ASC"})
      */
     private $flux;
@@ -47,7 +47,7 @@ class Site
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="site_created", type="datetime")
+     * @ORM\Column(name="created", type="datetime")
      * @Gedmo\Timestampable(on="create")
      */
     private $created;
@@ -55,7 +55,7 @@ class Site
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="site_updated", type="datetime")
+     * @ORM\Column(name="updated", type="datetime")
      * @Gedmo\Timestampable(on="update")
      */
     private $updated;

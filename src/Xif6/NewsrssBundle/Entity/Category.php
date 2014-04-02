@@ -40,7 +40,7 @@ class Category
     /**
      * @var Category
      *
-     * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="children", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
     private $parent;
@@ -48,7 +48,7 @@ class Category
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parent", cascade={"persist", "merge"})
      * @ORM\OrderBy({"name" = "ASC"})
      */
     private $children;
@@ -56,7 +56,7 @@ class Category
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="Flux", mappedBy="categories")
+     * @ORM\ManyToMany(targetEntity="Flux", mappedBy="categories", cascade={"persist", "merge"})
      */
     private $flux;
 
@@ -83,6 +83,19 @@ class Category
     {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->flux = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return Category
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**

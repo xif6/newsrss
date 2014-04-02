@@ -3,7 +3,9 @@
 namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\UserBundle\Entity\User as BaseUser;
+use Gedmo\Mapping\Annotation as Gedmo;
+use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * User
@@ -16,7 +18,7 @@ class User extends BaseUser
     /**
      * @var integer
      *
-     * @ORM\Column(name="user_id", type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -25,13 +27,26 @@ class User extends BaseUser
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="Flux", inversedBy="users")
-     * @ORM\JoinTable(name="user_flux",
-     *        joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="cascade")},
-     *        inverseJoinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")}
-     *        )
+     * @ORM\oneToMany(targetEntity="UserFlux", mappedBy="user", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
+     * @ORM\OrderBy({"rank" = "ASC"})
      */
-    private $flux;
+    protected $userFlux;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created", type="datetime")
+     * @Gedmo\Timestampable(on="create")
+     */
+    private $created;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated", type="datetime")
+     * @Gedmo\Timestampable(on="update")
+     */
+    private $updated;
 
     /**
      * Constructor
@@ -39,7 +54,20 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->flux = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userFlux = new ArrayCollection();
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return User
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -53,35 +81,81 @@ class User extends BaseUser
     }
 
     /**
-     * Add flux
+     * Add userFlux
      *
-     * @param  \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @param \Xif6\NewsrssBundle\Entity\UserFlux $userFlux
      * @return User
      */
-    public function addFlux(\Xif6\NewsrssBundle\Entity\Flux $flux)
+    public function addUserFlux(\Xif6\NewsrssBundle\Entity\UserFlux $userFlux)
     {
-        $this->flux[] = $flux;
+        $this->userFlux[] = $userFlux;
 
         return $this;
     }
 
     /**
-     * Remove flux
+     * Remove userFlux
      *
-     * @param \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @param \Xif6\NewsrssBundle\Entity\UserFlux $userFlux
      */
-    public function removeFlux(\Xif6\NewsrssBundle\Entity\Flux $flux)
+    public function removeUserFlux(\Xif6\NewsrssBundle\Entity\UserFlux $userFlux)
     {
-        $this->flux->removeElement($flux);
+        $this->userFlux->removeElement($userFlux);
     }
 
     /**
-     * Get flux
+     * Get userFlux
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getFlux()
+    public function getUserFlux()
     {
-        return $this->flux;
+        return $this->userFlux;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return User
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return User
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
     }
 }

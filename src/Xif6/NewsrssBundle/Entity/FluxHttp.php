@@ -17,7 +17,7 @@ class FluxHttp
      * @var integer
      *
      * @ORM\Id
-     * @ORM\OneToOne(targetEntity="Flux")
+     * @ORM\OneToOne(targetEntity="Flux", cascade={"remove", "persist", "merge"})
      * @ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $id;
@@ -25,7 +25,7 @@ class FluxHttp
     /* *
      * @var integer
      *
-     * @ORM\OneToOne(targetEntity="Flux")
+     * @ORM\OneToOne(targetEntity="Flux", cascade={"remove", "persist", "merge"})
      * @ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")
      * /
     private $flux;
@@ -34,56 +34,63 @@ class FluxHttp
     /**
      * @var integer
      *
-     * @ORM\Column(name="flux_http_status_code", type="smallint")
+     * @ORM\Column(name="status_code", type="smallint")
      */
     private $statusCode;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_http_url_redirection", type="string", length=255)
+     * @ORM\Column(name="url_redirection", type="string", length=255)
      */
     private $urlRedirection;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="flux_http_status_code_orig", type="smallint")
+     * @ORM\Column(name="status_code_orig", type="smallint")
      */
     private $statusCodeOrig;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_http_status_code_response", type="string", length=255)
+     * @ORM\Column(name="status_code_response", type="string", length=255)
      */
     private $statusCodeResponse;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_http_error", type="string", length=255)
+     * @ORM\Column(name="error", type="string", length=255)
      */
     private $error;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_http_if_none_match", type="string", length=255)
+     * @ORM\Column(name="if_none_match", type="string", length=255)
      */
     private $ifNoneMatch;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="flux_http_if_modified_since", type="string", length=255)
+     * @ORM\Column(name="if_modified_since", type="string", length=255)
      */
     private $ifModifiedSince;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="flux_http_created", type="datetime")
+     * @ORM\Column(name="updated_success", type="datetime", nullable=true)
+     */
+    private $updatedSucces;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created", type="datetime")
      * @Gedmo\Timestampable(on="create")
      */
     private $created;
@@ -91,7 +98,7 @@ class FluxHttp
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="flux_http_updated", type="datetime")
+     * @ORM\Column(name="updated", type="datetime")
      * @Gedmo\Timestampable(on="update")
      */
     private $updated;
@@ -324,5 +331,28 @@ class FluxHttp
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set updatedSucces
+     *
+     * @param \DateTime $updatedSucces
+     * @return FluxHttp
+     */
+    public function setUpdatedSucces($updatedSucces)
+    {
+        $this->updatedSucces = $updatedSucces;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedSucces
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedSucces()
+    {
+        return $this->updatedSucces;
     }
 }

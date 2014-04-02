@@ -4,6 +4,7 @@ namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Flux
@@ -42,7 +43,7 @@ class Flux
     /**
      * @var Site
      *
-     * @ORM\ManyToOne(targetEntity="Site", inversedBy="flux")
+     * @ORM\ManyToOne(targetEntity="Site", inversedBy="flux", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="site_id", referencedColumnName="id")
      */
     private $site;
@@ -71,7 +72,7 @@ class Flux
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux")
+     * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux", cascade={"persist", "merge"})
      * @ORM\JoinTable(name="flux_category",
      *        joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")},
      *        inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
@@ -82,9 +83,9 @@ class Flux
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="flux")
+     * @ORM\oneToMany(targetEntity="UserFlux", mappedBy="flux", cascade={"persist", "merge"})
      */
-    private $users;
+    private $userFlux;
 
     /**
      * @var \DateTime
@@ -114,8 +115,21 @@ class Flux
      */
     public function __construct()
     {
-        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->sites = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->sites = new ArrayCollection();
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return Flux
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -409,5 +423,38 @@ class Flux
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Add userFlux
+     *
+     * @param \Xif6\NewsrssBundle\Entity\UserFlux $userFlux
+     * @return Flux
+     */
+    public function addUserFlux(\Xif6\NewsrssBundle\Entity\UserFlux $userFlux)
+    {
+        $this->userFlux[] = $userFlux;
+
+        return $this;
+    }
+
+    /**
+     * Remove userFlux
+     *
+     * @param \Xif6\NewsrssBundle\Entity\UserFlux $userFlux
+     */
+    public function removeUserFlux(\Xif6\NewsrssBundle\Entity\UserFlux $userFlux)
+    {
+        $this->userFlux->removeElement($userFlux);
+    }
+
+    /**
+     * Get userFlux
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserFlux()
+    {
+        return $this->userFlux;
     }
 }
