@@ -4,6 +4,7 @@ namespace Xif6\NewsrssBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Xif6\NewsrssBundle\Entity\Flux;
 
 /**
  * @ODM\Document(
@@ -13,58 +14,82 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *			@ODM\Index(keys={"flux_id"="asc", "date"="desc"})
  *        }
  * )
+ * @ODM\HasLifecycleCallbacks
  */
 class Item
 {
     /**
+     * @var string
+     *
      * @ODM\Id
      */
     protected $id;
 
     /**
+     * @var Flux
+     *
      * @Gedmo\ReferenceOne(class="Xif6\NewsrssBundle\Entity\Flux", inversedBy="items", identifier="fluxId")
      */
     protected $flux;
 
     /**
+     * @var integer
+     *
      * @ODM\Field(name="flux_id", type="int")
      */
     protected $fluxId;
 
     /**
+     * @var string
+     *
      * @ODM\Field(name="title", type="string")
      */
     protected $title;
 
     /**
+     * @var string
+     *
      * @ODM\Field(name="url", type="string")
      */
     protected $url;
 
     /**
+     * @var string
+     *
      * @ODM\Field(name="description", type="string")
      */
     protected $description;
 
     /**
+     * @var string
+     *
      * @ODM\Field(name="category", type="string")
      */
-    protected $itemCategory;
+    protected $category;
 
     /**
+     * @var \DateTime
+     *
      * @ODM\Field(name="date", type="date")
      */
-    protected $itemDate;
+    protected $date;
 
     /**
-     * @ODM\Field(name="flux_date", type="date")
+     * @ODM\PrePersist
+     * @ODM\PreUpdate
+     *
+     * @return self
      */
-    protected $fluxDate;
+    public function loadFluxId()
+    {
+        $this->fluxId = $this->flux->getId();
+        return $this;
+    }
 
     /**
      * Get id
      *
-     * @return id $id
+     * @return string $id
      */
     public function getId()
     {
@@ -141,81 +166,58 @@ class Item
     }
 
     /**
-     * Set itemCategory
+     * Set category
      *
-     * @param  string $itemCategory
+     * @param  string $category
      * @return self
      */
-    public function setItemCategory($itemCategory)
+    public function setCategory($category)
     {
-        $this->itemCategory = $itemCategory;
+        $this->category = $category;
 
         return $this;
     }
 
     /**
-     * Get itemCategory
+     * Get category
      *
-     * @return string $itemCategory
+     * @return string $category
      */
-    public function getItemCategory()
+    public function getCategory()
     {
-        return $this->itemCategory;
+        return $this->category;
     }
 
     /**
-     * Set itemDate
+     * Set date
      *
-     * @param  date $itemDate
+     * @param \DateTime $date
      * @return self
      */
-    public function setItemDate($itemDate)
+    public function setDate($date)
     {
-        $this->itemDate = $itemDate;
+        $this->date = $date;
 
         return $this;
     }
 
     /**
-     * Get itemDate
+     * Get date
      *
-     * @return date $itemDate
+     * @return \DateTime $date
      */
-    public function getItemDate()
+    public function getDate()
     {
-        return $this->itemDate;
-    }
-
-    /**
-     * Set fluxDate
-     *
-     * @param  date $fluxDate
-     * @return self
-     */
-    public function setFluxDate($fluxDate)
-    {
-        $this->fluxDate = $fluxDate;
-
-        return $this;
-    }
-
-    /**
-     * Get fluxDate
-     *
-     * @return date $fluxDate
-     */
-    public function getFluxDate()
-    {
-        return $this->fluxDate;
+        return $this->date;
     }
 
     /**
      * Set flux
      *
-     * @param  \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @param Flux $flux
      * @return self
      */
-    public function setFlux(\Xif6\NewsrssBundle\Entity\Flux $flux)
+    public function setFlux(Flux $flux)
     {
         $this->flux = $flux;
 
@@ -225,7 +227,7 @@ class Item
     /**
      * Get flux
      *
-     * @return \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @return Flux $flux
      */
     public function getFlux()
     {
@@ -235,7 +237,7 @@ class Item
     /**
      * Set fluxId
      *
-     * @param  int $fluxId
+     * @param  integer $fluxId
      * @return self
      */
     public function setFluxId($fluxId)
@@ -248,10 +250,13 @@ class Item
     /**
      * Get fluxId
      *
-     * @return int $fluxId
+     * @return integer $fluxId
      */
     public function getFluxId()
     {
+        if (!$this->fluxId) {
+            $this->loadFluxId();
+        }
         return $this->fluxId;
     }
 }

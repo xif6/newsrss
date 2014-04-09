@@ -10,26 +10,29 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *
  * @ORM\Table(name="flux_http")
  * @ORM\Entity(repositoryClass="Xif6\NewsrssBundle\Entity\FluxHttpRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class FluxHttp
 {
     /**
+     * Hook timestampable behavior
+     * add created, updated fields
+     */
+    use TimestampableEntity;
+
+    /**
      * @var integer
-     *
-     * @ORM\Id
-     * @ORM\OneToOne(targetEntity="Flux", cascade={"remove", "persist", "merge"})
-     * @ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $id;
 
-    /* *
-     * @var integer
+    /**
+     * @var Flux
      *
-     * @ORM\OneToOne(targetEntity="Flux", cascade={"remove", "persist", "merge"})
-     * @ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")
-     * /
+     * @ORM\Id
+     * @ORM\OneToOne(targetEntity="Flux", inversedBy="http", cascade={"persist", "merge"})
+     * @ORM\JoinColumn(name="flux_id", referencedColumnName="id", onDelete="CASCADE")
+     */
     private $flux;
-*/
 
     /**
      * @var integer
@@ -88,20 +91,19 @@ class FluxHttp
     private $updatedSucces;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime")
-     * @Gedmo\Timestampable(on="create")
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
      */
-    private $created;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated", type="datetime")
-     * @Gedmo\Timestampable(on="update")
-     */
-    private $updated;
+    public function updateActiveOnFlux()
+    {
+        $dateMin = new \DateTime();
+        $dateMin->sub(new \DateInterval('P3M'));
+        if ($this->updatedSucces === null || $this->updatedSucces > $dateMin) {
+            $this->flux->setActive(true);
+        } else {
+            $this->flux->setActive(false);
+        }
+    }
 
     /**
      * Set statusCode
@@ -152,7 +154,7 @@ class FluxHttp
     /**
      * Set statusCodeOrig
      *
-     * @param  integer $statusCodeOrig
+     * @param integer $statusCodeOrig
      * @return FluxHttp
      */
     public function setStatusCodeOrig($statusCodeOrig)
@@ -265,71 +267,25 @@ class FluxHttp
     }
 
     /**
-     * Set created
+     * load user
      *
-     * @param  \DateTime $created
      * @return FluxHttp
      */
-    public function setCreated($created)
+    protected function loadUserId()
     {
-        $this->created = $created;
-
+        $this->id = $this->flux->getId();
         return $this;
     }
-
-    /**
-     * Get created
-     *
-     * @return \DateTime
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * Set updated
-     *
-     * @param  \DateTime $updated
-     * @return FluxHttp
-     */
-    public function setUpdated($updated)
-    {
-        $this->updated = $updated;
-
-        return $this;
-    }
-
-    /**
-     * Get updated
-     *
-     * @return \DateTime
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
-    }
-
-    /**
-     * Set id
-     *
-     * @param  \Xif6\NewsrssBundle\Entity\Flux $id
-     * @return FluxHttp
-     */
-    public function setId(\Xif6\NewsrssBundle\Entity\Flux $id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     /**
      * Get id
      *
-     * @return \Xif6\NewsrssBundle\Entity\Flux
+     * @return integer
      */
     public function getId()
     {
+        if (!$this->id) {
+            $this->loadUserId();
+        }
         return $this->id;
     }
 
@@ -354,5 +310,29 @@ class FluxHttp
     public function getUpdatedSucces()
     {
         return $this->updatedSucces;
+    }
+
+    /**
+     * Set flux
+     *
+     * @param \Xif6\NewsrssBundle\Entity\Flux $flux
+     * @return FluxHttp
+     */
+    public function setFlux(\Xif6\NewsrssBundle\Entity\Flux $flux = null)
+    {
+        $this->flux = $flux;
+        $this->loadUserId();
+
+        return $this;
+    }
+
+    /**
+     * Get flux
+     *
+     * @return \Xif6\NewsrssBundle\Entity\Flux
+     */
+    public function getFlux()
+    {
+        return $this->flux;
     }
 }

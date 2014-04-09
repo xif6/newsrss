@@ -10,6 +10,37 @@ use Symfony\Component\Validator\Constraints\Url;
 
 class ImportDataCommand extends ContainerAwareCommand
 {
+    /**
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
+     * @var OutputInterface
+     */
+    protected $output;
+
+    /**
+     * @var \Doctrine\Bundle\DoctrineBundle\Registry
+     */
+    protected $doctrine;
+
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    protected $em;
+
+    /**
+     * @var \Doctrine\DBAL\Connection
+     */
+    protected $conn;
+
+    /**
+     * @var \Symfony\Component\Console\Helper\ProgressHelper
+     */
+    protected $progress;
+
+
     protected function configure()
     {
         $this
@@ -20,49 +51,47 @@ class ImportDataCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $text = '';
+        $this->input = $input;
+        $this->output = $output;
         $this->doctrine = $this->getContainer()->get('doctrine');
-        $progress = $this->getHelperSet()->get('progress');
+        $this->progress = $this->getHelperSet()->get('progress');
 
         $this->em = $this->doctrine->getManager();
         $this->conn = $this->em->getConnection();
+        $this->removeTimestampableListener();
+
 
         $this->conn->executeQuery('SET foreign_key_checks = 0');
-//        $this->conn->executeQuery('TRUNCATE `category`');
-//        $this->conn->executeQuery('TRUNCATE `flux`');
-//        $this->conn->executeQuery('TRUNCATE `flux_category`');
-//        $this->conn->executeQuery('TRUNCATE `flux_http`');
-//        $this->conn->executeQuery('TRUNCATE `site`');
-//        $this->conn->executeQuery('TRUNCATE `user`');
+        $this->conn->executeQuery('TRUNCATE `category`');
+        $this->conn->executeQuery('TRUNCATE `flux`');
+        $this->conn->executeQuery('TRUNCATE `flux_category`');
+        $this->conn->executeQuery('TRUNCATE `flux_http`');
+        $this->conn->executeQuery('TRUNCATE `site`');
+        $this->conn->executeQuery('TRUNCATE `user`');
         $this->conn->executeQuery('TRUNCATE `user_flux`');
+        $this->conn->executeQuery('TRUNCATE `search_user`');
         $this->conn->executeQuery('SET foreign_key_checks = 1');
 
-//        $this->ImportSite($input, $output);
-//        $this->ImportFlux($input, $output);
-//        $this->ImportFluxHttp($input, $output);
-//        $this->ImportCategory($input, $output);
-//        $this->ImportFluxCategory($input, $output);
-//        $this->ImportUser($input, $output);
-        $this->ImportUserFlux($input, $output);
-        die();
-        $fluxAll = $this->doctrine->getRepository('Xif6NewsrssBundle:Flux')->findAll();
-        $progress->start($output, count($fluxAll));
-        $progress->setRedrawFrequency(10);
-        foreach ($fluxAll as $flux) {
-            $flux->setSlug(null);
-            $this->em->persist($flux);
-            $progress->advance();
-        }
-        $this->em->flush();
+        $this->ImportSite();
+        $this->ImportFlux();
+        $this->ImportFluxHttp();
+        $this->ImportCategory();
+        $this->ImportFluxCategory();
+        $this->ImportUser();
+        $this->ImportUserFlux();
+        $this->ImportSearchUser();
 
-        $output->writeln($text);
+        $this->output->writeln(
+            '<info>EXECUTION TIME : ' . number_format(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 2) . ' s</info>'
+        );
     }
 
     /**
      * Import site from old database
      */
-    protected function ImportSite(InputInterface $input, OutputInterface $output)
+    protected function ImportSite()
     {
-        $output->writeln('START ImportSite');
+        $this->output->writeln('<info>START ImportSite</info>');
         $sql = 'SELECT * FROM (
                     (SELECT
                         site AS name_and_url,
@@ -82,9 +111,8 @@ class ImportDataCommand extends ContainerAwareCommand
                     ORDER BY idnews)) tmp
                 GROUP BY name_and_url';
 
-        $progress = $this->getHelperSet()->get('progress');
         $statement = $this->conn->executeQuery($sql);
-        $progress->start($output, $statement->rowCount());
+        $this->progress->start($this->output, $statement->rowCount());
 
         while ($news = $statement->fetch()) {
             $site = new Entity\Site();
@@ -92,65 +120,93 @@ class ImportDataCommand extends ContainerAwareCommand
 
             $site->setName($news['name_and_url'])
                 ->setUrl('http://' . $news['name_and_url'])
-                ->setCreated(new \DateTime($news['created']))
-                ->setUpdated(new \DateTime($news['updated']));
+                ->setCreatedAt($this->toDateTime($news['created']))
+                ->setUpdatedAt($this->toDateTime($news['updated']));
             $this->em->persist($site);
-            $progress->advance();
+            $this->progress->advance();
         }
         $this->em->flush();
-        $output->writeln('');
+        $this->progress->finish();
     }
 
     /**
      * Import flux from old database
      */
-    protected function ImportFlux(InputInterface $input, OutputInterface $output)
+    protected function ImportFlux()
     {
-        $output->writeln('START ImportFlux');
-        $sql = 'SELECT
-                    idnews AS id,
-                    nom AS name,
-                    site AS site,
-                    url AS url,
-                    `desc` AS description,
-                    date_insert AS created,
-                    `date` AS updated
-                FROM newsrss.news
-                UNION
-                SELECT
-                    null AS id,
-                    nom AS name,
-                    site AS site,
-                    url AS url,
-                    `desc` AS description,
-                    date_insert AS created,
-                    `date` AS updated
-                FROM newsrss.news_perso';
+        $this->output->writeln('<info>START ImportFlux</info>');
+        $sql = 'SELECT * FROM (
+                    SELECT
+                        idnews AS id,
+                        nom AS name,
+                        site AS site,
+                        url AS url,
+                        `desc` AS description,
+                        date_insert AS created,
+                        `date` AS updated,
+                        false AS new
+                    FROM newsrss.news
+                    UNION
+                    SELECT
+                        null AS id,
+                        nom AS name,
+                        site AS site,
+                        url AS url,
+                        `desc` AS description,
+                        date_insert AS created,
+                        `date` AS updated,
+                        false AS new
+                    FROM newsrss.news_perso
+                    UNION
+                    SELECT
+                        null AS id,
+                        null AS name,
+                        null AS site,
+                        flux AS url,
+                        null AS description,
+                        MIN(`date`) AS created,
+                        MAX(`date`) AS updated,
+                        true AS new
+                    FROM newsrss.nouveau
+                    GROUP BY flux) t
+                GROUP BY url
+                ORDER BY id DESC';
 
-        $progress = $this->getHelperSet()->get('progress');
         $statement = $this->conn->executeQuery($sql);
-        $progress->start($output, $statement->rowCount());
-        $progress->setRedrawFrequency(10);
+        $this->progress->start($this->output, $statement->rowCount());
+
+        $urls = array();
+        $nbUrlNotExist = 0;
 
         while ($news = $statement->fetch()) {
+            $news['url'] = utf8_decode($news['url']);
             if (!preg_match('%^http%', $news['url'])) {
                 $news['url'] = 'http://' . $news['url'];
             }
             $urlConstraint = new Url();
             $errorList = $this->getContainer()->get('validator')->validateValue($news['url'], $urlConstraint);
-            if (count($errorList) != 0) {
-                $progress->advance();
+
+            if (count($errorList) != 0 || in_array($news['url'], $urls)) {
+                $this->progress->advance();
                 continue;
             }
+            $urls[] = $news['url'];
+            if ($news['new'] && !$this->urlExist($news['url'])) {
+                $nbUrlNotExist++;
+                $this->progress->advance();
+                continue;
+            }
+
 
             $flux = new Entity\Flux();
 
             $flux->setName(utf8_decode($news['name']))
                 ->setUrl($news['url'])
                 ->setDescription(utf8_decode($news['description']))
-                ->setCreated(new \DateTime($news['created']))
-                ->setUpdated(new \DateTime($news['updated']))
-                ->setDisplay(true);
+                ->setCreatedAt($this->toDateTime($news['created']))
+                ->setUpdatedAt($this->toDateTime($news['updated']))
+                ->setDisplay(true)
+                ->setNew($news['new']);
 
             $news['site'] = preg_replace('%/$%', '', $news['site']);
             if (!empty($news['site'])) {
@@ -160,26 +216,26 @@ class ImportDataCommand extends ContainerAwareCommand
 
             if ($news['id']) {
                 $flux->setId($news['id']);
-                // deactivate GeneratedValue AUTO
-                $metadata = $this->em->getClassMetaData(get_class($flux));
-                $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
+                $this->disabledAutoIncrement($flux);
             }
 
             $this->em->persist($flux);
 
-            $progress->advance();
+            $this->progress->advance();
         }
 
         $this->em->flush();
-        $output->writeln('');
+        $this->progress->finish();
+        $this->output->writeln('nbUrlNotExist : ' . $nbUrlNotExist);
+        $this->output->writeln('');
     }
 
     /**
      * Import fluxhttp from old database
      */
-    protected function ImportFluxHttp(InputInterface $input, OutputInterface $output)
+    protected function ImportFluxHttp()
     {
-        $output->writeln('START ImportFluxHttp');
+        $this->output->writeln('<info>START ImportFluxHttp</info>');
         $sql = 'SELECT
                     idnews AS id,
                     statut AS status_code,
@@ -208,10 +264,9 @@ class ImportDataCommand extends ContainerAwareCommand
                     `date` AS updated
                 FROM newsrss.news_perso';
 
-        $progress = $this->getHelperSet()->get('progress');
         $statement = $this->conn->executeQuery($sql);
-        $progress->start($output, $statement->rowCount());
-        $progress->setRedrawFrequency(10);
+        $this->progress->start($this->output, $statement->rowCount());
+        $this->progress->setRedrawFrequency(10);
 
         while ($news = $statement->fetch()) {
             if (!preg_match('%^http%', $news['url'])) {
@@ -220,14 +275,19 @@ class ImportDataCommand extends ContainerAwareCommand
             $urlConstraint = new Url();
             $errorList = $this->getContainer()->get('validator')->validateValue($news['url'], $urlConstraint);
             if (count($errorList) != 0) {
-                $progress->advance();
+                $this->progress->advance();
                 continue;
             }
             $flux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->findOneByUrl($news['url']);
 
             $fluxHttp = new Entity\FluxHttp();
 
-            $fluxHttp->setId($flux)
+            $updateSuccess = null;
+            if ($news['status_code'] == 200) {
+                $updateSuccess = $this->toDateTime($news['updated']);
+            }
+
+            $fluxHttp->setFlux($flux)
                 ->setStatusCode($news['status_code'])
                 ->setUrlRedirection(utf8_decode($news['url_redirection']))
                 ->setStatusCodeOrig($news['status_code_orig'])
@@ -235,33 +295,33 @@ class ImportDataCommand extends ContainerAwareCommand
                 ->setError(utf8_decode($news['error']))
                 ->setIfNoneMatch(utf8_decode($news['if_none_match']))
                 ->setIfModifiedSince(utf8_decode($news['if_modified_since']))
-                ->setCreated(new \DateTime($news['created']))
-                ->setUpdated(new \DateTime($news['updated']));
+                ->setUpdatedSucces($updateSuccess)
+                ->setCreatedAt($this->toDateTime($news['created']))
+                ->setUpdatedAt($this->toDateTime($news['updated']));
 
             $this->em->persist($fluxHttp);
 
-            $progress->advance();
+            $this->progress->advance();
         }
 
         $this->em->flush();
-        $output->writeln('');
+        $this->progress->finish();
     }
 
     /**
      * Import category from old database
      */
-    protected function ImportCategory(InputInterface $input, OutputInterface $output)
+    protected function ImportCategory()
     {
-        $output->writeln('START ImportCategory');
+        $this->output->writeln('<info>START ImportCategory</info>');
         $sql = 'SELECT
                     idrub AS id,
                     idrub1 AS parent_id,
                     rub AS name
                 FROM newsrss.rubrique';
 
-        $progress = $this->getHelperSet()->get('progress');
         $statement = $this->conn->executeQuery($sql);
-        $progress->start($output, $statement->rowCount() * 2);
+        $this->progress->start($this->output, $statement->rowCount() * 2);
         $rubs = $statement->fetchAll();
 
         foreach ($rubs as $rub) {
@@ -270,12 +330,11 @@ class ImportDataCommand extends ContainerAwareCommand
             $category->setId($rub['id'])
                 ->setName($rub['name']);
 
-            $metadata = $this->em->getClassMetaData(get_class($category));
-            $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
+            $this->disabledAutoIncrement($category);
 
             $this->em->persist($category);
 
-            $progress->advance();
+            $this->progress->advance();
         }
         $this->em->flush();
 
@@ -290,28 +349,27 @@ class ImportDataCommand extends ContainerAwareCommand
                 $this->em->persist($category);
             }
 
-            $progress->advance();
+            $this->progress->advance();
         }
 
         $this->em->flush();
-        $output->writeln('');
+        $this->progress->finish();
     }
 
     /**
      * Import fluxcategory from old database
      */
-    protected function ImportFluxCategory(InputInterface $input, OutputInterface $output)
+    protected function ImportFluxCategory()
     {
-        $output->writeln('START ImportFluxCategory');
+        $this->output->writeln('<info>START ImportFluxCategory</info>');
         $sql = 'SELECT
                     idnews AS flux_id,
                     idrub AS category_id
                 FROM newsrss.news_rub';
 
-        $progress = $this->getHelperSet()->get('progress');
         $statement = $this->conn->executeQuery($sql);
-        $progress->start($output, $statement->rowCount());
-        $progress->setRedrawFrequency(10);
+        $this->progress->start($this->output, $statement->rowCount());
+        $this->progress->setRedrawFrequency(10);
 
         while ($newsrub = $statement->fetch()) {
             $flux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->find($newsrub['flux_id']);
@@ -322,19 +380,19 @@ class ImportDataCommand extends ContainerAwareCommand
                 $this->em->persist($flux);
             }
 
-            $progress->advance();
+            $this->progress->advance();
         }
 
         $this->em->flush();
-        $output->writeln('');
+        $this->progress->finish();
     }
 
     /**
      * Import user from old database
      */
-    protected function ImportUser(InputInterface $input, OutputInterface $output)
+    protected function ImportUser()
     {
-        $output->writeln('START ImportUser');
+        $this->output->writeln('<info>START ImportUser</info>');
         $sql = 'SELECT
                     idlogin AS id,
                     log AS username,
@@ -345,10 +403,9 @@ class ImportDataCommand extends ContainerAwareCommand
                     dernieremodif AS updated
                 FROM newsrss.login';
 
-        $progress = $this->getHelperSet()->get('progress');
         $statement = $this->conn->executeQuery($sql);
-        $progress->start($output, $statement->rowCount());
-        $progress->setRedrawFrequency(10);
+        $this->progress->start($this->output, $statement->rowCount());
+        $this->progress->setRedrawFrequency(10);
 
         while ($login = $statement->fetch()) {
             $user = new Entity\User();
@@ -358,18 +415,17 @@ class ImportDataCommand extends ContainerAwareCommand
                 ->setPlainPassword(utf8_decode($login['password']))
                 ->setEmail(utf8_decode($login['email']))
                 ->setEnabled((bool)$login['enabled'])
-                ->setCreated(new \DateTime($login['created']))
-                ->setUpdated(new \DateTime($login['updated']));
+                ->setCreatedAt($this->toDateTime($login['created']))
+                ->setUpdatedAt($this->toDateTime($login['updated']));
 
-            // deactivate GeneratedValue AUTO
-            $metadata = $this->em->getClassMetaData(get_class($user));
-            $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
+            $this->disabledAutoIncrement($user);
 
             $this->em->persist($user);
-            $progress->advance();
+            $this->progress->advance();
         }
 
         $this->em->flush();
+        $this->progress->finish();
 
         $command = $this->getApplication()->find('fos:user:promote');
         $arguments = array(
@@ -378,17 +434,15 @@ class ImportDataCommand extends ContainerAwareCommand
             '--super' => true,
         );
         $inputFos = new ArrayInput($arguments);
-        $command->run($inputFos, $output);
-
-        $output->writeln('');
+        $command->run($inputFos, $this->output);
     }
 
     /**
      * Import userflux from old database
      */
-    public function ImportUserFlux(InputInterface $input, OutputInterface $output)
+    public function ImportUserFlux()
     {
-        $output->writeln('START ImportUserFlux');
+        $this->output->writeln('<info>START ImportUserFlux</info>');
         $sql = 'SELECT
                     idlogin AS user_id,
                     idnews AS flux_id,
@@ -402,10 +456,9 @@ class ImportDataCommand extends ContainerAwareCommand
                 FROM newsrss.log_news
                 ORDER BY user_id, rank_nb, rank_col';
 
-        $progress = $this->getHelperSet()->get('progress');
         $statement = $this->conn->executeQuery($sql);
-        $progress->start($output, $statement->rowCount());
-        $progress->setRedrawFrequency(10);
+        $this->progress->start($this->output, $statement->rowCount());
+        $this->progress->setRedrawFrequency(10);
 
         $rank = array();
 
@@ -431,9 +484,94 @@ class ImportDataCommand extends ContainerAwareCommand
 
                 $this->em->persist($userFlux);
             }
-            $progress->advance();
+            $this->progress->advance();
         }
         $this->em->flush();
-        $output->writeln('');
+        $this->progress->finish();
+    }
+
+    /**
+     * Import searchuser from old database
+     */
+    public function ImportSearchUser()
+    {
+        $this->output->writeln('<info>START ImportSearchUser</info>');
+
+        $sql = 'SELECT
+                    recherche AS query,
+                    nb,
+                    `date` AS created
+                FROM newsrss.recherche';
+
+        $statement = $this->conn->executeQuery($sql);
+        $this->progress->start($this->output, $statement->rowCount());
+        $this->progress->setRedrawFrequency(10);
+
+        while ($recherche = $statement->fetch()) {
+
+            for ($i = 0; $i < $recherche['nb']; $i++) {
+                $searchUser = new Entity\SearchUser();
+
+                $searchUser->setQuery(utf8_decode($recherche['query']))
+                    ->setCreatedAt($this->toDateTime($recherche['created']))
+                    ->setUpdatedAt($this->toDateTime($recherche['created']));
+
+                $this->em->persist($searchUser);
+                $recherche['created'] = '0000-00-00 00:00:00';
+            }
+            $this->progress->advance();
+        }
+        $this->em->flush();
+        $this->progress->finish();
+    }
+
+    protected function urlExist($url)
+    {
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_NOBODY, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+        $result = curl_exec($curl);
+
+        if ($result !== false) {
+            $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if (in_array($statusCode, array(200, 301, 302))) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $date
+     * @return \DateTime|null
+     */
+    protected function toDateTime($date)
+    {
+        if ($date == '0000-00-00 00:00:00') {
+            return null;
+        } else {
+            return new \DateTime($date);
+        }
+    }
+
+    protected function removeTimestampableListener()
+    {
+        $evm = $this->em->getEventManager();
+        $lcm = $evm->getListeners('loadClassMetadata');
+        foreach ($lcm as $listener) {
+            if (get_class($listener) == 'Gedmo\Timestampable\TimestampableListener') {
+                $evm->removeEventSubscriber($listener);
+            }
+        }
+    }
+
+    protected function disabledAutoIncrement(Object $object)
+    {
+        $metadata = $this->em->getClassMetaData(get_class($object));
+        $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
     }
 }

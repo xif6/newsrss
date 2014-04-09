@@ -17,6 +17,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Flux
 {
     /**
+     * Hook timestampable behavior
+     * add created, updated fields
+     */
+    use TimestampableEntity;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -26,6 +32,13 @@ class Flux
     private $id;
 
     /**
+     * @var FluxHttp
+     *
+     * @ORM\OneToOne(targetEntity="FluxHttp", mappedBy="flux", cascade={"remove", "persist", "merge"})
+     */
+    private $http;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
@@ -33,7 +46,7 @@ class Flux
     private $name;
 
     /**
-     * $var string
+     * @var string
      *
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(name="slug", type="string", length=255, nullable=true)
@@ -70,6 +83,20 @@ class Flux
     private $display = false;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="active", type="boolean", options={"default"=true})
+     */
+    private $active = true;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="new", type="boolean", options={"default"=false})
+     */
+    private $new = false;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="Category", inversedBy="flux", cascade={"persist", "merge"})
@@ -83,30 +110,14 @@ class Flux
     /**
      * @var ArrayCollection
      *
-     * @ORM\oneToMany(targetEntity="UserFlux", mappedBy="flux", cascade={"persist", "merge"})
+     * @ORM\OneToMany(targetEntity="UserFlux", mappedBy="flux", cascade={"persist", "merge"})
      */
     private $userFlux;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime")
-     * @Gedmo\Timestampable(on="create")
-     */
-    private $created;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated", type="datetime")
-     * @Gedmo\Timestampable(on="update")
-     */
-    private $updated;
-
-    /**
      * @var ArrayCollection
      *
-     * @Gedmo\ReferenceMany(class="Xif6\NewsrssBundle\Document\Item", mappedBy="flux")
+     * @Gedmo\ReferenceMany(class="Xif6\NewsrssBundle\Document\Item", mappedBy="flux", sort={"date"="desc"}, limit=10)
      */
     private $items;
 
@@ -209,52 +220,6 @@ class Flux
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * Set created
-     *
-     * @param  \DateTime $created
-     * @return Flux
-     */
-    public function setCreated($created)
-    {
-        $this->created = $created;
-
-        return $this;
-    }
-
-    /**
-     * Get created
-     *
-     * @return \DateTime
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * Set updated
-     *
-     * @param  \DateTime $updated
-     * @return Flux
-     */
-    public function setUpdated($updated)
-    {
-        $this->updated = $updated;
-
-        return $this;
-    }
-
-    /**
-     * Get updated
-     *
-     * @return \DateTime
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
     }
 
     /**
@@ -456,5 +421,74 @@ class Flux
     public function getUserFlux()
     {
         return $this->userFlux;
+    }
+
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     * @return Flux
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set new
+     *
+     * @param boolean $new
+     * @return Flux
+     */
+    public function setNew($new)
+    {
+        $this->new = $new;
+
+        return $this;
+    }
+
+    /**
+     * Get new
+     *
+     * @return boolean
+     */
+    public function getNew()
+    {
+        return $this->new;
+    }
+
+    /**
+     * Set http
+     *
+     * @param \Xif6\NewsrssBundle\Entity\FluxHttp $http
+     * @return Flux
+     */
+    public function setHttp(\Xif6\NewsrssBundle\Entity\FluxHttp $http = null)
+    {
+        $this->http = $http;
+
+        return $this;
+    }
+
+    /**
+     * Get http
+     *
+     * @return \Xif6\NewsrssBundle\Entity\FluxHttp
+     */
+    public function getHttp()
+    {
+        return $this->http;
     }
 }

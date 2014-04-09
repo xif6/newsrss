@@ -24,7 +24,7 @@ class UserFlux
     private $id;
 
     /**
-     * @var integer
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userFlux", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
@@ -32,7 +32,7 @@ class UserFlux
     private $user;
 
     /**
-     * @var integer
+     * @var Flux
      *
      * @ORM\ManyToOne(targetEntity="Flux", inversedBy="userFlux", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="flux_id", referencedColumnName="id", nullable=false)
@@ -81,6 +81,12 @@ class UserFlux
      */
     private $style;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     */
+    private $name;
 
     /**
      * Get id
@@ -274,5 +280,28 @@ class UserFlux
     public function getFlux()
     {
         return $this->flux;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return UserFlux
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }

@@ -14,6 +14,12 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Site
 {
     /**
+     * Hook timestampable behavior
+     * add created, updated fields
+     */
+    use TimestampableEntity;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -43,22 +49,6 @@ class Site
      * @ORM\OrderBy({"name" = "ASC"})
      */
     private $flux;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime")
-     * @Gedmo\Timestampable(on="create")
-     */
-    private $created;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated", type="datetime")
-     * @Gedmo\Timestampable(on="update")
-     */
-    private $updated;
 
     /**
      * Constructor
@@ -122,52 +112,6 @@ class Site
     public function getUrl()
     {
         return $this->url;
-    }
-
-    /**
-     * Set created
-     *
-     * @param  \DateTime $created
-     * @return Site
-     */
-    public function setCreated($created)
-    {
-        $this->created = $created;
-
-        return $this;
-    }
-
-    /**
-     * Get created
-     *
-     * @return \DateTime
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * Set updated
-     *
-     * @param  \DateTime $updated
-     * @return Site
-     */
-    public function setUpdated($updated)
-    {
-        $this->updated = $updated;
-
-        return $this;
-    }
-
-    /**
-     * Get updated
-     *
-     * @return \DateTime
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
     }
 
     /**

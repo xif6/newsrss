@@ -16,6 +16,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 class User extends BaseUser
 {
     /**
+     * Hook timestampable behavior
+     * add created, updated fields
+     */
+    use TimestampableEntity;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -27,26 +33,18 @@ class User extends BaseUser
     /**
      * @var ArrayCollection
      *
-     * @ORM\oneToMany(targetEntity="UserFlux", mappedBy="user", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="UserFlux", mappedBy="user", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
      * @ORM\OrderBy({"rank" = "ASC"})
      */
     protected $userFlux;
 
     /**
-     * @var \DateTime
+     * @var ArrayCollection
      *
-     * @ORM\Column(name="created", type="datetime")
-     * @Gedmo\Timestampable(on="create")
+     * @ORM\OneToMany(targetEntity="SearchUser", mappedBy="user", cascade={"persist", "merge"})
+     * @ORM\OrderBy({"createdAt" = "DESC"})
      */
-    private $created;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated", type="datetime")
-     * @Gedmo\Timestampable(on="update")
-     */
-    private $updated;
+    protected $search;
 
     /**
      * Constructor
@@ -55,6 +53,7 @@ class User extends BaseUser
     {
         parent::__construct();
         $this->userFlux = new ArrayCollection();
+        $this->search = new ArrayCollection();
     }
 
     /**
@@ -114,48 +113,35 @@ class User extends BaseUser
     }
 
     /**
-     * Set created
+     * Add search
      *
-     * @param \DateTime $created
+     * @param \Xif6\NewsrssBundle\Entity\SearchUser $search
      * @return User
      */
-    public function setCreated($created)
+    public function addSearch(\Xif6\NewsrssBundle\Entity\SearchUser $search)
     {
-        $this->created = $created;
+        $this->search[] = $search;
 
         return $this;
     }
 
     /**
-     * Get created
+     * Remove search
      *
-     * @return \DateTime
+     * @param \Xif6\NewsrssBundle\Entity\SearchUser $search
      */
-    public function getCreated()
+    public function removeSearch(\Xif6\NewsrssBundle\Entity\SearchUser $search)
     {
-        return $this->created;
+        $this->search->removeElement($search);
     }
 
     /**
-     * Set updated
+     * Get search
      *
-     * @param \DateTime $updated
-     * @return User
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function setUpdated($updated)
+    public function getSearch()
     {
-        $this->updated = $updated;
-
-        return $this;
-    }
-
-    /**
-     * Get updated
-     *
-     * @return \DateTime
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
+        return $this->search;
     }
 }
