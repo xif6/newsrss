@@ -12,6 +12,14 @@ xif6_newsrss_flux:
         id: \d+
         slug: ".+"
 
+xif6_newsrss_flux_items:
+    pattern: /items-{id}-{type}.{_format}
+    defaults: { _controller: Xif6NewsrssBundle:Flux:items }
+    requirements:
+        id: \d+
+        type: default|user
+        _format: html|json
+
 xif6_newsrss_flux_add:
     pattern: /actualite-{id}ajout-{slug}.html
     defaults: { _controller: Xif6NewsrssBundle:Flux:add }

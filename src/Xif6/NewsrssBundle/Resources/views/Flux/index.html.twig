@@ -13,14 +13,16 @@
         {% endfor %}
     </ul>
     <ol>
-        {% for item in flux.items %}
-            {#{ dump(item) }#}
+        {#% for item in flux.items %}
+            {#{ dump(item) }# }
             <li>
                 {{ item.title }} -
-                {% if item.itemDate %}
-                    {{ item.itemDate|date('c') }}
+                {% if item.date %}
+                    {{ item.date|date('c') }}
                 {% endif %}
             </li>
-        {% endfor %}
+        {% endfor %#}
     </ol>
+
+    {{ render(path('xif6_newsrss_flux_items', { 'id': flux.id, 'type': 'default', '_format': 'html' })) }}
 {% endblock %}
