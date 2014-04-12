@@ -13,18 +13,6 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $this->em = $this->getDoctrine()->getManager();
-//        $fluxAll = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->findAll();
-        $fluxAll = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->createQueryBuilder('f')->where(
-            'slug LIKE :slug'
-        )->setParameter('slug', 'dddd%')->getQuery()->execute();
-        var_dump(count($fluxAll));
-        foreach ($fluxAll as $flux) {
-            $flux->setSlug(null);
-            $this->em->persist($flux);
-            $this->em->flush();
-            break;
-        }
 
         return $this->render('Xif6NewsrssBundle:Default:index.html.twig', array('name' => 'bienvenue'));
     }
@@ -43,7 +31,7 @@ class DefaultController extends Controller
         $this->em->clear();
         var_dump($fluxHttp->getError());
         //*/
-        //*
+        /*
         $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find(5);
         $item = $this->get('doctrine_mongodb')->getRepository('Xif6NewsrssBundle:Item')->find(
             '532cbecca35440c2048b458d'
@@ -55,26 +43,56 @@ class DefaultController extends Controller
         $this->dm->clear();
         var_dump($item->getFluxId(), $item->getFlux()->getId());
         //*/
+        //*
+        $a = array(
+            'title' => 'test title dd',
+            'url' => 'ddd' . time(),
+            'date' => time() - rand(10000000, 50000000),
+            'flux_id' => 5,
+        );
+
         /*
-                $item = new Document\Item();
-                $item->setTitle('test title dd');
-                $item->setUrl('ddd'.time());
-                $item->setDate(time()-rand(10000000, 50000000));
-                $item->setFlux($flux);
-                $this->dm->persist($item);
-                $this->dm->flush();
-                $this->dm->clear();
-                /*
-                //*
-                $flux = new Entity\Flux();
-                $flux->setName('testi é lol .ff.' . time());
-                $flux->setUrl('http://google.fr/' . time());
+        $result = $this->get('doctrine_mongodb')
+            ->getRepository('Xif6NewsrssBundle:Item')
+            ->createQueryBuilder();
+
+        $result->update()
+            ->field('title')->set($a['title'])
+            ->field('url')->set($a['url'])
+            ->field('date')->set($a['date'])
+            ->field('flux_id')->set($a['flux_id'])
+            ->addAnd(
+                $result->expr()->field('flux_id')->equals($a['flux_id'])
+                    ->addOr($result->expr()->field('title')->equals($a['title']))
+                    ->addOr($result->expr()->field('url')->equals($a['url']))
+            )
+            ->upsert(true)
+            ->getQuery()
+            ->execute();
+        //*/
+        //var_dump($result);
+//*
+        $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find($a['flux_id']);
+
+        $item = new Document\Item();
+        $item->setTitle($a['title']);
+        $item->setUrl($a['url']);
+        $item->setDate($a['date']);
+        $item->setFlux($flux);
+        $this->dm->persist($item);
+        $this->dm->flush();
+        $this->dm->clear();
+        /*
+        //*
+        $flux = new Entity\Flux();
+        $flux->setName('testi é lol .ff.' . time());
+        $flux->setUrl('http://google.fr/' . time());
 
 
-                $this->em->persist($flux);
-                $this->em->flush();
-                $name = $flux->getSlug();
-                //*/
+        $this->em->persist($flux);
+        $this->em->flush();
+        $name = $flux->getSlug();
+        //*/
         //*/
 
         /*

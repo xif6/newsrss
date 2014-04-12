@@ -475,9 +475,9 @@ class ImportDataCommand extends ContainerAwareCommand
 
                 $userFlux->setUser($user)
                     ->setFlux($flux)
-                    ->setDisplayDate($lognews['display_date'] == 'oui')
-                    ->setDisplayCategory($lognews['display_category'] == 'oui')
-                    ->setDisplayDescription($lognews['display_description'] == 'oui')
+                    ->setDate($lognews['display_date'] == 'oui')
+                    ->setCategory($lognews['display_category'] == 'oui')
+                    ->setDescription($lognews['display_description'] == 'oui')
                     ->setFluxNb($lognews['flux_nb'])
                     ->setStyle(substr($lognews['style'], 0, -4))
                     ->setRank(++$rank[$lognews['user_id']]);
