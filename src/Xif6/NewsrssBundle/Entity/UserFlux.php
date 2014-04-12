@@ -3,6 +3,7 @@
 namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * UserFlux
@@ -20,6 +21,8 @@ class UserFlux
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @JMS\Exclude
      */
     private $id;
 
@@ -28,6 +31,8 @@ class UserFlux
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userFlux", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     *
+     * @JMS\Exclude
      */
     private $user;
 
@@ -36,50 +41,52 @@ class UserFlux
      *
      * @ORM\ManyToOne(targetEntity="Flux", inversedBy="userFlux", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="flux_id", referencedColumnName="id", nullable=false)
+     *
+     * @JMS\Exclude
      */
     private $flux;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="display_date", type="boolean")
+     * @ORM\Column(name="date", type="boolean")
      */
-    private $displayDate;
+    private $date = true;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="display_category", type="boolean")
+     * @ORM\Column(name="category", type="boolean")
      */
-    private $displayCategory;
+    private $category = true;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="display_description", type="boolean")
+     * @ORM\Column(name="description", type="boolean")
      */
-    private $displayDescription;
+    private $description = true;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="flux_nb", type="smallint")
      */
-    private $fluxNb;
+    private $fluxNb = 10;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="rank", type="smallint")
      */
-    private $rank;
+    private $rank = 1;
 
     /**
      * @var string
      *
      * @ORM\Column(name="style", type="string", length=20)
      */
-    private $style;
+    private $style = '';
 
     /**
      * @var string
@@ -99,72 +106,72 @@ class UserFlux
     }
 
     /**
-     * Set displayDate
+     * Set date
      *
-     * @param boolean $displayDate
+     * @param boolean $date
      * @return UserFlux
      */
-    public function setDisplayDate($displayDate)
+    public function setDate($date)
     {
-        $this->displayDate = $displayDate;
+        $this->date = $date;
 
         return $this;
     }
 
     /**
-     * Get displayDate
+     * Get date
      *
      * @return boolean
      */
-    public function getDisplayDate()
+    public function getDate()
     {
-        return $this->displayDate;
+        return $this->date;
     }
 
     /**
-     * Set displayCategory
+     * Set category
      *
-     * @param boolean $displayCategory
+     * @param boolean $category
      * @return UserFlux
      */
-    public function setDisplayCategory($displayCategory)
+    public function setCategory($category)
     {
-        $this->displayCategory = $displayCategory;
+        $this->category = $category;
 
         return $this;
     }
 
     /**
-     * Get displayCategory
+     * Get category
      *
      * @return boolean
      */
-    public function getDisplayCategory()
+    public function getCategory()
     {
-        return $this->displayCategory;
+        return $this->category;
     }
 
     /**
-     * Set displayDescription
+     * Set description
      *
-     * @param boolean $displayDescription
+     * @param boolean $description
      * @return UserFlux
      */
-    public function setDisplayDescription($displayDescription)
+    public function setDescription($description)
     {
-        $this->displayDescription = $displayDescription;
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * Get displayDescription
+     * Get description
      *
      * @return boolean
      */
-    public function getDisplayDescription()
+    public function getDescription()
     {
-        return $this->displayDescription;
+        return $this->description;
     }
 
     /**

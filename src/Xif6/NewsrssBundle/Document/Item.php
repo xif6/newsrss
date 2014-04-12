@@ -5,15 +5,15 @@ namespace Xif6\NewsrssBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Xif6\NewsrssBundle\Entity\Flux;
+use JMS\Serializer\Annotation as JMS;
 
 /**
- * @ODM\Document(
- *        collection="item",
- *        indexes={
- *			@ODM\Index(keys={"flux_id"="asc", "url"="asc"}, options={"unique"=true}),
- *			@ODM\Index(keys={"flux_id"="asc", "date"="desc"})
- *        }
- * )
+ * @ODM\Document(collection="item", repositoryClass="Xif6\NewsrssBundle\Document\ItemRepository")
+ * @ODM\Indexes({
+ *		@ODM\Index(keys={"flux_id"="asc", "url"="asc"}, options={"unique"=true}),
+ *		@ODM\Index(keys={"flux_id"="asc", "title"="asc"}, options={"unique"=true}),
+ *		@ODM\Index(keys={"flux_id"="asc", "date"="desc"})
+ * })
  * @ODM\HasLifecycleCallbacks
  */
 class Item
@@ -22,6 +22,7 @@ class Item
      * @var string
      *
      * @ODM\Id
+     * @JMS\Exclude
      */
     protected $id;
 
@@ -29,6 +30,7 @@ class Item
      * @var Flux
      *
      * @Gedmo\ReferenceOne(class="Xif6\NewsrssBundle\Entity\Flux", inversedBy="items", identifier="fluxId")
+     * @JMS\Exclude
      */
     protected $flux;
 
@@ -36,6 +38,7 @@ class Item
      * @var integer
      *
      * @ODM\Field(name="flux_id", type="int")
+     * @JMS\Exclude
      */
     protected $fluxId;
 
@@ -83,6 +86,19 @@ class Item
     public function loadFluxId()
     {
         $this->fluxId = $this->flux->getId();
+        return $this;
+    }
+
+    /**
+     * Set id
+     *
+     * @param  string $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
         return $this;
     }
 
