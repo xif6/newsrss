@@ -74,6 +74,7 @@ class ImportDataCommand extends ContainerAwareCommand
 
         $this->ImportSite();
         $this->ImportFlux();
+        die;
         $this->ImportFluxHttp();
         $this->ImportCategory();
         $this->ImportFluxCategory();
@@ -210,7 +211,7 @@ class ImportDataCommand extends ContainerAwareCommand
 
             $news['site'] = preg_replace('%/$%', '', $news['site']);
             if (!empty($news['site'])) {
-                $site = $this->em->getRepository('Xif6NewsrssBundle:Site')->findOneByUrl($news['site']);
+                $site = $this->em->getRepository('Xif6NewsrssBundle:Site')->findOneByName($news['site']);
                 $flux->setSite($site);
             }
 
