@@ -1,1 +1,29 @@
 {% extends '::base.html.twig' %}
+
+{% block meta %}
+    {# media queries : window width of the sreen AND zoom to 1 #}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock meta %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" media="screen">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container-fluid">
+        <header>
+            {% block header %}{% endblock header %}
+        </header>
+        {% block container %}{% endblock container %}
+        <footer>
+            {% block footer %}{% endblock footer %}
+        </footer>
+    </div>
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
+{% endblock javascripts %}
