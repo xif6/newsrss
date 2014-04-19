@@ -569,7 +569,7 @@ class ImportDataCommand extends ContainerAwareCommand
         }
     }
 
-    protected function disabledAutoIncrement(Object $object)
+    protected function disabledAutoIncrement($object)
     {
         $metadata = $this->em->getClassMetaData(get_class($object));
         $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
