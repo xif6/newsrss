@@ -3,10 +3,10 @@ parameters:
 #    xif6_newsrss.example.class: Xif6\NewsrssBundle\Example
 
 services:
-    xif6_newsrss.listener:
-        class: %xif6_newsrss.listener.document.class%
-        tags:
-            - { name: doctrine_mongodb.odm.event_listener, event: prePersist }
+#    xif6_newsrss.listener:
+#        class: %xif6_newsrss.listener.document.class%
+#        tags:
+#            - { name: doctrine_mongodb.odm.event_listener, event: prePersist }
 #    xif6_newsrss.example:
 #        class: %xif6_newsrss.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
