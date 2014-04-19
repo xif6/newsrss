@@ -74,7 +74,6 @@ class ImportDataCommand extends ContainerAwareCommand
 
         $this->ImportSite();
         $this->ImportFlux();
-        die;
         $this->ImportFluxHttp();
         $this->ImportCategory();
         $this->ImportFluxCategory();
