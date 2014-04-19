@@ -71,28 +71,28 @@ class DefaultController extends Controller
             ->execute();
         //*/
         //var_dump($result);
-//*
-        $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find($a['flux_id']);
-
-        $item = new Document\Item();
-        $item->setTitle($a['title']);
-        $item->setUrl($a['url']);
-        $item->setDate($a['date']);
-        $item->setFlux($flux);
-        $this->dm->persist($item);
-        $this->dm->flush();
-        $this->dm->clear();
         /*
-        //*
-        $flux = new Entity\Flux();
-        $flux->setName('testi é lol .ff.' . time());
-        $flux->setUrl('http://google.fr/' . time());
+                $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find($a['flux_id']);
+
+                $item = new Document\Item();
+                $item->setTitle($a['title']);
+                $item->setUrl($a['url']);
+                $item->setDate($a['date']);
+                $item->setFlux($flux);
+                $this->dm->persist($item);
+                $this->dm->flush();
+                $this->dm->clear();
+                /*
+                //*
+                $flux = new Entity\Flux();
+                $flux->setName('testi é lol .ff.' . time());
+                $flux->setUrl('http://google.fr/' . time());
 
 
-        $this->em->persist($flux);
-        $this->em->flush();
-        $name = $flux->getSlug();
-        //*/
+                $this->em->persist($flux);
+                $this->em->flush();
+                $name = $flux->getSlug();
+                //*/
         //*/
 
         /*
@@ -101,19 +101,27 @@ class DefaultController extends Controller
         $this->em->flush();
         //*/
 
+        //*
+        $a = time();
+        $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find(8);
         /*
         $item = new Document\Item();
-        $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find(1);
-        $item->setTitle('test title dd');
-        $item->setUrl('ddd'.time());
-$item->setFlux($flux);
-$item->setItemDate(time()-rand(10000000, 50000000));
-        $this->dm->persist($item);
-        $this->dm->flush();
-        $name = $name . ' ' . $item->getId();
-        $id = $item->getId();
-        $this->dm->clear();
-        $this->em->clear();
+        $item->setTitle('test title ddvvvvvvv'.$a);
+        $item->setUrl('ddd'.microtime());
+        $item->setFlux($flux);
+        $item->setDate(time()-rand(10000000, 50000000));
+        $this->get('doctrine_mongodb')->getRepository('Xif6NewsrssBundle:Item')->upsert($item);die();
+        //*/
+        $itemRepository = $this->get('doctrine_mongodb')->getRepository('Xif6NewsrssBundle:Item');
+        for ($i = 1; $i <= 10; $i++) {
+            $item = new Document\Item();
+            $item->setTitle('test title ddvvvvvvv' . $a);
+            $item->setUrl('ddd' . microtime());
+            $item->setFlux($flux);
+            $item->setDate(time() - rand(10000000, 50000000));
+            $itemRepository->upsert($item);
+        }
+
 //*/
         /*
                         $id = '532cc0c4a35440c2048b4591';
