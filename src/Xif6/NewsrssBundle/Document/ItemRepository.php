@@ -3,7 +3,7 @@
 namespace Xif6\NewsrssBundle\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use Xif6\NewsrssBundle\Document\Item;
+use Doctrine\ODM\MongoDB\Events;
 
 /**
  * ItemRepository
@@ -28,6 +28,49 @@ class ItemRepository extends DocumentRepository
 
         if ($result) {
             $item->setId($result->getId());
+        }
+    }
+
+    public function upsert(Item $item)
+    {
+        $preEvents = array(
+            Events::prePersist,
+            Events::preUpdate,
+            Events::preFlush,
+        );
+        $postEvents = array(
+            Events::postPersist,
+            Events::postUpdate,
+            Events::postFlush,
+        );
+        $this->invokeLifecycle($preEvents, $item);
+
+        $qb = $this->createQueryBuilder();
+        $update = $qb->update();
+        $itemData = $this->dm->getUnitOfWork()->getDocumentActualData($item);
+        foreach ($itemData as $field => $value) {
+            if ($field != 'id') {
+                $update->field($field)->set($value);
+            }
+        }
+        $update->addAnd(
+            $qb->expr()->field('flux_id')->equals($itemData['fluxId'])
+                ->addOr($qb->expr()->field('title')->equals($itemData['title']))
+                ->addOr($qb->expr()->field('url')->equals($itemData['url']))
+        )
+            ->upsert(true)
+            ->getQuery()
+            ->execute();
+        $this->invokeLifecycle($preEvents, $item);
+    }
+
+    protected function invokeLifecycle(array $events, $object)
+    {
+        $class = $this->dm->getClassMetadata(get_class($object));
+        foreach ($events as $event) {
+            if ($class->hasLifecycleCallbacks($event)) {
+                $class->invokeLifecycleCallbacks($event, $object);
+            }
         }
     }
 }
