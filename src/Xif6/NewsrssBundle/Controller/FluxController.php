@@ -22,7 +22,6 @@ class FluxController extends Controller
                     ->getrepository('Xif6NewsrssBundle:Flux')
                     ->findOneBy(array('id' => $id, 'display' => true));
          */
-        var_dump($flux->getSite());
 
         return array('flux' => $flux);
     }

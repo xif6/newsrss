@@ -1,8 +1,6 @@
 {% extends 'Xif6NewsrssBundle::layout.html.twig' %}
 
 {% block container %}
-    Hello !
-    <br>
     <a href="{{ path('xif6_newsrss_flux', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
     <br>
     {#{ dump(flux.site) }#}
@@ -13,10 +11,14 @@
         {% endfor %}
     </ul>
     <ul>
-        {{ dump(flux.site) }}
-        {#% for siteFlux in flux.site.flux %}
-            <li>{{ siteFlux.title }}</li>
-        {% endfor %#}
+        {#{ dump(flux.site.flux) }#}
+        {% for siteFlux in flux.site.flux %}
+            {% if flux.id != siteFlux.id %}
+                <li>
+                    <a href="{{ path('xif6_newsrss_flux', { 'id': siteFlux.id, 'slug': siteFlux.slug }) }}">{{ siteFlux.id }} {{ siteFlux.name }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
     </ul>
     <ol>
         {#% for item in flux.items %}
