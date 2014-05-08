@@ -30,7 +30,7 @@ class Category
     private $name;
 
     /**
-     * $var string
+     * @var string
      *
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(name="slug", type="string", length=50)
