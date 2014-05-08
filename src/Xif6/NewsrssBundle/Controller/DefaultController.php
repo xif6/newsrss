@@ -11,8 +11,77 @@ use Xif6\NewsrssBundle\Document;
 
 class DefaultController extends Controller
 {
+    /**
+     * @Route("/time/{time}")
+     */
+    public function timeAction($time)
+    {
+        sleep($time);
+        return $this->render('Xif6NewsrssBundle:Default:hello.html.twig', array('name' => 'time'));
+    }
+
     public function indexAction()
     {
+        $dateRaw = 'mar 22 avr 2014';
+        $xml = '<?xml version="1.0" encoding="utf-8"?>
+<feed ns="http://www.w3.org/2005/Atom">
+
+ <title>Fil dexemple</title>
+ <subtitle>Un titre secondaire.</subtitle>
+ <link href="http://example.org/"/>
+ <updated>2010-05-13T18:30:02Z</updated>
+ <author>
+   <name>Paul Martin</name>
+   <email>paulmartin@example.com</email>
+ </author>
+ <id>urn:uuid:60a76c80-d399-11d9-b91C-0003939e0af6</id>
+
+ <entry>
+   <title>Des robots propulsés par Atom deviennent fous</title>
+   <link href="http://example.org/2003/12/13/atom03"/>
+   <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+   <updated>2010-04-01T18:30:02Z</updated>
+   <summary>Poisson davril !</summary>
+ </entry>
+
+</feed>';
+//*
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" >
+    <channel>
+        <title>Mon site</title>
+        <description>Ceci est un exemple de flux RSS 2.0</description>
+        <lastBuildDate>mardi 22 avril 2014</lastBuildDate>
+        <link>http://www.example.org</link>
+        <item>
+            <title>Actualité N°1</title>
+            <description>Ceci est ma première actualité</description>
+            <pubDate>Sat, 07 Sep 2002 00:00:01 GMT</pubDate>
+            <dc:date>Sat, 07 Sep 2002 00:00:01 GMT</dc:date>
+            <link>http://www.example.org/actu1</link>
+        </item>
+        <item>
+            <title>Actualité N°2</title>
+            <description>Ceci est ma seconde actualité</description>
+            <pubDate>Sat, 07 Sep 2012 00:00:01 GMT</pubDate>
+            <link>://www.example.org/actu2</link>
+        </item>
+        <item>
+            <title>Actualité N°3</title>
+            <description>Ceci est ma troisième actualité</description>
+            <pubDate>Sat, 07 Sep 2010 00:00:01 GMT</pubDate>
+        </item>
+    </channel>
+</rss>';
+//*/
+        $pfd = $this->get('xif6_newsrss.parser.french_date_time');
+        $pfr = $this->get('xif6_newsrss.parser.rss');
+        $c = $pfr->parse($xml);
+        var_dump('-----------', $c, '-----------', $c->items);
+        $date = $pfd->parse($dateRaw);
+
+        //$date = new \Xif6\NewsrssBundle\Service\DateTime($dateRaw);
+        var_dump($date->format('c'));
 
         return $this->render('Xif6NewsrssBundle:Default:index.html.twig', array('name' => 'bienvenue'));
     }
@@ -23,13 +92,13 @@ class DefaultController extends Controller
         $this->dm = $this->get('doctrine_mongodb')->getManager();
 
         /*
-        $fluxHttp = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:FluxHttp')->find(2);
-        var_dump($fluxHttp->getError());
-        $fluxHttp->setError('toto5 ');
-        $this->em->persist($fluxHttp);
+        $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find(2);
+        var_dump($flux->getError());
+        $flux->setError('toto5 ');
+        $this->em->persist($flux);
         $this->em->flush();
         $this->em->clear();
-        var_dump($fluxHttp->getError());
+        var_dump($flux->getError());
         //*/
         /*
         $flux = $this->getDoctrine()->getRepository('Xif6NewsrssBundle:Flux')->find(5);
