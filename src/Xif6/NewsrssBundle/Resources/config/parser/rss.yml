@@ -1,0 +1,122 @@
+parameters:
+    xif6_newsrss.parser.xml.class: Xif6\NewsrssBundle\Parser\Xml
+    xif6_newsrss.parser.rss.config:
+        head:
+            xpath:
+                ns:
+                    - /*
+            node:
+                title:
+                    xpath:
+                        ns:
+                            - title
+                            - channel/title
+                    modifiers:
+                        - string
+                description:
+                    xpath:
+                        ns:
+                            - description
+                            - channel/description
+                            - subtitle
+                    modifiers:
+                        - string
+                link:
+                    xpath:
+                        ns:
+                            - link
+                            - link/@href
+                            - guid
+                            - channel/link
+                            - channel/link/@href
+                            - channel/guid
+                    modifiers:
+                        - string
+                    constraints:
+                        - Url
+                date:
+                    xpath:
+                        ns:
+                            - channel/lastBuildDate
+                            - channel/pubDate
+                            - channel/date
+                            - updated
+                        dc:
+                            - channel/dc:date
+                    modifiers:
+                        - localeDateTime
+                    constraints:
+                        - DateTime
+        items:
+            xpath:
+                ns:
+                    - //item
+                    - //entry
+            multiple: true
+            required: true
+            node:
+                title:
+                    xpath:
+                        ns:
+                            - title
+                    required: true
+                    modifiers:
+                        - string
+                description:
+                    xpath:
+                        ns:
+                            - description
+                            - content
+                    modifiers:
+                        - string
+                category:
+                    xpath:
+                        ns:
+                            - category
+                    modifiers:
+                        - string
+                link:
+                    xpath:
+                        ns:
+                            - guid[not(@isPermaLink="false")]
+                            - link
+                            - link/@href
+                    modifiers:
+                        - string
+                    constraints:
+                        - Url
+                    required: true
+                date:
+                    xpath:
+                        ns:
+                            - lastBuildDate
+                            - pubDate
+                            - date
+                            - updated
+                            - published
+                        dc:
+                            - dc:date
+                        a10:
+                            - a10:updated
+                    modifiers:
+                        - localeDateTime
+                    constraints:
+                        - DateTime
+                    required: true
+                image:
+                    xpath:
+                        ns:
+                            - image/link
+                            - logo
+                    modifiers:
+                        - string
+                    constraints:
+                        - Url
+
+services:
+    xif6_newsrss.parser.rss:
+        class: %xif6_newsrss.parser.xml.class%
+        arguments: [%xif6_newsrss.parser.rss.config%]
+        calls:
+            - [ setValidator , [ @validator ] ]
+            - [ setLocaleDateTime , [ @xif6_newsrss.parser.french_date_time ] ]

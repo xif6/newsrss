@@ -1,6 +1,6 @@
 <?php
 
-namespace Xif6\NewsrssBundle\Listener;
+namespace Xif6\NewsrssBundle\EventListener;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Xif6\NewsrssBundle\Document\Item;
