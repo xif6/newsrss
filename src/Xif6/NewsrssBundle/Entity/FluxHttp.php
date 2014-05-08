@@ -37,9 +37,16 @@ class FluxHttp
     /**
      * @var integer
      *
-     * @ORM\Column(name="status_code", type="smallint")
+     * @ORM\Column(name="response_code", type="smallint")
      */
-    private $statusCode;
+    private $responseCode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="response_status", type="string", length=255)
+     */
+    private $responseStatus;
 
     /**
      * @var string
@@ -47,20 +54,6 @@ class FluxHttp
      * @ORM\Column(name="url_redirection", type="string", length=255)
      */
     private $urlRedirection;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="status_code_orig", type="smallint")
-     */
-    private $statusCodeOrig;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="status_code_response", type="string", length=255)
-     */
-    private $statusCodeResponse;
 
     /**
      * @var string
@@ -77,11 +70,18 @@ class FluxHttp
     private $ifNoneMatch;
 
     /**
-     * @var string
+     * @var \DateTime
      *
-     * @ORM\Column(name="if_modified_since", type="string", length=255)
+     * @ORM\Column(name="if_modified_since", type="string", length=255, nullable=true)
      */
     private $ifModifiedSince;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="hash", type="string", length=50, nullable=true)
+     */
+    private $hash;
 
     /**
      * @var \DateTime
@@ -111,9 +111,9 @@ class FluxHttp
      * @param  integer $statusCode
      * @return FluxHttp
      */
-    public function setStatusCode($statusCode)
+    public function setResponseCode($statusCode)
     {
-        $this->statusCode = $statusCode;
+        $this->responseCode = $statusCode;
 
         return $this;
     }
@@ -123,9 +123,9 @@ class FluxHttp
      *
      * @return integer
      */
-    public function getStatusCode()
+    public function getResponseCode()
     {
-        return $this->statusCode;
+        return $this->responseCode;
     }
 
     /**
@@ -152,49 +152,26 @@ class FluxHttp
     }
 
     /**
-     * Set statusCodeOrig
-     *
-     * @param integer $statusCodeOrig
-     * @return FluxHttp
-     */
-    public function setStatusCodeOrig($statusCodeOrig)
-    {
-        $this->statusCodeOrig = $statusCodeOrig;
-
-        return $this;
-    }
-
-    /**
-     * Get statusCodeOrig
-     *
-     * @return integer
-     */
-    public function getStatusCodeOrig()
-    {
-        return $this->statusCodeOrig;
-    }
-
-    /**
-     * Set statusCodeResponse
+     * Set responseStatus
      *
      * @param  string $statusCodeResponse
      * @return FluxHttp
      */
-    public function setStatusCodeResponse($statusCodeResponse)
+    public function setResponseStatus($statusCodeResponse)
     {
-        $this->statusCodeResponse = $statusCodeResponse;
+        $this->responseStatus = $statusCodeResponse;
 
         return $this;
     }
 
     /**
-     * Get statusCodeResponse
+     * Get responseStatus
      *
      * @return string
      */
-    public function getStatusCodeResponse()
+    public function getResponseStatus()
     {
-        return $this->statusCodeResponse;
+        return $this->responseStatus;
     }
 
     /**
@@ -246,10 +223,10 @@ class FluxHttp
     /**
      * Set ifModifiedSince
      *
-     * @param  string $ifModifiedSince
+     * @param  \DateTime $ifModifiedSince
      * @return FluxHttp
      */
-    public function setIfModifiedSince($ifModifiedSince)
+    public function setIfModifiedSince(\DateTime $ifModifiedSince = null)
     {
         $this->ifModifiedSince = $ifModifiedSince;
 
@@ -259,7 +236,7 @@ class FluxHttp
     /**
      * Get ifModifiedSince
      *
-     * @return string
+     * @return \DateTime
      */
     public function getIfModifiedSince()
     {
@@ -276,6 +253,7 @@ class FluxHttp
         $this->id = $this->flux->getId();
         return $this;
     }
+
     /**
      * Get id
      *
@@ -295,7 +273,7 @@ class FluxHttp
      * @param \DateTime $updatedSucces
      * @return FluxHttp
      */
-    public function setUpdatedSucces($updatedSucces)
+    public function setUpdatedSucces(\DateTime $updatedSucces = null)
     {
         $this->updatedSucces = $updatedSucces;
 
@@ -335,4 +313,28 @@ class FluxHttp
     {
         return $this->flux;
     }
+
+    /**
+     * Set hash
+     *
+     * @param string $hash
+     * @return Flux
+     */
+    public function setHash($hash)
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    /**
+     * Get hash
+     *
+     * @return string
+     */
+    public function getHash()
+    {
+        return $this->hash;
+    }
+
 }

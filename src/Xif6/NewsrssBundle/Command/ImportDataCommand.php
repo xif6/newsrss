@@ -241,7 +241,6 @@ class ImportDataCommand extends ContainerAwareCommand
                     statut AS status_code,
                     url_redirection AS url_redirection,
                     url AS url,
-                    statut_init AS status_code_orig,
                     code_reponse AS status_code_response,
                     erreur AS error,
                     `If-None-Match` AS if_none_match,
@@ -255,7 +254,6 @@ class ImportDataCommand extends ContainerAwareCommand
                     statut AS status_code,
                     url_redirection AS url_redirection,
                     url AS url,
-                    statut_init AS status_code_orig,
                     code_reponse AS status_code_response,
                     erreur AS error,
                     `If-None-Match` AS if_none_match,
@@ -280,21 +278,25 @@ class ImportDataCommand extends ContainerAwareCommand
             }
             $flux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->findOneByUrl($news['url']);
 
-            $fluxHttp = new Entity\FluxHttp();
+            $fluxHttp = new Entity\Flux();
 
             $updateSuccess = null;
             if ($news['status_code'] == 200) {
                 $updateSuccess = $this->toDateTime($news['updated']);
             }
 
+            $ifModifiedSince = null;
+            if ($news['if_modified_since']) {
+                $ifModifiedSince = new \DateTime(utf8_decode($news['if_modified_since']));
+            }
+
             $fluxHttp->setFlux($flux)
                 ->setStatusCode($news['status_code'])
                 ->setUrlRedirection(utf8_decode($news['url_redirection']))
-                ->setStatusCodeOrig($news['status_code_orig'])
                 ->setStatusCodeResponse(utf8_decode($news['status_code_response']))
                 ->setError(utf8_decode($news['error']))
                 ->setIfNoneMatch(utf8_decode($news['if_none_match']))
-                ->setIfModifiedSince(utf8_decode($news['if_modified_since']))
+                ->setIfModifiedSince($ifModifiedSince)
                 ->setUpdatedSucces($updateSuccess)
                 ->setCreatedAt($this->toDateTime($news['created']))
                 ->setUpdatedAt($this->toDateTime($news['updated']));
