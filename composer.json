@@ -17,7 +17,7 @@
             "type": "package",
             "package": {
                 "name": "google/angularjs",
-                "version": "dev-master",
+                "version": "1.2.16",
                 "dist": {
                     "url": "http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js",
                     "type": "file"
@@ -28,7 +28,7 @@
             "type": "package",
             "package": {
                 "name": "jquery/jquery",
-                "version": "dev-master",
+                "version": "2.1.0",
                 "dist": {
                     "url": "http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js",
                     "type": "file"
@@ -54,8 +54,8 @@
         "doctrine/mongodb-odm": "1.0.*@dev",
         "doctrine/mongodb-odm-bundle": "3.0.*@dev",
         "jms/serializer-bundle": "0.13.*@dev",
-        "jquery/jquery": "dev-master",
-        "google/angularjs": "dev-master",
+        "jquery/jquery": "*",
+        "google/angularjs": "*",
         "oyejorge/less.php": "dev-master",
         "twbs/bootstrap": "3.1.*",
         "knplabs/knp-menu": "2.0.*@dev",
