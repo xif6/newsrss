@@ -76,11 +76,11 @@ class Encoding
     {
         $encoding = $this->detect($string);
         if ($encoding === false) {
-            $string = mb_convert_encoding($string, $encodingDest);
-        } elseif ($encoding !== $encodingDest) {
+            $encoding = mb_internal_encoding();
+        }
+        if ($encoding !== $encodingDest) {
             $string = iconv($encoding, $encodingDest . '//TRANSLIT', $string);
         }
-        return $this->htmlEntityDecode($string, $encodingDest);
 
         return $string;
     }
