@@ -72,7 +72,7 @@ class FluxHttp
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="if_modified_since", type="string", length=255, nullable=true)
+     * @ORM\Column(name="if_modified_since", type="datetime", nullable=true)
      */
     private $ifModifiedSince;
 
