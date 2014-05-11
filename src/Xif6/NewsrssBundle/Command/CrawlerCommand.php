@@ -28,9 +28,9 @@ class CrawlerCommand extends ContainerAwareCommand
             //'http://127.0.0.1:8081/app_dev.php/time/10',
             //'http://www.notexist.think', //*/
             //'http://yahoo.com',
-            //'http://com.clubic.feedsportal.com/c/33464/f/581979/index.rss',
+            'http://com.clubic.feedsportal.com/c/33464/f/581979/index.rss',
             //'http://feeds.feedburner.com/Revioo',
-            'http://www.newsrss.net/ddd',
+            //'http://www.newsrss.net/ddd',
             //'http://127.0.0.1:8081/app_dev.php/time/5',
         ];
         $this->http2($urls);
@@ -67,7 +67,7 @@ class CrawlerCommand extends ContainerAwareCommand
         //$httpClient->send();
     }
 
-    protected function http2($urls)
+    protected function http2($allFlux)
     {
         /*
         $fluxRequest = new \Xif6\NewsrssBundle\Crawler\FluxRequest([
@@ -78,13 +78,13 @@ class CrawlerCommand extends ContainerAwareCommand
         //*/
         $fluxRequest = $this->getContainer()->get('xif6.newsrss.crawler.flux');
 
-        $flux1 = $this->em->getRepository('Xif6NewsrssBundle:Flux')->find(1);
-        foreach ($urls as $url) {
-            $flux = clone $flux1;
-            $flux->setUrl($url);
+        $allFlux = array($this->em->getRepository('Xif6NewsrssBundle:Flux')->find(1));
+        foreach ($allFlux as $flux) {
             $fluxRequest->add($flux);
-        };
+        }
         $fluxRequest->send();
+        $this->em->flush();
+        $this->em->clear();
     }
 
 
