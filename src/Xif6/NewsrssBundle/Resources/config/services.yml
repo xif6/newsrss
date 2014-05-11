@@ -3,6 +3,7 @@ imports:
     - { resource: parser/locale_date_time.yml }
 #    - { resource: @Xif6NewsrssBundle/Resources/config/crawler.xml }
     - { resource: crawler.xml }
+    - { resource: encoding.yml }
 
 parameters:
     xif6_newsrss.listener.document.class: Xif6\NewsrssBundle\EventListener\DocumentListener

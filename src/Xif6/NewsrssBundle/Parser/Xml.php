@@ -3,6 +3,7 @@
 namespace Xif6\NewsrssBundle\Parser;
 
 use Symfony\Component\Validator\Validator;
+use Xif6\NewsrssBundle\Service\Encoding;
 
 /**
  * Class Xml
@@ -26,6 +27,11 @@ class Xml
     protected $localeDateTime;
 
     /**
+     * @var Encoding
+     */
+    protected $mbString;
+
+    /**
      * @var Array
      */
     protected $parser;
@@ -35,9 +41,10 @@ class Xml
      * @param Validator $validator
      * @param LocaleDateTime $localeDateTime
      */
-    public function __construct(Array $parserConfig)
+    public function __construct(Array $parserConfig, Encoding $mbString)
     {
         $this->parserConfig = $parserConfig;
+        $this->mbString = $mbString;
     }
 
     /**
@@ -142,6 +149,7 @@ class Xml
     {
         $string = str_replace('xmlns=', 'ns=', $string);
         $string = preg_replace('/encoding=("|\')ISO-8859-[0-9+]\1/i', 'encoding="UTF-8"', $string);
+        $string = $this->mbString->convert($string, 'UTF-8');
         $domDocument = new \DOMDocument();
         $domDocument->recover = true;
         $domDocument->loadXML($string);
