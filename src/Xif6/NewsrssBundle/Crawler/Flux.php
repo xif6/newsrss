@@ -2,6 +2,7 @@
 
 namespace Xif6\NewsrssBundle\Crawler;
 
+use Doctrine\ORM\EntityManager;
 use Xif6\NewsrssBundle\Entity;
 
 /**
@@ -26,12 +27,76 @@ class Flux
     protected $response;
 
     /**
+     * @var String
+     */
+    protected $directory;
+
+    /**
+     * @var String
+     */
+    protected $fileName;
+
+    /**
+     * @var Array
+     */
+    protected $options = [];
+
+    /**
+     * @var EntityManager
+     */
+    protected $em;
+
+    /**
      * @param Entity\Flux $flux
      */
-    function __construct(Entity\Flux $flux, $options = [])
+    function __construct(Entity\Flux $flux, EntityManager $em)
     {
         $this->flux = $flux;
-        $this->generateRequest($options);
+        $this->em = $em;
+    }
+
+    /**
+     * Set options
+     *
+     * @param Array $options
+     * @return Flux
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    /**
+     * Set directory
+     *
+     * @param String $directory
+     * @return Flux
+     */
+    public function setDirectory($directory)
+    {
+        $dir = realpath($directory);
+        if ($dir === false) {
+            if (mkdir($directory, 0777, true) === false) {
+                throw new \RuntimeException('Directory could not be created : "' . $directory . '"');
+            } else {
+                $dir = realpath($directory);
+            }
+        }
+        $this->directory = $dir . '/';
+        return $this;
+    }
+
+    /**
+     * Set fileName
+     *
+     * @param String $fileName
+     * @return Flux
+     */
+    public function setFileName($fileName)
+    {
+        $this->fileName = $fileName;
+        return $this;
     }
 
     /**
@@ -49,21 +114,21 @@ class Flux
      *
      * @return FluxCrawler
      */
-    protected function generateRequest($options = [])
+    public function generateRequest()
     {
         $this->request = new \http\client\Request('GET', $this->flux->getUrl());
 
         $http = $this->flux->getHttp();
         if ($http->getIfNoneMatch()) {
-            $options['etag'] = $http->getIfNoneMatch();
+            $this->options['etag'] = $http->getIfNoneMatch();
         }
         if ($http->getIfModifiedSince()) {
-            $options['lastmodified'] = $http->getIfModifiedSince()->getTimestamp();
+            $this->options['lastmodified'] = $http->getIfModifiedSince()->getTimestamp();
         }
 
-        $this->request->setOptions($options);
+        $this->request->setOptions($this->options);
 
-        return $this;
+        return $this->request;
     }
 
     /**
@@ -84,21 +149,7 @@ class Flux
     {
         $this->response = $response;
         $http = $this->flux->getHttp();
-        /*
-                printf(
-                    "%s returned %d %s %s Error : %s\n",
-                    $this->response->getTransferInfo('effective_url'),
-                    $this->response->getResponseCode(),
-                    $this->response->getResponseStatus(),
-                    $this->response->getType(),
-                    $this->response->getTransferInfo('error')
-                );
-                var_dump($this->response->getHeaders());
-                var_dump($this->response->getHeader('etag'));
-                var_dump($this->response->getHeader('last-modified'));
-                var_dump(new \DateTime($this->response->getHeader('last-modified')));
-                return true;
-        //*/
+
         if ($this->response->getHeader('last-modified')) {
             $ifModifiedSince = new \DateTime($this->response->getHeader('last-modified'));
         } else {
@@ -123,9 +174,16 @@ class Flux
                 $http->setIfNoneMatch($this->response->getHeader('etag'));
                 $http->setHash($hash);
 
-                $file = '/tmp/' . $this->response->getBody()->etag() . '.xml';
-                $f = fopen($file, 'w');
-                $this->response->getBody()->toStream($f);
+
+                $path = $this->directory . $this->fileName;
+                $file = fopen($path, 'c');
+                if (flock($file, LOCK_EX)) {
+                    $file = fopen($path, 'c');
+                    flock($file, LOCK_EX);
+                }
+                $this->response->getBody()->toStream($file);
+                flock($file, LOCK_UN);
+                fclose($file);
 
             } //the content is the same as in previous download
             elseif ($this->response->getResponseCode() == 304 || $hash == $http->getHash()) {
@@ -137,8 +195,26 @@ class Flux
             else {
             }
         }
-        //*/
+        $this->em->persist($http);
+        return true;
 
+
+        //*/
+        /*
+                printf(
+                    "%s returned %d %s %s Error : %s\n",
+                    $this->response->getTransferInfo('effective_url'),
+                    $this->response->getResponseCode(),
+                    $this->response->getResponseStatus(),
+                    $this->response->getType(),
+                    $this->response->getTransferInfo('error')
+                );
+                var_dump($this->response->getHeaders());
+                var_dump($this->response->getHeader('etag'));
+                var_dump($this->response->getHeader('last-modified'));
+                var_dump(new \DateTime($this->response->getHeader('last-modified')));
+                return true;
+        //*/
 
         /*
         var_dump($this->response);
@@ -168,7 +244,6 @@ class Flux
         fclose($f);
         var_dump($this->flux->getUrl(), $file);
         //*/
-        return true;
     }
 
 }

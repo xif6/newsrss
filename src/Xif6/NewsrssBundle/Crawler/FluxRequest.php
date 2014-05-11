@@ -27,18 +27,22 @@ class FluxRequest implements FluxRequestInterface
     protected $optionsRequest = [];
 
     /**
-     * @var entityManager
+     * @var EntityManager
      */
     protected $em;
 
     /**
+     * @var String
+     */
+    protected $directory = '/tmp/';
+
+    /**
      *
      */
-    function __construct(EntityManager $entityManager, $optionsRequest = [])
+    function __construct(EntityManager $entityManager)
     {
         $this->em = $entityManager;
         $this->httpClient = new \http\client();
-        $this->optionsRequest = $optionsRequest;
     }
 
     /**
@@ -47,12 +51,18 @@ class FluxRequest implements FluxRequestInterface
      * @param Entity\Flux $flux
      * @return FluxRequest
      */
-    public function add(Entity\Flux $flux)
+    public function add(Entity\Flux $flux, $fileName = null, $directory = null)
     {
         $hash = spl_object_hash($flux);
-        $this->allFlux[$hash] = new Flux($flux, $this->optionsRequest);
+        $this->allFlux[$hash] = new Flux($flux, $this->em);
+        $this->allFlux[$hash]->setOptions($this->optionsRequest)
+            ->setFileName(($fileName ? : $flux->getId() . '.xml'))
+            ->setDirectory(($directory ? : $this->directory));
 
-        $this->httpClient->enqueue($this->allFlux[$hash]->getRequest(), [$this->allFlux[$hash], 'callbackResponse']);
+        $this->httpClient->enqueue(
+            $this->allFlux[$hash]->generateRequest(),
+            [$this->allFlux[$hash], 'callbackResponse']
+        );
         return $this;
     }
 
@@ -96,6 +106,28 @@ class FluxRequest implements FluxRequestInterface
         $this->allFlux = [];
         $this->httpClient->reset();
         return $this;
+    }
+
+    /**
+     * Set directory
+     *
+     * @param String $directory
+     * @return FluxRequest
+     */
+    public function setDirectory($directory)
+    {
+        $this->directory = $directory;
+        return $this;
+    }
+
+    /**
+     * Get directory
+     *
+     * @return String
+     */
+    public function getDirectory()
+    {
+        return $this->directory;
     }
 
     /**
