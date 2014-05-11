@@ -77,13 +77,15 @@ class DefaultController extends Controller
         $pfd = $this->get('xif6_newsrss.parser.french_date_time');
         $pfr = $this->get('xif6_newsrss.parser.rss');
         $c = $pfr->parse($xml);
-        var_dump('-----------', $c, '-----------', $c->items);
+//        var_dump('-----------', $c, '-----------', $c->items);
         $date = $pfd->parse($dateRaw);
 
         //$date = new \Xif6\NewsrssBundle\Service\DateTime($dateRaw);
-        var_dump($date->format('c'));
+//        var_dump($date->format('c'));
+        $name = 'bienvenue';
+        $name = 'Jane &#140; &#146; &#128; &#169; Œ &amp; &#039;Tarzan&#039;';
 
-        return $this->render('Xif6NewsrssBundle:Default:index.html.twig', array('name' => 'bienvenue'));
+        return $this->render('Xif6NewsrssBundle:Default:index.html.twig', array('name' => $name));
     }
 
     public function helloAction($name)
