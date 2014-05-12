@@ -2,119 +2,112 @@
 
 namespace Xif6\NewsrssBundle\Crawler;
 
-use Xif6\NewsrssBundle\Entity\Flux;
+use Doctrine\ORM\EntityManager;
+use Xif6\NewsrssBundle\Entity;
 
-class FluxCrawler
+/**
+ * Class FluxCrawler
+ * @package Xif6\NewsrssBundle\Crawler
+ */
+class FluxCrawler extends Crawler
 {
     /**
-     * @var Flux
+     * @var Array
      */
-    protected $flux;
+    protected $optionsRequest = [];
 
     /**
-     * @var \http\client\Request
+     * @var EntityManager
      */
-    protected $request;
+    protected $em;
 
     /**
-     * @var \http\Client\Response
+     * @var String
      */
-    protected $response;
-
-    public function __construct(Flux $flux)
-    {
-        $this->flux = $flux;
-        $this->generateRequest();
-    }
-
-    public function callbackResponse(\http\Client\Response $response)
-    {
-        $this->response = $response;
-        $http = $this->flux->getHttp();
-
-        var_dump($this->response);
-        /*
-        $http->setResponseCode($this->response->getResponseCode());
-        $http->setResponseStatus($this->response->getResponseCode());
-        $http->setUrlRedirection($this->response->getTransferInfo('effective_url'));
-        if ($this->response->getResponseCode() == 200) {
-
-        }*/
-
-        var_dump($this->response->getTransferInfo());
-        //var_dump($this->response->getResponseCode());
-        /*
-        var_dump($this->response->getResponseStatus());
-        var_dump($this->response->getHeader('etag'));
-        //var_dump($this->response->getHeaders());
-        /*
-        var_dump($this->response->getHeaders());
-        var_dump($this->response->getHeader('date'));
-        var_dump((string)$this->response->getBody());
-        //* /
-        var_dump($this->response->getBody()->etag());
-        var_dump(hash('crc32b', $this->response->getBody()->__toString()));
-        $file = '/tmp/'.$this->response->getBody()->etag().'.html';
-        $f = fopen($file, 'w');
-        $this->response->getBody()->toStream($f);
-        fclose($f);
-        var_dump($this->flux->getUrl(), $file);
-        //*/
-        return true;
-    }
+    protected $directory;
 
     /**
-     * Get flux
      *
-     * @return \Xif6\NewsrssBundle\Entity\Flux
      */
-    public function getFlux()
+    function __construct(EntityManager $entityManager)
     {
-        return $this->flux;
+        parent::__construct();
+        $this->em = $entityManager;
+        $this->setRequestClass(__NAMESPACE__ . '\FluxRequest');
     }
 
     /**
-     * Get request
+     * Add request to call
      *
-     * @return \http\client\Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Get request
-     *
+     * @param Entity\Flux $flux
      * @return FluxCrawler
      */
-    public function generateRequest()
+    public function add($flux, $request = [])
     {
-        $this->request = new \http\client\Request('GET', $this->flux->getUrl());
-        $this->request->setOptions(
-            [
-                'redirect' => 10,
-                'postredir' => \http\Client\Curl\POSTREDIR_ALL,
-                'compress' => true,
-                'useragent' => '',
-                'etag' => '',
-                'lastmodified' => 0, // timestamp
-                'timeout' => 100,
-            ]
-        );
-        //var_dump($this->request->getContentType());
+        if (!($flux instanceof Entity\Flux)) {
+            throw new \InvalidArgumentException('Class "' . get_class($flux) . '" does not extend Entity\Flux');
+        }
 
+        $hash = $this->hash($flux);
+        $className = $this->getRequestClass();
+        if (empty($request['fileName'])) {
+            $request['fileName'] = $flux->getId() . '.xml';
+        }
+        if (empty($request['directory']) && !empty($this->directory)) {
+            $request['directory'] = $this->directory;
+        }
+        if (empty($request['options'])) {
+            $request['options'] = $this->optionsRequest;
+        } else {
+            $request['options'] += $this->optionsRequest;
+        }
+        $this->allFlux[$hash] = new $className($flux, $this->em);
+
+        return $this->addRequest($this->allFlux[$hash], $request);
+    }
+
+    /**
+     * Set optionsRequest
+     *
+     * @param Array $optionsRequest
+     * @return FluxCrawler
+     */
+    public function setOptionsRequest(Array $optionsRequest)
+    {
+        $this->optionsRequest = $optionsRequest;
         return $this;
     }
 
     /**
-     * Get response
+     * Get optionsRequest
      *
-     * @return \http\Client\Response
+     * @return Array
      */
-    public function getResponse()
+    public function getOptionsRequest()
     {
-        return $this->response;
+        return $this->optionsRequest;
     }
-}
 
+    /**
+     * Set directory
+     *
+     * @param String $directory
+     * @return FluxCrawler
+     */
+    public function setDirectory($directory)
+    {
+        $this->directory = $directory;
+        return $this;
+    }
+
+    /**
+     * Get directory
+     *
+     * @return String
+     */
+    public function getDirectory()
+    {
+        return $this->directory;
+    }
+
+}

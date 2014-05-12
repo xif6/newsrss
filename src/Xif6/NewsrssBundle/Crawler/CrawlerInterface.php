@@ -5,10 +5,10 @@ namespace Xif6\NewsrssBundle\Crawler;
 use Xif6\NewsrssBundle\Entity\Flux;
 
 /**
- * Interface FluxRequestInterface
+ * Interface CrawlerInterface
  * @package Xif6\NewsrssBundle\Crawler
  */
-interface FluxRequestInterface
+interface CrawlerInterface
 {
     /**
      * Add request to call

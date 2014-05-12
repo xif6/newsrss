@@ -9,22 +9,12 @@ use Xif6\NewsrssBundle\Entity;
  * Class FluxRequest
  * @package Xif6\NewsrssBundle\Crawler
  */
-class FluxRequest implements FluxRequestInterface
+class FluxRequest extends Request
 {
     /**
-     * @var \http\client
+     * @var Entity\Flux
      */
-    protected $httpClient;
-
-    /**
-     * @var Array
-     */
-    protected $allFlux = [];
-
-    /**
-     * @var Array
-     */
-    protected $optionsRequest = [];
+    protected $flux;
 
     /**
      * @var EntityManager
@@ -32,155 +22,135 @@ class FluxRequest implements FluxRequestInterface
     protected $em;
 
     /**
-     * @var String
-     */
-    protected $directory = '/tmp/';
-
-    /**
-     *
-     */
-    function __construct(EntityManager $entityManager)
-    {
-        $this->em = $entityManager;
-        $this->httpClient = new \http\client();
-    }
-
-    /**
-     * Add request to call
-     *
      * @param Entity\Flux $flux
-     * @return FluxRequest
      */
-    public function add(Entity\Flux $flux, $fileName = null, $directory = null)
+    function __construct(Entity\Flux $flux, EntityManager $em)
     {
-        $hash = spl_object_hash($flux);
-        $this->allFlux[$hash] = new Flux($flux, $this->em);
-        $this->allFlux[$hash]->setOptions($this->optionsRequest)
-            ->setFileName(($fileName ? : $flux->getId() . '.xml'))
-            ->setDirectory(($directory ? : $this->directory));
-
-        $this->httpClient->enqueue(
-            $this->allFlux[$hash]->generateRequest(),
-            [$this->allFlux[$hash], 'callbackResponse']
-        );
-        return $this;
+        parent::__construct($flux->getUrl());
+        $this->flux = $flux;
+        $this->em = $em;
     }
 
     /**
-     * Remove request to call
+     * Get request
      *
-     * @param Entity\Flux $flux
-     * @return FluxRequest
+     * @return \http\client\Request
      */
-    public function remove(Entity\Flux $flux)
+    public function generateRequest()
     {
-        $hash = spl_object_hash($flux);
-
-        $this->httpClient->dequeue($this->allFlux[$hash]);
-        unset($this->allFlux[$hash]);
-
-        return $this;
-    }
-
-    /**
-     * Send all request
-     *
-     * @return FluxRequest
-     */
-    public function send()
-    {
-        while ($this->httpClient->once()) {
-            //$this->httpClient->wait();
+        $http = $this->flux->getHttp();
+        if ($http->getIfNoneMatch()) {
+            $this->options['etag'] = $http->getIfNoneMatch();
         }
-        $this->reset();
-        return $this;
+        if ($http->getIfModifiedSince()) {
+            $this->options['lastmodified'] = $http->getIfModifiedSince()->getTimestamp();
+        }
+
+        return parent::generateRequest();
     }
 
     /**
-     * Remove all request
-     *
-     * @return FluxRequest
+     * @param \http\Client\Response $response
+     * @return bool
      */
-    public function reset()
+    public function callbackResponse(\http\Client\Response $response)
     {
-        $this->allFlux = [];
-        $this->httpClient->reset();
-        return $this;
+        $this->response = $response;
+        $http = $this->flux->getHttp();
+
+        if ($this->response->getHeader('last-modified')) {
+            $ifModifiedSince = new \DateTime($this->response->getHeader('last-modified'));
+        } else {
+            $ifModifiedSince = null;
+        }
+        $hash = $this->response->getBody()->etag();
+
+
+        $http->setError($this->response->getTransferInfo('error'));
+        $http->setUrlRedirection($this->response->getTransferInfo('effective_url'));
+        $http->setResponseStatus($this->response->getResponseStatus());
+        $http->setResponseCode($this->response->getResponseCode());
+
+        // the server responded
+        if ($this->response->getType() == 2) {
+
+            // the content is good AND different from the previous download
+            if ($this->response->getResponseCode() == 200 && $hash != $http->getHash()) {
+
+                $http->setUpdatedSucces(new \DateTime());
+                $http->setIfModifiedSince($ifModifiedSince);
+                $http->setIfNoneMatch($this->response->getHeader('etag'));
+                $http->setHash($hash);
+
+
+                $file = fopen($this->getPath(), 'c');
+                if (flock($file, LOCK_EX)) {
+                    $file = fopen($this->getPath(), 'c');
+                    flock($file, LOCK_EX);
+                }
+                $this->response->getBody()->toStream($file);
+                flock($file, LOCK_UN);
+                fclose($file);
+
+            } //the content is the same as in previous download
+            elseif ($this->response->getResponseCode() == 304 || $hash == $http->getHash()) {
+                $http->setUpdatedSucces(new \DateTime());
+                $http->setIfModifiedSince($ifModifiedSince);
+                $http->setIfNoneMatch($this->response->getHeader('etag'));
+
+            } // problem when downloading
+            else {
+            }
+        }
+        $this->em->persist($http);
+        return true;
+
+
+        //*/
+        /*
+                printf(
+                    "%s returned %d %s %s Error : %s\n",
+                    $this->response->getTransferInfo('effective_url'),
+                    $this->response->getResponseCode(),
+                    $this->response->getResponseStatus(),
+                    $this->response->getType(),
+                    $this->response->getTransferInfo('error')
+                );
+                var_dump($this->response->getHeaders());
+                var_dump($this->response->getHeader('etag'));
+                var_dump($this->response->getHeader('last-modified'));
+                var_dump(new \DateTime($this->response->getHeader('last-modified')));
+                return true;
+        //*/
+
+        /*
+        var_dump($this->response);
+        $http->setResponseCode($this->response->getResponseCode());
+        $http->setResponseStatus($this->response->getResponseCode());
+        $http->setUrlRedirection($this->response->getTransferInfo('effective_url'));
+        if ($this->response->getResponseCode() == 200) {
+
+        }//* /
+
+        var_dump($this->response->getTransferInfo());
+        //var_dump($this->response->getResponseCode());
+        /*
+        var_dump($this->response->getResponseStatus());
+        var_dump($this->response->getHeader('etag'));
+        //var_dump($this->response->getHeaders());
+        /*
+        var_dump($this->response->getHeaders());
+        var_dump($this->response->getHeader('date'));
+        var_dump((string)$this->response->getBody());
+        //* /
+        var_dump($this->response->getBody()->etag());
+        var_dump(hash('crc32b', $this->response->getBody()->__toString()));
+        $file = '/tmp/'.$this->response->getBody()->etag().'.html';
+        $f = fopen($file, 'w');
+        $this->response->getBody()->toStream($f);
+        fclose($f);
+        var_dump($this->flux->getUrl(), $file);
+        //*/
     }
 
-    /**
-     * Set directory
-     *
-     * @param String $directory
-     * @return FluxRequest
-     */
-    public function setDirectory($directory)
-    {
-        $this->directory = $directory;
-        return $this;
-    }
-
-    /**
-     * Get directory
-     *
-     * @return String
-     */
-    public function getDirectory()
-    {
-        return $this->directory;
-    }
-
-    /**
-     * Set optionsRequest
-     *
-     * @param Array $optionsRequest
-     * @return FluxRequest
-     */
-    public function setOptionsRequest(Array $optionsRequest)
-    {
-        $this->optionsRequest = $optionsRequest;
-        return $this;
-    }
-
-    /**
-     * Get optionsRequest
-     *
-     * @return Array
-     */
-    public function getOptionsRequest()
-    {
-        return $this->optionsRequest;
-    }
-
-    /**
-     * Set allFlux
-     *
-     * @param Array $allFlux
-     * @return FluxRequest
-     */
-    public function setAllFlux(Array $allFlux)
-    {
-        $this->allFlux = $allFlux;
-        return $this;
-    }
-
-    /**
-     * Get allFlux
-     *
-     * @return Array
-     */
-    public function getAllFlux()
-    {
-        return $this->allFlux;
-    }
-
-    /**
-     * Get httpClient
-     *
-     * @return \http\client
-     */
-    public function getHttpClient()
-    {
-        return $this->httpClient;
-    }
 }

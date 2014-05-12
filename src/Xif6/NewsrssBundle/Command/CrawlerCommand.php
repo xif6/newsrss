@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
-use Xif6\NewsrssBundle\Crawler\FluxCrawler;
 
 class CrawlerCommand extends ContainerAwareCommand
 {
@@ -44,7 +43,7 @@ class CrawlerCommand extends ContainerAwareCommand
         $httpRequestPool = new \HttpRequestPool();
         $a = [];
         foreach ($urls as $url) {
-            //$httpRequest = new \http\Client\FluxRequest('GET', $url);
+            //$httpRequest = new \http\Client\FluxCrawler('GET', $url);
             $httpRequest = new \HttpRequest($url);
             $httpRequest->setOptions(
                 [
@@ -54,10 +53,8 @@ class CrawlerCommand extends ContainerAwareCommand
             );
             //$flux = clone $flux1;
             //$flux->setUrl($url);
-            //$fluxCrawler = new FluxCrawler($flux);
             $a[] = $httpRequest;
             $httpRequestPool->attach($httpRequest);
-            //$httpClient->enqueue($fluxCrawler->getRequest(), [$fluxCrawler, 'callbackResponse']);
         };
         try {
             $httpRequestPool->send();
@@ -70,7 +67,7 @@ class CrawlerCommand extends ContainerAwareCommand
     protected function http2($allFlux)
     {
         /*
-        $fluxRequest = new \Xif6\NewsrssBundle\Crawler\FluxRequest([
+        $fluxRequest = new \Xif6\NewsrssBundle\Crawler\FluxCrawler([
             'compress' => true,
             'redirect' => 10,
             'postredir' => \http\Client\Curl\POSTREDIR_ALL,
@@ -100,7 +97,6 @@ class CrawlerCommand extends ContainerAwareCommand
                     'postredir' => \http\Client\Curl\POSTREDIR_ALL,
                 ]
             );
-            //$httpClient->enqueue($fluxCrawler->getRequest(), [$fluxCrawler, 'callbackResponse']);
             $httpClient->enqueue(
                 $httpRequest,
                 function ($res) {
