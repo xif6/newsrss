@@ -77,9 +77,12 @@ class Xml
      */
     public function parse($stringXml)
     {
-        $xml = new \SimpleXMLElement($this->recoverXml(
-            $stringXml
-        ), LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOCDATA | LIBXML_NSCLEAN);
+        $stringXml = $this->recoverXml($stringXml);
+        if (!$stringXml) {
+            return false;
+        }
+
+        $xml = new \SimpleXMLElement($stringXml, $this->getOptionsXml());
 
         $this->parser = $this->generateParser($xml);
 
@@ -95,30 +98,25 @@ class Xml
     {
         $out = new \stdClass();
         foreach ($parser as $rootNode => $data) {
-            if (isset($data['node']) && isset($data['multiple']) && $data['multiple']) {
-                $nodes = array();
-            } else {
-                $nodes = null;
-            }
+            $nodes = array();
+
             $xpath = $xml->xpath($data['xpath']);
             foreach ($xpath as $xmlElmt) {
                 if (isset($data['node'])) {
-                    if ($outNode = $this->parseNode($data['node'], $xmlElmt)) {
-                        if (is_array($nodes)) {
-                            $nodes[] = $outNode;
-                        } else {
-                            $nodes = $outNode;
-                        }
-                        unset($outNode);
-                    }
+                    $nodes[] = $this->parseNode($data['node'], $xmlElmt);
                 } else {
-                    $nodes = $this->parseValue($data, $xmlElmt);
+                    $nodes[] = $this->parseValue($data, $xmlElmt);
                 }
             }
+            $nodes = array_values(array_filter($nodes)); // delete all FALSE (==) values in the array
             if (isset($data['required']) && $data['required'] && empty($nodes)) {
                 return null;
             }
-            $out->$rootNode = $nodes;
+            if (isset($data['multiple']) && $data['multiple']) {
+                $out->$rootNode = $nodes;
+            } else {
+                $out->$rootNode = (reset($nodes) ? : null);
+            }
         }
         return $out;
 
@@ -147,12 +145,44 @@ class Xml
      */
     protected function recoverXml($string)
     {
-        $string = str_replace('xmlns=', 'ns=', $string);
-        $string = preg_replace('/encoding=("|\')ISO-8859-[0-9+]\1/i', 'encoding="UTF-8"', $string);
-        $string = $this->mbString->convert($string, 'UTF-8');
+        $string = trim($string);
+        if (substr($string, 0, 5) !== '<?xml'
+            || stripos($string, '<html') !== false
+            || strripos($string, '</html>') !== false
+        ) {
+            var_dump('ERROR');
+            return false;
+        }
+        $string = str_replace('&amp;', '&', $string);
+        $string = str_replace('&amp;', '&', $string); // double decode for bad encoding
+        $string = str_replace('&', '&amp;', $string); // char '&' illegal on xml out of a cdata
+        $string = str_replace('xmlns=', 'ns=', $string); // bug xpath for other namespace
+        $string = preg_replace('/<!DOCTYPE[^>]*>/i', '', $string); // RSS 0.91 use tag <!DOCTYPE that is invalid xml
+        //$string = preg_replace('/encoding=("|\')ISO-8859-[0-9+]\1/i', 'encoding="UTF-8"', $string);
+        //$string = $this->mbString->convert($string, 'UTF-8');
         $domDocument = new \DOMDocument();
         $domDocument->recover = true;
+        $domDocument->preserveWhiteSpace = false;
+        $internalErrors = libxml_use_internal_errors(true);
         $domDocument->loadXML($string);
+        libxml_use_internal_errors($internalErrors);
+        $lastError = libxml_get_last_error();
+        if ($lastError) {
+            switch ($lastError->code) {
+                case 9: // Error XML_ERR_INVALID_CHAR : encoding error
+                    $string = $this->mbString->convert($string, strtoupper($domDocument->encoding));
+                    $domDocument->loadXML($string);
+                    break;
+                case 77: // Error XML_ERR_TAG_NOT_FINISHED : error tag end
+                case 5: // Error XML_ERR_DOCUMENT_END : Extra content at the end of the document
+                    // no problem recover will try to fix it
+                    break;
+                default:
+                    throw new \InvalidArgumentException('libxml last error : ' . $lastError->message, $lastError->code);
+                    break;
+            }
+        }
+        $domDocument->normalizeDocument();
         unset($string);
         return $domDocument->saveXML();
     }
@@ -195,10 +225,18 @@ class Xml
         $xpath = $xpathNs['ns'];
         foreach ($nameSpaces as $ns) {
             if (isset($xpathNs[$ns])) {
-                $xpath += $xpathNs[$ns];
+                $xpath = array_merge($xpath, $xpathNs[$ns]);
             }
         }
         return implode(' | ', array_unique($xpath));
+    }
+
+    /**
+     * @return int
+     */
+    protected function getOptionsXml()
+    {
+        return LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG | LIBXML_NOWARNING | LIBXML_NOCDATA | LIBXML_NSCLEAN;
     }
 
     /**
@@ -233,10 +271,28 @@ class Xml
     }
 
     /**
-     * @param \SimpleXMLElement $xml
+     * @param $xml
      * @return string
      */
-    protected function stringModifier(\SimpleXMLElement $xml)
+    protected function toUtf8Modifier($xml)
+    {
+        return $this->mbString->convert($xml, 'UTF-8');
+    }
+
+    /**
+     * @param $xml
+     * @return string
+     */
+    protected function htmlEntityDecodeModifier($xml)
+    {
+        return $this->mbString->htmlEntityDecode($xml, 'UTF-8');
+    }
+
+    /**
+     * @param $xml
+     * @return string
+     */
+    protected function stringModifier($xml)
     {
         return trim((string)$xml);
     }
