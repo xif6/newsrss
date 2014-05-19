@@ -4,7 +4,7 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <parameters>
-        <parameter key="xif6.newsrss.crawler.flux.class">Xif6\NewsrssBundle\Crawler\FluxCrawler</parameter>
+        <parameter key="xif6.newsrss.crawler.flux.class">Xif6\NewsrssBundle\Crawler\Crawler</parameter>
         <parameter key="xif6.newsrss.crawler.flux.xml_dir">%kernel.cache_dir%/newsrss/flux_xml/</parameter>
         <parameter key="xif6.newsrss.crawler.flux.options_request" type="collection">
             <parameter key="redirect">10</parameter>
@@ -18,12 +18,6 @@
     <services>
         <service id="xif6.newsrss.crawler.flux" class="%xif6.newsrss.crawler.flux.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
-            <call method="setOptionsRequest">
-                <argument>%xif6.newsrss.crawler.flux.options_request%</argument>
-            </call>
-            <call method="setDirectory">
-                <argument>%xif6.newsrss.crawler.flux.xml_dir%</argument>
-            </call>
         </service>
     </services>
 </container>

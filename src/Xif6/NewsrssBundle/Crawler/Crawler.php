@@ -9,11 +9,6 @@ namespace Xif6\NewsrssBundle\Crawler;
 class Crawler
 {
     /**
-     * @const String
-     */
-    const REQUEST_CLASS = 'Xif6\NewsrssBundle\Crawler\Request';
-
-    /**
      * @var \http\client
      */
     protected $httpClient;
@@ -24,14 +19,9 @@ class Crawler
     protected $allFlux = [];
 
     /**
-     * @var String
-     */
-    private $requestClass = self::REQUEST_CLASS;
-
-    /**
      *
      */
-    function __construct()
+    public function __construct($url)
     {
         $this->httpClient = new \http\client();
     }
@@ -61,51 +51,15 @@ class Crawler
      * @param Array $request
      * @return FluxCrawler
      */
-    public function add($request)
+    public function add(RequestInterface $request)
     {
         $hash = $this->hash($request);
-        $className = $this->getRequestClass();
-        $this->allFlux[$hash] = new $className($request['url']);
-
-        return $this->addRequest($this->allFlux[$hash], $hash);
-    }
-
-    /**
-     * Add request object
-     *
-     * @param Object $requestObject
-     * @param Array $data
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    protected function addRequest($requestObject, $data)
-    {
-        if (!is_subclass_of($requestObject, self::REQUEST_CLASS)) {
-            throw new \InvalidArgumentException('Class "' . get_class(
-                $requestObject
-            ) . '" does not extend ' . self::REQUEST_CLASS);
-        }
-
-        if (!empty($data['fileName'])) {
-            $requestObject->setFileName($data['fileName']);
-        }
-        if (!empty($data['directory'])) {
-            $requestObject->setDirectory($data['directory']);
-        }
-        if (!empty($data['options'])) {
-            $requestObject->setOptions($data['options']);
-        }
-        if (!empty($data['method'])) {
-            $requestObject->setMethod($data['method']);
-        }
-        if (!empty($data['headers'])) {
-            $requestObject->addHeaders($data['headers']);
-        }
-
+        $this->allFlux[$hash] = $request;
         $this->httpClient->enqueue(
-            $requestObject->generateRequest(),
-            [$requestObject, 'callbackResponse']
+            $request->getRequest(),
+            [$request, 'callbackResponse']
         );
+
         return $this;
     }
 
@@ -132,7 +86,7 @@ class Crawler
      */
     public function send()
     {
-        while ($this->httpClient->once()) {
+        while (@$this->httpClient->once()) {
             //$this->httpClient->wait();
         }
         $this->reset();
@@ -171,31 +125,6 @@ class Crawler
     public function getAllFlux()
     {
         return $this->allFlux;
-    }
-
-    /**
-     * Set requestClass
-     *
-     * @param String $requestClass
-     * @return Crawler
-     */
-    public function setRequestClass($requestClass)
-    {
-        if (!is_subclass_of($requestClass, self::REQUEST_CLASS)) {
-            throw new \InvalidArgumentException('Class "' . $requestClass . '" does not extend ' . self::REQUEST_CLASS);
-        }
-        $this->requestClass = $requestClass;
-        return $this;
-    }
-
-    /**
-     * Get requestClass
-     *
-     * @return String
-     */
-    public function getRequestClass()
-    {
-        return $this->requestClass;
     }
 
     /**

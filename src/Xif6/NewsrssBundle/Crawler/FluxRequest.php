@@ -17,18 +17,54 @@ class FluxRequest extends Request
     protected $flux;
 
     /**
+     * @var Entity\FluxHttp
+     */
+    protected $fluxHttp;
+
+    /**
      * @var EntityManager
      */
     protected $em;
 
     /**
      * @param Entity\Flux $flux
+     * @param EntityManager $em
      */
-    function __construct(Entity\Flux $flux, EntityManager $em)
+    public function __construct(Entity\Flux $flux, EntityManager $em)
     {
-        parent::__construct($flux->getUrl());
+        parent::__construct();
         $this->flux = $flux;
+        $this->fluxHttp = $this->flux->getHttp();
+        if ($this->fluxHttp === null) {
+            $this->createFluxHttp();
+        }
         $this->em = $em;
+        $this->setFileName($flux->getId() . '.xml');
+        $this->setParamRequest();
+    }
+
+    /**
+     * Set directory
+     *
+     * @param String $directory
+     * @return FluxRequest
+     */
+    public function setDirectory($directory)
+    {
+        $directory = $directory . ($this->flux->getId() % 100) . '/';
+        return parent::setDirectory($directory);
+    }
+
+    /**
+     * Create new Entity\FluxHttp
+     *
+     * @return Entity\FluxHttp
+     */
+    protected function createFluxHttp()
+    {
+        $this->fluxHttp = new Entity\FluxHttp();
+        $this->fluxHttp->setFlux($this->flux);
+        return $this->fluxHttp;
     }
 
     /**
@@ -36,17 +72,19 @@ class FluxRequest extends Request
      *
      * @return \http\client\Request
      */
-    public function generateRequest()
+    protected function setParamRequest()
     {
-        $http = $this->flux->getHttp();
-        if ($http->getIfNoneMatch()) {
-            $this->options['etag'] = $http->getIfNoneMatch();
+        $this->request->setRequestUrl($this->flux->getUrl());
+        $this->request->setRequestMethod('GET');
+
+        if ($this->fluxHttp->getIfNoneMatch()) {
+            $this->request->setOptions(['etag' => $this->fluxHttp->getIfNoneMatch()]);
         }
-        if ($http->getIfModifiedSince()) {
-            $this->options['lastmodified'] = $http->getIfModifiedSince()->getTimestamp();
+        if ($this->fluxHttp->getIfModifiedSince()) {
+            $this->request->setOptions(['lastmodified' => $this->fluxHttp->getIfModifiedSince()->getTimestamp()]);
         }
 
-        return parent::generateRequest();
+        return $this;
     }
 
     /**
@@ -56,34 +94,37 @@ class FluxRequest extends Request
     public function callbackResponse(\http\Client\Response $response)
     {
         $this->response = $response;
-        $http = $this->flux->getHttp();
 
-        if ($this->response->getHeader('last-modified')) {
-            $ifModifiedSince = new \DateTime($this->response->getHeader('last-modified'));
+        if ($this->getResponseHeader('last-modified')) {
+            $ifModifiedSince = new \DateTime($this->getResponseHeader('last-modified'));
         } else {
             $ifModifiedSince = null;
         }
         $hash = $this->response->getBody()->etag();
 
 
-        $http->setError($this->response->getTransferInfo('error'));
-        $http->setUrlRedirection($this->response->getTransferInfo('effective_url'));
-        $http->setResponseStatus($this->response->getResponseStatus());
-        $http->setResponseCode($this->response->getResponseCode());
+        $this->fluxHttp->setError($this->response->getTransferInfo('error'));
+        $this->fluxHttp->setUrlRedirection($this->response->getTransferInfo('effective_url'));
+        $this->fluxHttp->setResponseStatus($this->response->getResponseStatus());
+        $this->fluxHttp->setResponseCode($this->response->getResponseCode());
 
         // the server responded
         if ($this->response->getType() == 2) {
 
             // the content is good AND different from the previous download
-            if ($this->response->getResponseCode() == 200 && $hash != $http->getHash()) {
+            if ($this->response->getResponseCode() == 200
+                && $this->response->getBody()->stat('size')
+                //&& $hash != $this->fluxHttp->getHash()
+            ) {
 
-                $http->setUpdatedSucces(new \DateTime());
-                $http->setIfModifiedSince($ifModifiedSince);
-                $http->setIfNoneMatch($this->response->getHeader('etag'));
-                $http->setHash($hash);
+                $this->fluxHttp->setUpdatedSucces(new \DateTime());
+                $this->fluxHttp->setIfModifiedSince($ifModifiedSince);
+                $this->fluxHttp->setIfNoneMatch($this->getResponseHeader('etag'));
+                $this->fluxHttp->setHash($hash);
 
 
                 $file = fopen($this->getPath(), 'c');
+                var_dump($this->getPath());
                 if (flock($file, LOCK_EX)) {
                     $file = fopen($this->getPath(), 'c');
                     flock($file, LOCK_EX);
@@ -93,16 +134,16 @@ class FluxRequest extends Request
                 fclose($file);
 
             } //the content is the same as in previous download
-            elseif ($this->response->getResponseCode() == 304 || $hash == $http->getHash()) {
-                $http->setUpdatedSucces(new \DateTime());
-                $http->setIfModifiedSince($ifModifiedSince);
-                $http->setIfNoneMatch($this->response->getHeader('etag'));
+            elseif ($this->response->getResponseCode() == 304 || $hash == $this->fluxHttp->getHash()) {
+                $this->fluxHttp->setUpdatedSucces(new \DateTime());
+                $this->fluxHttp->setIfModifiedSince($ifModifiedSince);
+                $this->fluxHttp->setIfNoneMatch($this->getResponseHeader('etag'));
 
             } // problem when downloading
             else {
             }
         }
-        $this->em->persist($http);
+        $this->em->persist($this->fluxHttp);
         return true;
 
 
@@ -125,9 +166,9 @@ class FluxRequest extends Request
 
         /*
         var_dump($this->response);
-        $http->setResponseCode($this->response->getResponseCode());
-        $http->setResponseStatus($this->response->getResponseCode());
-        $http->setUrlRedirection($this->response->getTransferInfo('effective_url'));
+        $this->fluxHttp->setResponseCode($this->response->getResponseCode());
+        $this->fluxHttp->setResponseStatus($this->response->getResponseCode());
+        $this->fluxHttp->setUrlRedirection($this->response->getTransferInfo('effective_url'));
         if ($this->response->getResponseCode() == 200) {
 
         }//* /

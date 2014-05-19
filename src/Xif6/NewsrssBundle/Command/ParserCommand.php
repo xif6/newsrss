@@ -6,6 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Xif6\NewsrssBundle\Document\Item;
 
 class ParserCommand extends ContainerAwareCommand
 {
@@ -19,28 +22,21 @@ class ParserCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->em = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $this->dm = $this->getContainer()->get('doctrine.odm.mongodb.document_manager');
+        $this->itemRepository = $this->dm->getRepository('Xif6NewsrssBundle:Item');
         $parser = $this->getContainer()->get('xif6_newsrss.parser.rss');
-        $directory = $this->getDirectory();
-        /*
-        $files = [];
-        $cmd = 'ls -tr ' . escapeshellcmd($directory) . '*.xml';
-        passthru($cmd, $files);
+        $directory = $this->getContainer()->getParameter('xif6.newsrss.crawler.flux.xml_dir');
+        $fs = new Filesystem();
 
-        //*
-        foreach ($files as $file) {
-            $fp = fopen($file, 'r');
-            if(flock($fp, LOCK_EX | LOCK_NB)) {
-                var_dump('OK');
-                unlink($file);
-                flock($fp, LOCK_UN);
-                fclose($fp);
-            }
-        }
-        //*/
+        $finder = new Finder();
+        $finder->files()->name('*.xml')->depth(1)->size('> 0k')->sortByModifiedTime()->in($directory);
+        //$finder->files()->name('686.xml')->depth(1)->size('> 0k')->sortByModifiedTime()->in($directory);
+        //$finder->files()->name('1.xml')->depth(1)->size('> 0k')->sortByModifiedTime()->in($directory);
+        //$finder->files()->name('rss.xml')->depth(1)->size('> 0k')->sortByModifiedTime()->in('/tmp/');
 
-        $it = new \FilesystemIterator($directory);
-        foreach ($it as $path => $fileInfo) {
-            if ($fileInfo->isFile() && $fileInfo->isReadable()) {
+        foreach ($finder as $fileInfo) {
+            var_dump($fileInfo->getRealpath() /* , $fileInfo*/);
+            if ($fileInfo->isFile() && $fileInfo->isReadable() && $fileInfo->getSize()) {
                 $file = $fileInfo->openFile('r');
                 if (!$file->flock(LOCK_EX | LOCK_NB)) {
                     continue;
@@ -50,36 +46,37 @@ class ParserCommand extends ContainerAwareCommand
                 foreach ($file as $line) {
                     $s .= $line;
                 }
-                var_dump($parser->parse($s));
-                //unlink($path);
+                $a = $parser->parse($s);
+                if ($a) {
+                    $this->saveItems($a, $this->getFluxId($fileInfo->getFilename()));
+                } else {
+                    var_dump('ERROR PARSE REQUIRE');
+                }
+                $fs->remove($fileInfo->getRealpath());
                 $file->flock(LOCK_UN);
                 unset($file);
-                var_dump($path, $fileInfo);
             }
         }
-
-        /*
-        if ($dh = opendir($directory)) {
-            while (($file = readdir($dh)) !== false) {
-                var_dump($file);
-    //sleep(10);
-            }
-        }
-        //*/
-
-
     }
 
-    protected
-    function getDirectory()
+    protected function saveItems($flux, $fluxId)
     {
-        $directory = $this->getContainer()->getParameter('xif6.newsrss.crawler.flux.xml_dir');
-        $dir = realpath($directory);
-        if ($dir === false) {
-            throw new \RuntimeException('Directory does not exist : "' . $directory . '"');
-        } elseif (!is_dir($dir)) {
-            throw new \RuntimeException('Path is not a directory : "' . $directory . '"');
+        foreach ($flux->items as $itemRss) {
+            $item = new Item();
+            $item
+                ->setTitle($itemRss->title)
+                ->setDescription($itemRss->description)
+                ->setCategory($itemRss->category)
+                ->setUrl($itemRss->link)
+                ->setDate($itemRss->date)
+                ->setImage($itemRss->image)
+                ->setFluxId($fluxId);
+            $this->itemRepository->upsert($item, $flux->head->date);
         }
-        return $dir . '/';
+    }
+
+    protected function getFluxId($fileName)
+    {
+        return (int)str_replace('.xml', '', $fileName);
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Xif6\NewsrssBundle\Crawler;
 
+use Symfony\Component\Filesystem\Filesystem;
+
 /**
  * Class Request
  * @package Xif6\NewsrssBundle\Crawler
  */
-class Request
+class Request implements RequestInterface
 {
     /**
      * @var \http\client\Request
@@ -39,26 +41,17 @@ class Request
     protected $url;
 
     /**
-     * @var Array
+     * @var Filesystem
      */
-    protected $options = [];
-
-    /**
-     * @var String
-     */
-    protected $method = 'GET';
-
-    /**
-     * @var Array
-     */
-    protected $headers = [];
+    protected $fs;
 
     /**
      * @param Entity\Flux $flux
      */
-    function __construct($url)
+    public function __construct()
     {
-        $this->url = $url;
+        $this->fs = new Filesystem();
+        $this->request = new \http\client\Request();
     }
 
     /**
@@ -69,15 +62,8 @@ class Request
      */
     public function setDirectory($directory)
     {
-        $dir = realpath($directory);
-        if ($dir === false) {
-            if (mkdir($directory, 0777, true) === false) {
-                throw new \RuntimeException('Directory could not be created : "' . $directory . '"');
-            } else {
-                $dir = realpath($directory);
-            }
-        }
-        $this->directory = $dir . '/';
+        $this->fs->mkdir($directory);
+        $this->directory = $directory;
         $this->generatePath();
         return $this;
     }
@@ -113,72 +99,6 @@ class Request
     public function getFileName()
     {
         return $this->fileName;
-    }
-
-    /**
-     * Set options
-     *
-     * @param Array $options
-     * @return FluxRequest
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
-        return $this;
-    }
-
-    /**
-     * Get options
-     *
-     * @return Array
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * Set method
-     *
-     * @param String $method
-     * @return Request
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-        return $this;
-    }
-
-    /**
-     * Get method
-     *
-     * @return String
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * Set headers
-     *
-     * @param Array $headers
-     * @return Request
-     */
-    public function setHeaders($headers)
-    {
-        $this->headers = $headers;
-        return $this;
-    }
-
-    /**
-     * Get headers
-     *
-     * @return Array
-     */
-    public function getHeaders()
-    {
-        return $this->headers;
     }
 
     /**
@@ -223,21 +143,6 @@ class Request
     }
 
     /**
-     * Generate request
-     *
-     * @return \http\client\Request
-     */
-    public function generateRequest()
-    {
-        $this->request = new \http\client\Request($this->method, $this->url);
-
-        $this->request->setOptions($this->options);
-        $this->request->addHeaders($this->headers, true);
-
-        return $this->request;
-    }
-
-    /**
      * Get response
      *
      * @return \http\Client\Response
@@ -264,6 +169,19 @@ class Request
         }
         return false;
 
+    }
+
+    protected function getResponseHeader($header)
+    {
+        if ($this->response) {
+            $responseHeader = $this->response->getHeader($header);
+            if (is_array($responseHeader)) {
+                return end($responseHeader);
+            } else {
+                return $responseHeader;
+            }
+        }
+        return null;
     }
 
 }
