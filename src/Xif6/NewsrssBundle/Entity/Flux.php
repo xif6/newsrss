@@ -131,6 +131,17 @@ class Flux
     }
 
     /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateDisplay()
+    {
+        if (!$this->name) {
+            $this->display = false;
+        }
+    }
+
+    /**
      * Set id
      *
      * @param integer $id
