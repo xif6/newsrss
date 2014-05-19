@@ -205,7 +205,7 @@ class ImportDataCommand extends ContainerAwareCommand
                 ->setDescription(utf8_decode($news['description']))
                 ->setCreatedAt($this->toDateTime($news['created']))
                 ->setUpdatedAt($this->toDateTime($news['updated']))
-                ->setDisplay(true)
+                ->setDisplay(false)
                 ->setNew($news['new']);
 
             $news['site'] = preg_replace('%/$%', '', $news['site']);
@@ -215,7 +215,8 @@ class ImportDataCommand extends ContainerAwareCommand
             }
 
             if ($news['id']) {
-                $flux->setId($news['id']);
+                $flux->setId($news['id'])
+                    ->setDisplay(true);
                 $this->disabledAutoIncrement($flux);
             }
 
@@ -278,7 +279,7 @@ class ImportDataCommand extends ContainerAwareCommand
             }
             $flux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->findOneByUrl($news['url']);
 
-            $fluxHttp = new Entity\Flux();
+            $fluxHttp = new Entity\FluxHttp();
 
             $updateSuccess = null;
             if ($news['status_code'] == 200) {
@@ -291,9 +292,9 @@ class ImportDataCommand extends ContainerAwareCommand
             }
 
             $fluxHttp->setFlux($flux)
-                ->setStatusCode($news['status_code'])
+                ->setResponseCode($news['status_code'])
                 ->setUrlRedirection(utf8_decode($news['url_redirection']))
-                ->setStatusCodeResponse(utf8_decode($news['status_code_response']))
+                ->setResponseStatus(utf8_decode($news['status_code_response']))
                 ->setError(utf8_decode($news['error']))
                 ->setIfNoneMatch(utf8_decode($news['if_none_match']))
                 ->setIfModifiedSince($ifModifiedSince)
