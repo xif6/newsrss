@@ -22,13 +22,16 @@ class FluxHttp
 
     /**
      * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var Flux
      *
-     * @ORM\Id
      * @ORM\OneToOne(targetEntity="Flux", inversedBy="http", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="flux_id", referencedColumnName="id", onDelete="CASCADE")
      */
@@ -65,7 +68,7 @@ class FluxHttp
     /**
      * @var string
      *
-     * @ORM\Column(name="if_none_match", type="string", length=255)
+     * @ORM\Column(name="if_none_match", type="string", length=255, nullable=true)
      */
     private $ifNoneMatch;
 
@@ -244,27 +247,26 @@ class FluxHttp
     }
 
     /**
-     * load user
-     *
-     * @return FluxHttp
-     */
-    protected function loadUserId()
-    {
-        $this->id = $this->flux->getId();
-        return $this;
-    }
-
-    /**
      * Get id
      *
      * @return integer
      */
     public function getId()
     {
-        if (!$this->id) {
-            $this->loadUserId();
-        }
         return $this->id;
+    }
+
+    /**
+     * Get flux_id
+     *
+     * @return integer
+     */
+    public function getFluxId()
+    {
+        if ($this->flux) {
+            return $this->flux->getId();
+        }
+        return null;
     }
 
     /**
@@ -299,7 +301,6 @@ class FluxHttp
     public function setFlux(\Xif6\NewsrssBundle\Entity\Flux $flux = null)
     {
         $this->flux = $flux;
-        $this->loadUserId();
 
         return $this;
     }
