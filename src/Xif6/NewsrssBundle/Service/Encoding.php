@@ -127,7 +127,6 @@ class Encoding
 
     public function htmlEntityChrUtf8Replace($matches)
     {
-        var_dump($matches);
         if ($matches[1] === 'x') {
             $code = hexdec($matches[2]);
         } else {
