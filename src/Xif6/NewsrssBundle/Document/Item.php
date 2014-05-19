@@ -66,6 +66,13 @@ class Item
     /**
      * @var string
      *
+     * @ODM\Field(name="image", type="string")
+     */
+    protected $image;
+
+    /**
+     * @var string
+     *
      * @ODM\Field(name="category", type="string")
      */
     protected $category;
@@ -85,7 +92,9 @@ class Item
      */
     public function loadFluxId()
     {
-        $this->fluxId = $this->flux->getId();
+        if ($this->flux) {
+            $this->fluxId = $this->flux->getId();
+        }
         return $this;
     }
 
@@ -202,6 +211,28 @@ class Item
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * Set image
+     *
+     * @param string $image
+     * @return self
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 
     /**

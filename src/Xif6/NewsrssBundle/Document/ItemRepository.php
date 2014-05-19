@@ -31,12 +31,13 @@ class ItemRepository extends DocumentRepository
         }
     }
 
-    public function upsert(Item $item)
+    public function upsert(Item $item, \DateTime $dateUpdate = null)
     {
         $preEvents = array(
             Events::prePersist,
             Events::preUpdate,
             Events::preFlush,
+            Events::onFlush,
         );
         $postEvents = array(
             Events::postPersist,
@@ -48,9 +49,20 @@ class ItemRepository extends DocumentRepository
         $qb = $this->createQueryBuilder();
         $update = $qb->update();
         $itemData = $this->dm->getUnitOfWork()->getDocumentActualData($item);
+        $emptyDate = false;
         foreach ($itemData as $field => $value) {
-            if ($field != 'id') {
-                $update->field($field)->set($value);
+            switch ($field) {
+                case 'id':
+                    // ignore
+                    break;
+                case 'date':
+                    if ($value === null) {
+                        $emptyDate = true;
+                        break;
+                    }
+                default:
+                    $update->field($field)->set($value);
+                    break;
             }
         }
         $update->addAnd(
@@ -61,6 +73,17 @@ class ItemRepository extends DocumentRepository
             ->upsert(true)
             ->getQuery()
             ->execute();
+
+        if ($emptyDate) { // update date if null by current date
+            $this->createQueryBuilder()->update()
+                ->multiple(true)
+                ->field('date')->set(($dateUpdate ? : new \DateTime()))
+                ->field('date')->equals(null)
+                ->field('fluxId')->equals($itemData['fluxId'])
+                ->getQuery()
+                ->execute();
+        }
+
         $this->invokeLifecycle($preEvents, $item);
     }
 
