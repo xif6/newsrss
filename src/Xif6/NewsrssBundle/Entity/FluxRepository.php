@@ -3,6 +3,7 @@
 namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 /**
  * FluxRepository
@@ -12,4 +13,78 @@ use Doctrine\ORM\EntityRepository;
  */
 class FluxRepository extends EntityRepository
 {
+    /**
+     *
+     * @param int $limit
+     * @return array
+     */
+    public function lastFlux($limit = 10)
+    {
+        $flux = $this->findBy(['display' => true], ['createdAt' => 'DESC'], $limit);
+
+        return $flux;
+    }
+
+
+    /**
+     * Flux that have the most users
+     *
+     * @param int $limit
+     * @param bool $withNbUsers
+     * @return array
+     */
+    public function mostUsers($limit = 10, $withNbUsers = false)
+    {
+        $qb = $this->createQueryBuilder('f');
+        $flux = $qb
+            ->addSelect('count(f) AS ' . ($withNbUsers ? '' : 'HIDDEN') . ' nbUsers')
+            ->addSelect('fh')
+            ->innerjoin('f.userFlux', 'uf')
+            ->leftjoin('f.http', 'fh')
+            ->andWhere($qb->expr()->eq('f.display', ':display'))
+            ->setParameter('display', true)
+            ->groupBy('f.id')
+            ->orderBy('nbUsers', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->execute();
+
+        return $flux;
+    }
+
+    /**
+     * Flux that have the most users (in DQL query)
+     *
+     * @param int $limit
+     * @param bool $withNbUsers
+     * @return array
+     */
+    public function mostUsersDQL($limit = 10, $withNbUsers = false)
+    {
+        // same request to DQL
+        $rsm = new ResultSetMappingBuilder($this->_em);
+        $rsm->addRootEntityFromClassMetadata('Xif6NewsrssBundle:Flux', 'f');
+        if ($withNbUsers) {
+            $rsm->addScalarResult('nbUsers', 'nbUsers');
+        }
+        $rsm->addJoinedEntityFromClassMetadata(
+            'Xif6NewsrssBundle:FluxHttp',
+            'fh',
+            'f',
+            'http',
+            ['id' => 'flux_http_id', 'created_at' => 'created_at_fh', 'updated_at' => 'updated_at_fh']
+        );
+        $sql = 'SELECT ' . $rsm . ', count(*) AS nbUsers
+                FROM flux f
+                INNER JOIN user_flux uf ON f.id = uf.flux_id
+                LEFT JOIN flux_http fh ON f.id = fh.flux_id
+                WHERE f.display = true
+                GROUP BY f.id
+                ORDER BY nbUsers DESC
+                LIMIT ' . $limit;
+        $query = $this->_em->createNativeQuery($sql, $rsm);
+        $flux = $query->getResult();
+
+        return $flux;
+    }
 }

@@ -48,4 +48,24 @@ class FluxController extends Controller
 
         return array('items' => $items, 'userFlux' => $userFlux);
     }
+
+    /**
+     * @Template()
+     */
+    public function mostUsersAction()
+    {
+        $fluxes = $this->getDoctrine()->getrepository('Xif6NewsrssBundle:Flux')->mostUsers();
+
+        return ['fluxes' => $fluxes];
+    }
+
+    /**
+     * @Template()
+     */
+    public function lastFluxAction()
+    {
+        $fluxes = $this->getDoctrine()->getrepository('Xif6NewsrssBundle:Flux')->lastFlux();
+
+        return ['fluxes' => $fluxes];
+    }
 }

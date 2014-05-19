@@ -20,6 +20,18 @@ xif6_newsrss_flux_items:
         type: default|user
         _format: html|json
 
+xif6_newsrss_flux_most_users:
+    pattern: /flux-most-users.{_format}
+    defaults: { _controller: Xif6NewsrssBundle:Flux:mostUsers }
+    requirements:
+        _format: html|json
+
+xif6_newsrss_flux_last:
+    pattern: /last-flux.{_format}
+    defaults: { _controller: Xif6NewsrssBundle:Flux:lastFlux }
+    requirements:
+        _format: html|json
+
 xif6_newsrss_flux_add:
     pattern: /actualite-{id}ajout-{slug}.html
     defaults: { _controller: Xif6NewsrssBundle:Flux:add }
