@@ -13,6 +13,8 @@ parameters:
                             - channel/title
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                 description:
                     xpath:
                         ns:
@@ -21,6 +23,8 @@ parameters:
                             - subtitle
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                 link:
                     xpath:
                         ns:
@@ -32,6 +36,8 @@ parameters:
                             - channel/guid
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                     constraints:
                         - Url
                 date:
@@ -62,19 +68,27 @@ parameters:
                     required: true
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                 description:
                     xpath:
                         ns:
                             - description
                             - content
+                        content:
+                            - content:encoded
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                 category:
                     xpath:
                         ns:
                             - category
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                 link:
                     xpath:
                         ns:
@@ -83,6 +97,8 @@ parameters:
                             - link/@href
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                     constraints:
                         - Url
                     required: true
@@ -102,7 +118,6 @@ parameters:
                         - localeDateTime
                     constraints:
                         - DateTime
-                    required: true
                 image:
                     xpath:
                         ns:
@@ -110,6 +125,8 @@ parameters:
                             - logo
                     modifiers:
                         - string
+                        - toUtf8
+                        - htmlEntityDecode
                     constraints:
                         - Url
 
