@@ -4,11 +4,14 @@ namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Category
  *
- * @ORM\Table(name="category")
+ * @Gedmo\Tree(type="materializedPath")
+ * @ORM\Table(name="category", indexes={@ORM\Index(columns={"path"})})
  * @ORM\Entity(repositoryClass="Xif6\NewsrssBundle\Entity\CategoryRepository")
  */
 class Category
@@ -26,22 +29,40 @@ class Category
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=50)
+     * @Assert\NotBlank(message = "name.not_blank")
      */
     private $name;
 
     /**
      * @var string
      *
-     * @Gedmo\Slug(fields={"name"})
-     * @ORM\Column(name="slug", type="string", length=50)
+     * @Gedmo\TreePath(separator="/", appendId=false, startsWithSeparator=false, endsWithSeparator=false)
+     * @ORM\Column(name="path", type="string", length=400, nullable=true)
+     */
+    private $path;
+
+    /**
+     * @var string
+     *
+     * @Gedmo\TreePathSource
+     * @Gedmo\Slug(fields={"name"}, unique=false)
+     * @ORM\Column(name="slug", type="string", length=50, nullable=true)
      */
     private $slug;
 
     /**
+     * @Gedmo\TreeLevel
+     * @ORM\Column(name="level", type="integer", nullable=true)
+     */
+    private $level;
+
+    /**
      * @var Category
      *
+     * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="children", cascade={"persist", "merge"})
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     * @JMS\Exclude
      */
     private $parent;
 
@@ -49,7 +70,8 @@ class Category
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Category", mappedBy="parent", cascade={"persist", "merge"})
-     * @ORM\OrderBy({"name" = "ASC"})
+     * @ORM\OrderBy({"level" = "ASC"})
+     * @JMS\Exclude
      */
     private $children;
 
@@ -57,6 +79,7 @@ class Category
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="Flux", mappedBy="categories", cascade={"persist", "merge"})
+     * @JMS\Exclude
      */
     private $flux;
 
@@ -225,5 +248,27 @@ class Category
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set path
+     *
+     * @param string $path
+     * @return Category
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+        return $this;
+    }
+
+    /**
+     * Get path
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 }
