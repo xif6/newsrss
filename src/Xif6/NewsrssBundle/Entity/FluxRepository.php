@@ -14,6 +14,22 @@ use Doctrine\ORM\Query\ResultSetMappingBuilder;
 class FluxRepository extends EntityRepository
 {
     /**
+     * Used by Elastica to transform results to model
+     *
+     * @param string $entityAlias
+     * @return  Doctrine\ORM\QueryBuilder
+     */
+    public function createSearchQueryBuilder($entityAlias)
+    {
+        $qb = $this->createQueryBuilder($entityAlias);
+
+        $qb->select($entityAlias, 'fh')
+            ->leftjoin($entityAlias . '.http', 'fh');
+
+        return $qb;
+    }
+
+    /**
      *
      * @param int $limit
      * @return array
@@ -25,6 +41,41 @@ class FluxRepository extends EntityRepository
         return $flux;
     }
 
+    /**
+     * Flux that have the most users
+     *
+     * @param int $limit
+     * @param bool $withNbUsers
+     * @return array
+     */
+    public function mostUsersByCategory($categoryId, $andWhere = [], $withNbUsers = false)
+    {
+        $qb = $this->createQueryBuilder('f');
+        $qb->addSelect('count(f) AS ' . ($withNbUsers ? '' : 'HIDDEN') . ' nbUsers')
+            ->addSelect('fh')
+            ->innerjoin('f.categories', 'c', 'WITH', $qb->expr()->eq('c.id', ':category'))
+            ->innerjoin('f.userFlux', 'uf')
+            ->leftjoin('f.http', 'fh')
+            ->andWhere($qb->expr()->eq('f.display', ':display'))
+            ->setParameter('display', true)
+            ->setParameter('category', $categoryId);
+        if ($andWhere) {
+            var_dump($andWhere);
+            foreach ($andWhere as $field => $value) {
+                $qb->andWhere($qb->expr()->eq('f.' . $field, ':' . $field))
+                    ->setParameter($field, $value);
+            }
+        }
+        $qb->groupBy('f.id')
+            ->addOrderBy('nbUsers', 'DESC')
+            ->addOrderBy('f.site', 'ASC')
+            ->addOrderBy('f.name', 'ASC');
+        $fluxes = $qb
+            ->getQuery()
+            ->execute();
+
+        return $fluxes;
+    }
 
     /**
      * Flux that have the most users
@@ -33,23 +84,31 @@ class FluxRepository extends EntityRepository
      * @param bool $withNbUsers
      * @return array
      */
-    public function mostUsers($limit = 10, $withNbUsers = false)
+    public function mostUsers($limit = 10, $andWhere = [], $withNbUsers = false)
     {
         $qb = $this->createQueryBuilder('f');
-        $flux = $qb
-            ->addSelect('count(f) AS ' . ($withNbUsers ? '' : 'HIDDEN') . ' nbUsers')
+        $qb->addSelect('count(f) AS ' . ($withNbUsers ? '' : 'HIDDEN') . ' nbUsers')
             ->addSelect('fh')
             ->innerjoin('f.userFlux', 'uf')
             ->leftjoin('f.http', 'fh')
             ->andWhere($qb->expr()->eq('f.display', ':display'))
-            ->setParameter('display', true)
-            ->groupBy('f.id')
-            ->orderBy('nbUsers', 'DESC')
-            ->setMaxResults($limit)
+            ->setParameter('display', true);
+        if ($andWhere) {
+            foreach ($andWhere as $field => $value) {
+                $qb->andWhere($qb->expr()->eq('f.' . $field, ':' . $field))
+                    ->setParameter($field, $value);
+            }
+        }
+        $qb->groupBy('f.id')
+            ->orderBy('nbUsers', 'DESC');
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+        $fluxes = $qb
             ->getQuery()
             ->execute();
 
-        return $flux;
+        return $fluxes;
     }
 
     /**
@@ -83,8 +142,8 @@ class FluxRepository extends EntityRepository
                 ORDER BY nbUsers DESC
                 LIMIT ' . $limit;
         $query = $this->_em->createNativeQuery($sql, $rsm);
-        $flux = $query->getResult();
+        $fluxes = $query->getResult();
 
-        return $flux;
+        return $fluxes;
     }
 }
