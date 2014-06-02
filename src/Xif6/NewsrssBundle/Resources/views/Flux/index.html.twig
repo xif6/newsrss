@@ -3,15 +3,15 @@
 {% block container %}
     <a href="{{ path('xif6_newsrss_flux', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
     <br>
-    {#{ dump(flux.site) }#}
-    {#{ dump(flux.categories) }#}
+    <a href="{{ flux.url }}">RSS</a>
+    <br>
+    {{ flux.description }}
     <ul>
         {% for category in flux.categories %}
             <li>{{ category.name }}</li>
         {% endfor %}
     </ul>
     <ul>
-        {#{ dump(flux.site.flux) }#}
         {% for siteFlux in flux.site.flux %}
             {% if flux.id != siteFlux.id %}
                 <li>
@@ -20,17 +20,6 @@
             {% endif %}
         {% endfor %}
     </ul>
-    <ol>
-        {#% for item in flux.items %}
-            {#{ dump(item) }# }
-            <li>
-                {{ item.title }} -
-                {% if item.date %}
-                    {{ item.date|date('c') }}
-                {% endif %}
-            </li>
-        {% endfor %#}
-    </ol>
 
-    {{ render(path('xif6_newsrss_flux_items', { 'id': flux.id, 'type': 'default', '_format': 'html' })) }}
+    {{ render(path('xif6_newsrss_item', { 'id': flux.id, 'type': 'default' })) }}
 {% endblock %}
