@@ -3,6 +3,8 @@ namespace Xif6\NewsrssBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Xif6\NewsrssBundle\Entity;
@@ -45,7 +47,18 @@ class ImportDataCommand extends ContainerAwareCommand
     {
         $this
             ->setName('newsrss:import:data')
-            ->setDescription('Import data from old database');
+            ->setDescription('Import data from old database')
+            ->addArgument(
+                'table',
+                InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
+                'List of tables to import IF NOT all tables'
+            )
+            ->addOption(
+                'reverse',
+                null,
+                InputOption::VALUE_NONE,
+                'If defined inverse behavior table'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -62,28 +75,74 @@ class ImportDataCommand extends ContainerAwareCommand
 
 
         $this->conn->executeQuery('SET foreign_key_checks = 0');
-        $this->conn->executeQuery('TRUNCATE `category`');
-        $this->conn->executeQuery('TRUNCATE `flux`');
-        $this->conn->executeQuery('TRUNCATE `flux_category`');
-        $this->conn->executeQuery('TRUNCATE `flux_http`');
-        $this->conn->executeQuery('TRUNCATE `site`');
-        $this->conn->executeQuery('TRUNCATE `user`');
-        $this->conn->executeQuery('TRUNCATE `user_flux`');
-        $this->conn->executeQuery('TRUNCATE `search_user`');
+        if ($this->isRun('category')) {
+            $this->conn->executeQuery('TRUNCATE `category`');
+        }
+        if ($this->isRun('flux')) {
+            $this->conn->executeQuery('TRUNCATE `flux`');
+        }
+        if ($this->isRun('flux_category')) {
+            $this->conn->executeQuery('TRUNCATE `flux_category`');
+        }
+        if ($this->isRun('flux_http')) {
+            $this->conn->executeQuery('TRUNCATE `flux_http`');
+        }
+        if ($this->isRun('site')) {
+            $this->conn->executeQuery('TRUNCATE `site`');
+        }
+        if ($this->isRun('user')) {
+            $this->conn->executeQuery('TRUNCATE `user`');
+        }
+        if ($this->isRun('user_flux')) {
+            $this->conn->executeQuery('TRUNCATE `user_flux`');
+        }
+        if ($this->isRun('search_user')) {
+            $this->conn->executeQuery('TRUNCATE `search_user`');
+        }
         $this->conn->executeQuery('SET foreign_key_checks = 1');
 
-        $this->ImportSite();
-        $this->ImportFlux();
-        $this->ImportFluxHttp();
-        $this->ImportCategory();
-        $this->ImportFluxCategory();
-        $this->ImportUser();
-        $this->ImportUserFlux();
-        $this->ImportSearchUser();
+
+        if ($this->isRun('site')) {
+            $this->ImportSite();
+        }
+        if ($this->isRun('flux')) {
+            $this->ImportFlux();
+        }
+        if ($this->isRun('flux_http')) {
+            $this->ImportFluxHttp();
+        }
+        if ($this->isRun('category')) {
+            $this->ImportCategory();
+        }
+        if ($this->isRun('flux_category')) {
+            $this->ImportFluxCategory();
+        }
+        if ($this->isRun('user')) {
+            $this->ImportUser();
+        }
+        if ($this->isRun('user_flux')) {
+            $this->ImportUserFlux();
+        }
+        if ($this->isRun('search_user')) {
+            $this->ImportSearchUser();
+        }
 
         $this->output->writeln(
             '<info>EXECUTION TIME : ' . number_format(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 2) . ' s</info>'
         );
+    }
+
+    protected function isRun($table)
+    {
+        if (!$this->input->getArgument('table')
+            || (in_array($table, $this->input->getArgument('table')) && !$this->input->getOption('reverse'))
+            || (!in_array($table, $this->input->getArgument('table')) && $this->input->getOption('reverse'))
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -321,7 +380,8 @@ class ImportDataCommand extends ContainerAwareCommand
                     idrub AS id,
                     idrub1 AS parent_id,
                     rub AS name
-                FROM newsrss.rubrique';
+                FROM newsrss.rubrique
+                ORDER BY rang';
 
         $statement = $this->conn->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount() * 2);
@@ -331,7 +391,7 @@ class ImportDataCommand extends ContainerAwareCommand
             $category = new Entity\Category();
 
             $category->setId($rub['id'])
-                ->setName($rub['name']);
+                ->setName(utf8_decode($rub['name']));
 
             $this->disabledAutoIncrement($category);
 
