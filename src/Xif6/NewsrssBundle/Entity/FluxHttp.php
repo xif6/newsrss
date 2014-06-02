@@ -4,6 +4,7 @@ namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * FluxHttp
@@ -76,6 +77,7 @@ class FluxHttp
      * @var \DateTime
      *
      * @ORM\Column(name="if_modified_since", type="datetime", nullable=true)
+     * @Assert\DateTime()
      */
     private $ifModifiedSince;
 

@@ -5,6 +5,8 @@ namespace Xif6\NewsrssBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Flux
@@ -35,6 +37,7 @@ class Flux
      * @var FluxHttp
      *
      * @ORM\OneToOne(targetEntity="FluxHttp", mappedBy="flux", cascade={"remove", "persist", "merge"})
+     * @JMS\Exclude
      */
     private $http;
 
@@ -58,6 +61,7 @@ class Flux
      *
      * @ORM\ManyToOne(targetEntity="Site", inversedBy="flux", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="site_id", referencedColumnName="id")
+     * @JMS\Exclude
      */
     private $site;
 
@@ -65,6 +69,7 @@ class Flux
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255, unique=true)
+     * @Assert\Url()
      */
     private $url;
 
@@ -79,6 +84,7 @@ class Flux
      * @var boolean
      *
      * @ORM\Column(name="display", type="boolean", options={"default"=false})
+     * @Assert\Type(type="bool")
      */
     private $display = false;
 
@@ -86,6 +92,7 @@ class Flux
      * @var boolean
      *
      * @ORM\Column(name="active", type="boolean", options={"default"=true})
+     * @Assert\Type(type="bool")
      */
     private $active = true;
 
@@ -93,6 +100,7 @@ class Flux
      * @var boolean
      *
      * @ORM\Column(name="new", type="boolean", options={"default"=false})
+     * @Assert\Type(type="bool")
      */
     private $new = false;
 
@@ -104,6 +112,7 @@ class Flux
      *        joinColumns={@ORM\JoinColumn(name="flux_id", referencedColumnName="id")},
      *        inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
      * )
+     * @JMS\Exclude
      */
     private $categories;
 
@@ -111,6 +120,7 @@ class Flux
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="UserFlux", mappedBy="flux", cascade={"persist", "merge"})
+     * @JMS\Exclude
      */
     private $userFlux;
 
@@ -118,6 +128,7 @@ class Flux
      * @var ArrayCollection
      *
      * @Gedmo\ReferenceMany(class="Xif6\NewsrssBundle\Document\Item", mappedBy="flux", sort={"date"="desc"}, limit=10)
+     * @JMS\Exclude
      */
     private $items;
 

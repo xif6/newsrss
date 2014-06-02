@@ -6,13 +6,14 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Xif6\NewsrssBundle\Entity\Flux;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ODM\Document(collection="item", repositoryClass="Xif6\NewsrssBundle\Document\ItemRepository")
  * @ODM\Indexes({
- *		@ODM\Index(keys={"flux_id"="asc", "url"="asc"}, options={"unique"=true}),
- *		@ODM\Index(keys={"flux_id"="asc", "title"="asc"}, options={"unique"=true}),
- *		@ODM\Index(keys={"flux_id"="asc", "date"="desc"})
+ *      @ODM\Index(keys={"flux_id"="asc", "url"="asc"}, options={"unique"=true}),
+ *      @ODM\Index(keys={"flux_id"="asc", "title"="asc"}, options={"unique"=true}),
+ *      @ODM\Index(keys={"flux_id"="asc", "date"="desc"})
  * })
  * @ODM\HasLifecycleCallbacks
  */
@@ -46,6 +47,7 @@ class Item
      * @var string
      *
      * @ODM\Field(name="title", type="string")
+     * @Assert\NotBlank()
      */
     protected $title;
 
@@ -53,6 +55,7 @@ class Item
      * @var string
      *
      * @ODM\Field(name="url", type="string")
+     * @Assert\Url()
      */
     protected $url;
 
@@ -81,6 +84,7 @@ class Item
      * @var \DateTime
      *
      * @ODM\Field(name="date", type="date")
+     * @Assert\DateTime()
      */
     protected $date;
 

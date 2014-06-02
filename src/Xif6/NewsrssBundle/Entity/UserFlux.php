@@ -4,6 +4,7 @@ namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * UserFlux
@@ -50,6 +51,7 @@ class UserFlux
      * @var boolean
      *
      * @ORM\Column(name="date", type="boolean")
+     * @Assert\Type(type="bool")
      */
     private $date = true;
 
@@ -57,6 +59,7 @@ class UserFlux
      * @var boolean
      *
      * @ORM\Column(name="category", type="boolean")
+     * @Assert\Type(type="bool")
      */
     private $category = true;
 
@@ -64,6 +67,7 @@ class UserFlux
      * @var boolean
      *
      * @ORM\Column(name="description", type="boolean")
+     * @Assert\Type(type="bool")
      */
     private $description = true;
 
@@ -71,6 +75,7 @@ class UserFlux
      * @var integer
      *
      * @ORM\Column(name="flux_nb", type="smallint")
+     * @Assert\Type(type="int")
      */
     private $fluxNb = 10;
 
@@ -78,6 +83,7 @@ class UserFlux
      * @var integer
      *
      * @ORM\Column(name="rank", type="smallint")
+     * @Assert\Type(type="int")
      */
     private $rank = 1;
 

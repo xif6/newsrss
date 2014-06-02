@@ -4,6 +4,7 @@ namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Site
@@ -32,6 +33,7 @@ class Site
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotBlank(message = "name.not_blank")
      */
     private $name;
 
@@ -39,6 +41,7 @@ class Site
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255, unique=true)
+     * @Assert\Url()
      */
     private $url;
 
