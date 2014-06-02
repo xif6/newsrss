@@ -1,36 +1,100 @@
 xif6_newsrss_annotation:
     resource: "@Xif6NewsrssBundle/Controller"
 
-xif6_newsrss_homepage:
+xif6_newsrss_default:
     pattern:  /
-    defaults: { _controller: Xif6NewsrssBundle:Default:index }
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /%locale%
+        permanent: true
+
+xif6_newsrss_homepage:
+    pattern:  /{_locale}
+    defaults:
+        _controller: Xif6NewsrssBundle:Default:index
+        _locale: %locale%
+    requirements:
+        _locale: en|fr
 
 xif6_newsrss_flux:
-    pattern: /actualite-{id}-{slug}.html
-    defaults: { _controller: Xif6NewsrssBundle:Flux:index, display: true }
+    pattern: /{_locale}/actualite-{id}-{slug}.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Flux:index
+        display: true
+        _format: html
+        _locale: %locale%
     requirements:
         id: \d+
         slug: ".+"
+        _format: html|json
+        _locale: en|fr
 
-xif6_newsrss_flux_items:
-    pattern: /items-{id}-{type}.{_format}
-    defaults: { _controller: Xif6NewsrssBundle:Flux:items }
+xif6_newsrss_item:
+    pattern: /{_locale}/items-{id}-{type}.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Item:index
+        _format: html
+        _locale: %locale%
     requirements:
         id: \d+
         type: default|user
         _format: html|json
+        _locale: en|fr
 
 xif6_newsrss_flux_most_users:
-    pattern: /flux-most-users.{_format}
-    defaults: { _controller: Xif6NewsrssBundle:Flux:mostUsers }
+    pattern: /{_locale}/flux-most-users.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Flux:mostUsers
+        _format: html
+        _locale: %locale%
     requirements:
         _format: html|json
+        _locale: en|fr
 
 xif6_newsrss_flux_last:
-    pattern: /last-flux.{_format}
-    defaults: { _controller: Xif6NewsrssBundle:Flux:lastFlux }
+    pattern: /{_locale}/last-flux.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Flux:lastFlux
+        _format: html
+        _locale: %locale%
     requirements:
         _format: html|json
+        _locale: en|fr
+
+xif6_newsrss_category_arbo:
+    pattern: /{_locale}/category-arbo.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Category:arbo
+        _format: html
+        _locale: %locale%
+    requirements:
+        _format: html|json
+        _locale: en|fr
+
+xif6_newsrss_category:
+    pattern: /{_locale}/category/{path}-{id}.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Category:index
+        _format: html
+        _locale: %locale%
+    requirements:
+        id: \d+
+        path: ".+"
+        _format: html|json
+        _locale: en|fr
+
+xif6_newsrss_search:
+    pattern: /{_locale}/search.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Search:index
+        _format: html
+        _locale: %locale%
+    requirements:
+        _format: html|json
+        _locale: en|fr
+
+
+
 
 xif6_newsrss_flux_add:
     pattern: /actualite-{id}ajout-{slug}.html

@@ -4,10 +4,12 @@ imports:
     - { resource: doctrine.yml }
     - { resource: doctrine_extensions.yml }
     - { resource: assetic.yml }
+    - { resource: fos_elastica.yml }
+    - { resource: knp_paginator.yml }
 
 framework:
     #esi:             ~
-    #translator:      { fallback: "%locale%" }
+    translator:      { fallback: "%locale%" }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
