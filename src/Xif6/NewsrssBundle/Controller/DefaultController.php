@@ -20,8 +20,10 @@ class DefaultController extends Controller
         return $this->render('Xif6NewsrssBundle:Default:hello.html.twig', array('name' => 'time'));
     }
 
-    public function indexAction()
+    public function indexAction($_locale)
     {
+        var_dump($_locale);
+        /*
         $dateRaw = 'mar 22 avr 2014';
         $xml = '<?xml version="1.0" encoding="utf-8"?>
 <feed ns="http://www.w3.org/2005/Atom">
@@ -73,13 +75,13 @@ class DefaultController extends Controller
         </item>
     </channel>
 </rss>';
-//*/
+//* /
         $pfd = $this->get('xif6_newsrss.parser.french_date_time');
         $pfr = $this->get('xif6_newsrss.parser.rss');
         $c = $pfr->parse($xml);
 //        var_dump('-----------', $c, '-----------', $c->items);
         $date = $pfd->parse($dateRaw);
-
+//*/
         //$date = new \Xif6\NewsrssBundle\Service\DateTime($dateRaw);
 //        var_dump($date->format('c'));
         $name = 'bienvenue';
