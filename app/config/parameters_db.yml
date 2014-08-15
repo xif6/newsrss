@@ -1,0 +1,10 @@
+parameters:
+    database_charset: UTF8
+
+    database_old_driver: pdo_mysql
+    database_old_host: ks2.xif6.com
+    database_old_port: null
+    database_old_name: newsrss
+    database_old_user: newsrss
+    database_old_password: megumi
+    database_old_charset: latin1
