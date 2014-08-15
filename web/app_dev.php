@@ -11,9 +11,11 @@ use Symfony\Component\Debug\Debug;
 // Feel free to remove this, extend it, or make something more sophisticated.
 if (isset($_SERVER['HTTP_CLIENT_IP'])
     || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-    || !in_array(
-        md5(@$_SERVER['REMOTE_ADDR']),
-        array(md5('127.0.0.1'), md5('fe80::1'), md5('::1'), '9e9dde078c7b9e881a50bf3feee2e449')
+    || !(in_array(
+            md5(@$_SERVER['REMOTE_ADDR']),
+            array(md5('127.0.0.1'), md5('fe80::1'), md5('::1'), '9e9dde078c7b9e881a50bf3feee2e449')
+        )
+        || substr(@$_SERVER['REMOTE_ADDR'], 0, 8) === '192.168.'
     )
 ) {
     header('HTTP/1.0 403 Forbidden');
