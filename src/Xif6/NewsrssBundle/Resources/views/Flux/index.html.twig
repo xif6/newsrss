@@ -8,7 +8,9 @@
     {{ flux.description }}
     <ul>
         {% for category in flux.categories %}
-            <li>{{ category.name }}</li>
+            <li>
+                <a href="{{ path('xif6_newsrss_category', { 'id': category.id, 'path': category.path, '_format': 'html' }) }}">{{ category.name }}</a>
+            </li>
         {% endfor %}
     </ul>
     <ul>
