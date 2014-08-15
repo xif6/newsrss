@@ -34,7 +34,6 @@ fos_elastica:
                         listener: ~ # by default, listens to "insert", "update" and "delete"
                         finder: ~
                 category:
-                    mappings:
                     persistence:
                         driver: orm # orm, mongodb, propel are available
                         model:  Xif6\NewsrssBundle\Entity\Category

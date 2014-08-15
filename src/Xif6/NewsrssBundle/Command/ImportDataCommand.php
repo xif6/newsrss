@@ -71,6 +71,7 @@ class ImportDataCommand extends ContainerAwareCommand
 
         $this->em = $this->doctrine->getManager();
         $this->conn = $this->em->getConnection();
+        $this->connOld = $this->getContainer()->get('doctrine.dbal.old_connection');
         $this->removeTimestampableListener();
 
 
@@ -156,7 +157,7 @@ class ImportDataCommand extends ContainerAwareCommand
                         site AS name_and_url,
                         MIN(date_insert) AS created,
                         MAX(date_insert) AS updated
-                    FROM newsrss.news
+                    FROM news
                     GROUP BY site
                     ORDER BY idnews)
                 UNION
@@ -164,13 +165,13 @@ class ImportDataCommand extends ContainerAwareCommand
                         site AS name_and_url,
                         MIN(date_insert) AS created,
                         MAX(date_insert) AS updated
-                    FROM newsrss.news_perso
+                    FROM news_perso
                     WHERE site != ""
                     GROUP BY site
                     ORDER BY idnews)) tmp
                 GROUP BY name_and_url';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount());
 
         while ($news = $statement->fetch()) {
@@ -204,7 +205,7 @@ class ImportDataCommand extends ContainerAwareCommand
                         date_insert AS created,
                         `date` AS updated,
                         false AS new
-                    FROM newsrss.news
+                    FROM news
                     UNION
                     SELECT
                         null AS id,
@@ -215,7 +216,7 @@ class ImportDataCommand extends ContainerAwareCommand
                         date_insert AS created,
                         `date` AS updated,
                         false AS new
-                    FROM newsrss.news_perso
+                    FROM news_perso
                     UNION
                     SELECT
                         null AS id,
@@ -226,24 +227,23 @@ class ImportDataCommand extends ContainerAwareCommand
                         MIN(`date`) AS created,
                         MAX(`date`) AS updated,
                         true AS new
-                    FROM newsrss.nouveau
+                    FROM nouveau
                     GROUP BY flux) t
                 GROUP BY url
                 ORDER BY id DESC';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount());
 
         $urls = array();
         $nbUrlNotExist = 0;
 
         while ($news = $statement->fetch()) {
-            $news['url'] = utf8_decode($news['url']);
             if (!preg_match('%^http%', $news['url'])) {
                 $news['url'] = 'http://' . $news['url'];
             }
             $urlConstraint = new Url();
-            $errorList = $this->getContainer()->get('validator')->validateValue($news['url'], $urlConstraint);
+            $errorList = $this->getContainer()->get('validator')->validate($news['url'], $urlConstraint);
 
             if (count($errorList) != 0 || in_array($news['url'], $urls)) {
                 $this->progress->advance();
@@ -259,9 +259,9 @@ class ImportDataCommand extends ContainerAwareCommand
 
             $flux = new Entity\Flux();
 
-            $flux->setName(utf8_decode($news['name']))
+            $flux->setName($news['name'])
                 ->setUrl($news['url'])
-                ->setDescription(utf8_decode($news['description']))
+                ->setDescription($news['description'])
                 ->setCreatedAt($this->toDateTime($news['created']))
                 ->setUpdatedAt($this->toDateTime($news['updated']))
                 ->setDisplay(false)
@@ -307,7 +307,7 @@ class ImportDataCommand extends ContainerAwareCommand
                     `If-Modified-Since` AS if_modified_since,
                     date_insert AS created,
                     `date` AS updated
-                FROM newsrss.news
+                FROM news
                 UNION
                 SELECT
                     null AS id,
@@ -320,9 +320,9 @@ class ImportDataCommand extends ContainerAwareCommand
                     `If-Modified-Since` AS if_modified_since,
                     date_insert AS created,
                     `date` AS updated
-                FROM newsrss.news_perso';
+                FROM news_perso';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount());
         $this->progress->setRedrawFrequency(10);
 
@@ -347,15 +347,15 @@ class ImportDataCommand extends ContainerAwareCommand
 
             $ifModifiedSince = null;
             if ($news['if_modified_since']) {
-                $ifModifiedSince = new \DateTime(utf8_decode($news['if_modified_since']));
+                $ifModifiedSince = new \DateTime($news['if_modified_since']);
             }
 
             $fluxHttp->setFlux($flux)
                 ->setResponseCode($news['status_code'])
-                ->setUrlRedirection(utf8_decode($news['url_redirection']))
-                ->setResponseStatus(utf8_decode($news['status_code_response']))
-                ->setError(utf8_decode($news['error']))
-                ->setIfNoneMatch(utf8_decode($news['if_none_match']))
+                ->setUrlRedirection($news['url_redirection'])
+                ->setResponseStatus($news['status_code_response'])
+                ->setError($news['error'])
+                ->setIfNoneMatch($news['if_none_match'])
                 ->setIfModifiedSince($ifModifiedSince)
                 ->setUpdatedSucces($updateSuccess)
                 ->setCreatedAt($this->toDateTime($news['created']))
@@ -380,10 +380,10 @@ class ImportDataCommand extends ContainerAwareCommand
                     idrub AS id,
                     idrub1 AS parent_id,
                     rub AS name
-                FROM newsrss.rubrique
+                FROM rubrique
                 ORDER BY rang';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount() * 2);
         $rubs = $statement->fetchAll();
 
@@ -391,7 +391,7 @@ class ImportDataCommand extends ContainerAwareCommand
             $category = new Entity\Category();
 
             $category->setId($rub['id'])
-                ->setName(utf8_decode($rub['name']));
+                ->setName($rub['name']);
 
             $this->disabledAutoIncrement($category);
 
@@ -428,9 +428,9 @@ class ImportDataCommand extends ContainerAwareCommand
         $sql = 'SELECT
                     idnews AS flux_id,
                     idrub AS category_id
-                FROM newsrss.news_rub';
+                FROM news_rub';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount());
         $this->progress->setRedrawFrequency(10);
 
@@ -464,9 +464,9 @@ class ImportDataCommand extends ContainerAwareCommand
                     verif AS enabled,
                     `date` AS created,
                     dernieremodif AS updated
-                FROM newsrss.login';
+                FROM login';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount());
         $this->progress->setRedrawFrequency(10);
 
@@ -474,9 +474,9 @@ class ImportDataCommand extends ContainerAwareCommand
             $user = new Entity\User();
 
             $user->setId($login['id'])
-                ->setUsername(utf8_decode($login['username']))
-                ->setPlainPassword(utf8_decode($login['password']))
-                ->setEmail(utf8_decode($login['email']))
+                ->setUsername($login['username'])
+                ->setPlainPassword($login['password'])
+                ->setEmail($login['email'])
                 ->setEnabled((bool)$login['enabled'])
                 ->setCreatedAt($this->toDateTime($login['created']))
                 ->setUpdatedAt($this->toDateTime($login['updated']));
@@ -516,10 +516,10 @@ class ImportDataCommand extends ContainerAwareCommand
                     rang AS rank_nb,
                     col AS rank_col,
                     color AS style
-                FROM newsrss.log_news
+                FROM log_news
                 ORDER BY user_id, rank_nb, rank_col';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount());
         $this->progress->setRedrawFrequency(10);
 
@@ -564,9 +564,9 @@ class ImportDataCommand extends ContainerAwareCommand
                     recherche AS query,
                     nb,
                     `date` AS created
-                FROM newsrss.recherche';
+                FROM recherche';
 
-        $statement = $this->conn->executeQuery($sql);
+        $statement = $this->connOld->executeQuery($sql);
         $this->progress->start($this->output, $statement->rowCount());
         $this->progress->setRedrawFrequency(10);
 
@@ -575,7 +575,7 @@ class ImportDataCommand extends ContainerAwareCommand
             for ($i = 0; $i < $recherche['nb']; $i++) {
                 $searchUser = new Entity\SearchUser();
 
-                $searchUser->setQuery(utf8_decode($recherche['query']))
+                $searchUser->setQuery($recherche['query'])
                     ->setCreatedAt($this->toDateTime($recherche['created']))
                     ->setUpdatedAt($this->toDateTime($recherche['created']));
 
