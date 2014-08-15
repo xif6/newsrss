@@ -1,97 +1,74 @@
 xif6_newsrss_annotation:
     resource: "@Xif6NewsrssBundle/Controller"
 
-xif6_newsrss_default:
+xif6_newsrss_homepage:
     pattern:  /
     defaults:
-        _controller: FrameworkBundle:Redirect:urlRedirect
-        path: /%locale%
-        permanent: true
-
-xif6_newsrss_homepage:
-    pattern:  /{_locale}
-    defaults:
         _controller: Xif6NewsrssBundle:Default:index
-        _locale: %locale%
-    requirements:
-        _locale: en|fr
+
 
 xif6_newsrss_flux:
-    pattern: /{_locale}/actualite-{id}-{slug}.{_format}
+    pattern: /actualite-{id}-{slug}.{_format}
     defaults:
         _controller: Xif6NewsrssBundle:Flux:index
         display: true
         _format: html
-        _locale: %locale%
     requirements:
         id: \d+
         slug: ".+"
         _format: html|json
-        _locale: en|fr
 
 xif6_newsrss_item:
-    pattern: /{_locale}/items-{id}-{type}.{_format}
+    pattern: /items-{id}-{type}.{_format}
     defaults:
         _controller: Xif6NewsrssBundle:Item:index
         _format: html
-        _locale: %locale%
     requirements:
         id: \d+
         type: default|user
         _format: html|json
-        _locale: en|fr
 
 xif6_newsrss_flux_most_users:
-    pattern: /{_locale}/flux-most-users.{_format}
+    pattern: /flux-most-users.{_format}
     defaults:
         _controller: Xif6NewsrssBundle:Flux:mostUsers
         _format: html
-        _locale: %locale%
     requirements:
         _format: html|json
-        _locale: en|fr
 
 xif6_newsrss_flux_last:
-    pattern: /{_locale}/last-flux.{_format}
+    pattern: /last-flux.{_format}
     defaults:
         _controller: Xif6NewsrssBundle:Flux:lastFlux
         _format: html
-        _locale: %locale%
     requirements:
         _format: html|json
-        _locale: en|fr
 
 xif6_newsrss_category_arbo:
-    pattern: /{_locale}/category-arbo.{_format}
+    pattern: /category-arbo.{_format}
     defaults:
         _controller: Xif6NewsrssBundle:Category:arbo
         _format: html
-        _locale: %locale%
     requirements:
         _format: html|json
-        _locale: en|fr
 
 xif6_newsrss_category:
-    pattern: /{_locale}/category/{path}-{id}.{_format}
+    pattern: /category/{path}-{id}.{_format}
     defaults:
         _controller: Xif6NewsrssBundle:Category:index
         _format: html
-        _locale: %locale%
     requirements:
         id: \d+
         path: ".+"
         _format: html|json
-        _locale: en|fr
 
 xif6_newsrss_search:
-    pattern: /{_locale}/search.{_format}
+    pattern: /search.{_format}
     defaults:
         _controller: Xif6NewsrssBundle:Search:index
         _format: html
-        _locale: %locale%
     requirements:
         _format: html|json
-        _locale: en|fr
 
 
 
