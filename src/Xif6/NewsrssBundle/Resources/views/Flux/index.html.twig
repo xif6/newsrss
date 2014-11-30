@@ -1,6 +1,6 @@
 {% extends 'Xif6NewsrssBundle::layout.html.twig' %}
 
-{% block container %}
+{% block content_left %}
     <a href="{{ path('xif6_newsrss_flux', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
     <br>
     <a href="{{ flux.url }}">RSS</a>

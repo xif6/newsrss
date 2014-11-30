@@ -2,7 +2,7 @@
 
 namespace Xif6\NewsrssBundle\Parser;
 
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
 use Xif6\NewsrssBundle\Service\Encoding;
 
 /**
@@ -17,7 +17,7 @@ class Xml
     protected $parserConfig;
 
     /**
-     * @var Validator
+     * @var RecursiveValidator
      */
     protected $validator;
 
@@ -38,7 +38,6 @@ class Xml
 
     /**
      * @param Array $parserConfig
-     * @param Validator $validator
      * @param LocaleDateTime $localeDateTime
      */
     public function __construct(Array $parserConfig, Encoding $mbString)
@@ -62,10 +61,10 @@ class Xml
     /**
      * Set validator
      *
-     * @param Validator $validator
+     * @param RecursiveValidator $validator
      * @return Xml
      */
-    public function setValidator(Validator $validator)
+    public function setValidator(RecursiveValidator $validator)
     {
         $this->validator = $validator;
         return $this;

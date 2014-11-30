@@ -1,0 +1,10 @@
+<div class="col-sm-12 text-center">
+    <p>
+        {% image '@Xif6NewsrssBundle/Resources/public/images/newsrss-80-15.jpg' output="images/logo.jpg" %}
+        <img src="{{ asset_url }}" alt="NewsRSS"/>
+        {% endimage %}
+        {% trans with {'%year%': 'now'|date('Y')} %}newsrss.copyright{% endtrans %}
+    </p>
+
+    <p>{% trans %}newsrss.cnil{% endtrans %}</p>
+</div>

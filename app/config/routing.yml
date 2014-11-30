@@ -1,18 +1,57 @@
-routing_locale:
-    resource: "routing_locale.yml"
+
+
+
+xif6_default:
+    pattern: /
+    defaults:
+        _controller: Xif6NewsrssBundle:Default:hello
+
+xif6_newsrss:
+    resource: "@Xif6NewsrssBundle/Resources/config/routing.yml"
     prefix:   /{_locale}
     defaults:
         _locale: %locale%
     requirements:
         _locale: en|fr
 
-routing_locale_old:
-    pattern:  /actualite-{id}-{slug}.{_format}
-    defaults:
-        _controller: FrameworkBundle:Redirect:redirect
-        route: xif6_newsrss_flux
-        permanent: true
-    requirements:
-        id: \d+
-        slug: ".+"
-        _format: html|json
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+    prefix: /
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+
+#
+#routing_locale:
+#    resource: "routing_locale.yml"
+#    prefix:   /{_locale}
+#    defaults:
+#        _locale: %locale%
+#    requirements:
+#        _locale: en|fr
+#
+#
+#
+#routing_locale_old:
+#    pattern:  /actualite-{id}-{slug}.{_format}
+#    defaults:
+#        _controller: FrameworkBundle:Redirect:redirect
+#        route: xif6_newsrss_flux
+#        permanent: true
+#    requirements:
+#        id: \d+
+#        slug: ".+"
+#        _format: html|json

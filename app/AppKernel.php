@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
+            new Xif6\UserBundle\Xif6UserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -1,9 +1,20 @@
-<html>
-<head>
-</head>
-<body>
-Hello {{ name }}!
-<br>
-{% trans %}welcome.newsrss{% endtrans %}
-</body>
-</html>
+{% extends 'Xif6NewsrssBundle::layout.html.twig' %}
+
+
+{% block content_left %}
+    <h1>{% trans with {'%site.name.color%': "site.name.color"|trans} %}newsrss.welcome{% endtrans %}</h1>
+
+    <h2>{% trans %}newsrss.whats{% endtrans %}</h2>
+    <p>{% trans %}newsrss.explain{% endtrans %}</p>
+
+    <h2>{% trans %}rss.whats{% endtrans %}</h2>
+    <p>{% trans %}rss.explain{% endtrans %}</p>
+
+    <h3>{% trans with {'%site.name.color%': "site.name.color"|trans} %}newsrss.example{% endtrans %}</h3>
+    <div class="row">
+        <div class="col-sm-offset-2 col-sm-8">
+            {{ render(path('xif6_newsrss_item_most_users')) }}
+        </div>
+    </div>
+
+{% endblock %}
