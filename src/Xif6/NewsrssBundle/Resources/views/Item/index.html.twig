@@ -1,10 +1,19 @@
-<ol>
-    {% for item in items %}
-        <li>
-            {{ item.title }} -
-            {% if item.date %}
-                {{ item.date|date('c') }}
-            {% endif %}
-        </li>
-    {% endfor %}
-</ol>
+<div class="row">
+    <div class="col-sm-8"><a href="{{ flux.site.url }}">{{ flux.name }}</a></div>
+    <div class="col-sm-4"></div>
+</div>
+<div class="row">
+    <ol class="col-sm-12">
+        {% for item in items %}
+            <li>
+                <a href="{{ item.url }}">
+                    {{ item.title }} -
+                    {% if item.date %}
+                        {{ item.date|date('c') }}
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ol>
+</div>
+

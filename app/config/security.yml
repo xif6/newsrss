@@ -30,6 +30,7 @@ security:
             form_login:
                 provider:       fos_userbundle
                 csrf_provider:  form.csrf_provider
+                use_referer:    true
 #        secured_area:
 #            anonymous: ~
 

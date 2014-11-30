@@ -3,21 +3,36 @@
 {% block meta %}
     {# media queries : window width of the sreen AND zoom to 1 #}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% endblock meta %}
+{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" media="screen">
-{% endblock stylesheets %}
+{% endblock %}
 
 {% block body %}
-    <div class="container-fluid">
-        <header>
-            {% block header %}{% endblock header %}
+    {#<div class="container-fluid">#}
+    <div class="container">
+        <header class="row">
+            {% block header %}{% include 'Xif6NewsrssBundle::header.html.twig' %}{% endblock %}
         </header>
-        {% block container %}{% endblock container %}
-        <footer>
-            {% block footer %}{% endblock footer %}
+        <div class="row">
+            {% block container %}
+            <div class="col-sm-8">
+                {% block content_left %}{% endblock %}
+            </div>
+            <div class="col-sm-4">
+                {% block content_right %}
+                    {% render(path('fos_user_security_login')) %}
+                    {% render(path('xif6_newsrss_category_arbo')) %}
+                    {% render(path('xif6_newsrss_flux_most_users')) %}
+                    {% render(path('xif6_newsrss_flux_last')) %}
+                {% endblock %}
+            </div>
+        </div>
+        {% endblock %}
+        <footer class="row">
+            {% block footer %}{% include 'Xif6NewsrssBundle::footer.html.twig' %}{% endblock %}
         </footer>
     </div>
 {% endblock body %}
@@ -26,4 +41,9 @@
     {{ parent() }}
     <script src="{{ asset('js/jquery.js') }}"></script>
     <script src="{{ asset('js/bootstrap.js') }}"></script>
-{% endblock javascripts %}
+{% endblock %}
+{% block tracking %}
+    {{ parent() }}
+    {% include 'Xif6NewsrssBundle::google-analytics.html.twig' %}
+    {% include 'Xif6NewsrssBundle::xiti.html.twig' %}
+{% endblock %}

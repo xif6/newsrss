@@ -84,7 +84,7 @@ class FluxRepository extends EntityRepository
      * @param bool $withNbUsers
      * @return array
      */
-    public function mostUsers($limit = 10, $andWhere = [], $withNbUsers = false)
+    public function mostUsers($limit = 10, $andWhere = [], $withNbUsers = false, $withSite = false)
     {
         $qb = $this->createQueryBuilder('f');
         $qb->addSelect('count(f) AS ' . ($withNbUsers ? '' : 'HIDDEN') . ' nbUsers')
@@ -93,6 +93,9 @@ class FluxRepository extends EntityRepository
             ->leftjoin('f.http', 'fh')
             ->andWhere($qb->expr()->eq('f.display', ':display'))
             ->setParameter('display', true);
+        if ($withSite) {
+            $qb->addSelect('s')->innerjoin('f.site', 's');
+        }
         if ($andWhere) {
             foreach ($andWhere as $field => $value) {
                 $qb->andWhere($qb->expr()->eq('f.' . $field, ':' . $field))
