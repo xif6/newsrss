@@ -34,28 +34,24 @@ class CrawlerCommand extends ContainerAwareCommand
         $crawler = $this->getContainer()->get('xif6.newsrss.crawler.flux');
 
         //$all = $this->em->getRepository('Xif6NewsrssBundle:Flux')->findBy(['id' => 686], null/*, 500*/);
-        $all = $this->em->getRepository('Xif6NewsrssBundle:Flux')->findAll();
-        foreach (array_chunk($all, 20) as $allFlux) {
-            $lockFiles = [];
-            foreach ($allFlux as $flux) {
-                $lockFilePath = self::LOCK_FILE_DIR . ($flux->getId() % 100) . '/' . $flux->getId() . '.lock';
-                $fs->mkdir(dirname($lockFilePath));
-                $lockFile = new \SplFileObject($lockFilePath, 'w');
-                $lock = $lockFile->flock(LOCK_EX | LOCK_NB);
-                if (!$lock) {
-                    continue;
-                }
-                $lockFiles[] = $lockFile;
-                $fluxRequest = new \Xif6\NewsrssBundle\Crawler\FluxRequest($flux, $this->em);
-                $fluxRequest->setDirectory($directory)
-                    ->getRequest()->setOptions($options);
-                $crawler->add($fluxRequest);
+        $allFlux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->findAll();
+
+        foreach ($allFlux as $flux) {
+            $lockFilePath = self::LOCK_FILE_DIR . ($flux->getId() % 100) . '/' . $flux->getId() . '.lock';
+            $fs->mkdir(dirname($lockFilePath));
+            $lockFile = new \SplFileObject($lockFilePath, 'w');
+            $lock = $lockFile->flock(LOCK_EX | LOCK_NB);
+            if (!$lock) {
+                continue;
             }
+            $fluxRequest = new \Xif6\NewsrssBundle\Crawler\FluxRequest($flux, $this->em);
+            $fluxRequest->setDirectory($directory)
+                ->getRequest()->setOptions($options);
+            $crawler->add($fluxRequest);
             $crawler->send();
+
             $this->em->flush();
-            foreach ($lockFiles as $lockFile) {
-                $lockFile->flock(LOCK_UN);
-            }
+            $lockFile->flock(LOCK_UN);
         }
     }
 
