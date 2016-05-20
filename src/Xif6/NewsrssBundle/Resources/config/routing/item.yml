@@ -1,0 +1,17 @@
+xif6_newsrss_item_index:
+    pattern: /{id}-{type}.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Item:index
+        _format: html
+    requirements:
+        id: \d+
+        type: default|user
+        _format: html|json
+
+xif6_newsrss_item_most_users:
+    pattern: /most-users.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Item:mostUsers
+        _format: html
+    requirements:
+        _format: html|json

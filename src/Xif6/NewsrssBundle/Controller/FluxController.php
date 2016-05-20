@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Xif6\NewsrssBundle\Annotation\CanonicalLink;
 use Xif6\NewsrssBundle\Entity\Flux;
 use Xif6\NewsrssBundle\Entity\UserFlux;

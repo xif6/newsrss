@@ -42,8 +42,6 @@ class UserFlux
      *
      * @ORM\ManyToOne(targetEntity="Flux", inversedBy="userFlux", cascade={"persist", "merge"})
      * @ORM\JoinColumn(name="flux_id", referencedColumnName="id", nullable=false)
-     *
-     * @JMS\Exclude
      */
     private $flux;
 

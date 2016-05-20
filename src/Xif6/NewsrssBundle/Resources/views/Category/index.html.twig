@@ -1,12 +1,12 @@
 {% extends 'Xif6NewsrssBundle::layout.html.twig' %}
 
 {% block container %}
-    <a href="{{ path('xif6_newsrss_category', { 'id': category.id, 'path': category.path }) }}">{{ category.name }}</a>
+    <a href="{{ path('xif6_newsrss_category_index', { 'id': category.id, 'path': category.path }) }}">{{ category.name }}</a>
     <br>
     <ul>
         {% for flux in fluxes %}
             <li>
-                <a href="{{ path('xif6_newsrss_flux', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
+                <a href="{{ path('xif6_newsrss_flux_index', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
             </li>
         {% endfor %}
     </ul>

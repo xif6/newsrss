@@ -3,6 +3,7 @@
 namespace Xif6\NewsrssBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 use Gedmo\Mapping\Annotation as Gedmo;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -36,6 +37,8 @@ class User extends BaseUser
      *
      * @ORM\OneToMany(targetEntity="UserFlux", mappedBy="user", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
      * @ORM\OrderBy({"rank" = "ASC"})
+     *
+     * @JMS\Exclude
      */
     protected $userFlux;
 

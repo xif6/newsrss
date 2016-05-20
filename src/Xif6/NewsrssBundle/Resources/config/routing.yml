@@ -2,98 +2,31 @@ xif6_newsrss_annotation:
     resource: "@Xif6NewsrssBundle/Controller"
 
 xif6_newsrss_homepage:
-    pattern:  /
+    pattern: /
     defaults:
         _controller: Xif6NewsrssBundle:Default:index
 
+xif6_newsrss_category:
+    resource: "@Xif6NewsrssBundle/Resources/config/routing/category.yml"
+    prefix: /category
 
 xif6_newsrss_flux:
-    pattern: /actualite-{id}-{slug}.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Flux:index
-        display: true
-        _format: html
-    requirements:
-        id: \d+
-        slug: ".+"
-        _format: html|json
+    resource: "@Xif6NewsrssBundle/Resources/config/routing/flux.yml"
+    prefix: /flux
 
 xif6_newsrss_item:
-    pattern: /items-{id}-{type}.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Item:index
-        _format: html
-    requirements:
-        id: \d+
-        type: default|user
-        _format: html|json
+    resource: "@Xif6NewsrssBundle/Resources/config/routing/item.yml"
+    prefix: /item
 
-xif6_newsrss_item_most_users:
-    pattern: /items-most-users.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Item:mostUsers
-        _format: html
-    requirements:
-        _format: html|json
-
-xif6_newsrss_flux_most_users:
-    pattern: /flux-most-users.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Flux:mostUsers
-        _format: html
-    requirements:
-        _format: html|json
-
-xif6_newsrss_flux_last:
-    pattern: /last-flux.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Flux:lastFlux
-        _format: html
-    requirements:
-        _format: html|json
-
-xif6_newsrss_category_arbo:
-    pattern: /category-arbo.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Category:arbo
-        _format: html
-    requirements:
-        _format: html|json
-
-xif6_newsrss_category:
-    pattern: /category/{path}-{id}.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Category:index
-        _format: html
-    requirements:
-        id: \d+
-        path: ".+"
-        _format: html|json
+xif6_newsrss_user:
+    resource: "@Xif6NewsrssBundle/Resources/config/routing/user.yml"
+    prefix: /user
 
 xif6_newsrss_search:
-    pattern: /search.{_format}
-    defaults:
-        _controller: Xif6NewsrssBundle:Search:index
-        _format: html
-    requirements:
-        _format: html|json
+    resource: "@Xif6NewsrssBundle/Resources/config/routing/search.yml"
+    prefix: /search
 
 
-
-
-xif6_newsrss_flux_add:
-    pattern: /actualite-{id}ajout-{slug}.html
-    defaults: { _controller: Xif6NewsrssBundle:Flux:add }
-    requirements:
-        id: \d+
-        slug: ".+"
-
-xif6_newsrss_flux_del:
-    pattern: /actualite-{id}suppr-{slug}.html
-    defaults: { _controller: Xif6NewsrssBundle:Flux:del }
-    requirements:
-        id: \d+
-        slug: ".+"
 
 xif6_newsrss_hello:
     pattern:  /hello/{name}

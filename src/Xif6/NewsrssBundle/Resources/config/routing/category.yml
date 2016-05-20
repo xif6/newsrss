@@ -1,0 +1,18 @@
+xif6_newsrss_category_index:
+    pattern: /{path}-{id}.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Category:index
+        _format: html
+    requirements:
+        id: \d+
+        path: ".+"
+        _format: html|json
+
+xif6_newsrss_category_arbo:
+    pattern: /arbo.{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Category:arbo
+        _format: html
+    requirements:
+        _format: html|json
+

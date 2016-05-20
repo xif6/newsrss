@@ -1,0 +1,7 @@
+xif6_newsrss_search_index:
+    pattern: .{_format}
+    defaults:
+        _controller: Xif6NewsrssBundle:Search:index
+        _format: html
+    requirements:
+        _format: html|json

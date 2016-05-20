@@ -5,11 +5,11 @@
     {% block meta %}{% endblock meta %}
     <title>{% block title %}Welcome!{% endblock %}</title>
     {% block stylesheets %}{% endblock stylesheets %}
+    {% block javascripts %}{% endblock javascripts %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
 </head>
 <body>
 {% block body %}{% endblock body %}
-{% block javascripts %}{% endblock javascripts %}
 
 <script type="text/javascript">
     $(document).ready(function () {

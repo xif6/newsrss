@@ -1,7 +1,7 @@
 {% extends 'Xif6NewsrssBundle::layout.html.twig' %}
 
 {% block content_left %}
-    <a href="{{ path('xif6_newsrss_flux', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
+    <a href="{{ path('xif6_newsrss_flux_index', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
     <br>
     <a href="{{ flux.url }}">RSS</a>
     <br>
@@ -9,7 +9,7 @@
     <ul>
         {% for category in flux.categories %}
             <li>
-                <a href="{{ path('xif6_newsrss_category', { 'id': category.id, 'path': category.path, '_format': 'html' }) }}">{{ category.name }}</a>
+                <a href="{{ path('xif6_newsrss_category_index', { 'id': category.id, 'path': category.path, '_format': 'html' }) }}">{{ category.name }}</a>
             </li>
         {% endfor %}
     </ul>
@@ -17,11 +17,11 @@
         {% for siteFlux in flux.site.flux %}
             {% if flux.id != siteFlux.id %}
                 <li>
-                    <a href="{{ path('xif6_newsrss_flux', { 'id': siteFlux.id, 'slug': siteFlux.slug }) }}">{{ siteFlux.id }} {{ siteFlux.name }}</a>
+                    <a href="{{ path('xif6_newsrss_flux_index', { 'id': siteFlux.id, 'slug': siteFlux.slug }) }}">{{ siteFlux.id }} {{ siteFlux.name }}</a>
                 </li>
             {% endif %}
         {% endfor %}
     </ul>
 
     {{ render(path('xif6_newsrss_item', { 'id': flux.id, 'type': 'default' })) }}
-{% endblock %}
+{% endblock content_left %}

@@ -22,9 +22,9 @@ class ItemController extends Controller
     public function indexAction($type, Flux $flux)
     {
         //*
-        if ($type == 'user' && $this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if ($type == 'user' && $this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             $userFlux = $this->getDoctrine()
-                ->getrepository('Xif6NewsrssBundle:UserFlux')
+                ->getRepository('Xif6NewsrssBundle:UserFlux')
                 ->findOneBy(array('flux' => $flux->getId(), 'user' => $this->getUser()->getId()));
             $item_nb = $userFlux->getFluxNb();
         } else {
@@ -55,7 +55,7 @@ class ItemController extends Controller
     protected function getItems(Flux $flux, $fluxNb)
     {
         return $this->get('doctrine_mongodb')
-            ->getrepository('Xif6NewsrssBundle:Item')
+            ->getRepository('Xif6NewsrssBundle:Item')
             ->findBy(array('flux_id' => $flux->getId()), array('date' => 'DESC'), $fluxNb);
     }
 }

@@ -2,7 +2,7 @@
     <ul>
         {% for category in categories %}
             <li>
-                <a href="{{ path('xif6_newsrss_category', { 'id': category.id, 'path': category.path, '_format': 'html' }) }}">{{ category.name }}</a>
+                <a href="{{ path('xif6_newsrss_category_index', { 'id': category.id, 'path': category.path, '_format': 'html' }) }}">{{ category.name }}</a>
                 {% if category.__children %}
                     {{ _self.recursiveCategories(category.__children) }}
                 {% endif %}

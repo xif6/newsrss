@@ -1,0 +1,57 @@
+{% extends 'Xif6NewsrssBundle::layout.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid" ng-app="userApp" ng-controller="IndexCtrl">
+        {% verbatim %}
+    <div class="col-fluid col-fluid-xl-4 col-fluid-lg-3 col-fluid-md-2 col-fluid-sm-1">
+        <div ng-repeat="flux in fluxes" class="panel panel-{{ flux.style || 'default' }} col-fluid-cell" ng-class="">
+            <div class="panel-heading">{{ flux.flux.name }}</div>
+            <div class="panel-body">
+                <div ng-repeat="item in items['flux_' + flux.flux.id]">
+                    <span>{{ item.date | date : 'dd/MM HH:mm' }} : </span><a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+    </div>
+    {#
+    <div class="container-fluid" ng-app="userApp" ng-controller="IndexCtrl">
+        {% verbatim %}
+        <div class="row">
+            <div ng-repeat="flux in fluxes" class="col-sm-12 col-md-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">{{ flux.name }}</div>
+                    <div class="panel-body">
+                        <div ng-repeat="item in items['flux_' + flux.id]">
+                            <a href="{{ item.url }}">{{ item.date | date : 'dd/MM HH:mm' }} : {{ item.title }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endverbatim %}
+    </div>
+    #}
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        userAppCfg = {
+            url: {
+                items: '{{ path('xif6_newsrss_user_items') }}',
+                fluxes: '{{ path('xif6_newsrss_user_fluxes') }}'
+            }
+        };
+    </script>
+
+    <script src="{{ asset('js/angular.js') }}"></script>
+    {% javascripts
+    '@Xif6NewsrssBundle/Resources/public/js/angular/userApp.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

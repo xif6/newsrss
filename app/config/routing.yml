@@ -1,18 +1,8 @@
-
-
-
-xif6_default:
-    pattern: /
-    defaults:
-        _controller: Xif6NewsrssBundle:Default:hello
-
 xif6_newsrss:
     resource: "@Xif6NewsrssBundle/Resources/config/routing.yml"
-    prefix:   /{_locale}
+    prefix:   /
     defaults:
         _locale: %locale%
-    requirements:
-        _locale: en|fr
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
