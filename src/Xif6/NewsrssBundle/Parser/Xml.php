@@ -76,7 +76,12 @@ class Xml
      */
     public function parse($stringXml)
     {
-        $stringXml = $this->recoverXml($stringXml);
+        try {
+            $stringXml = $this->recoverXml($stringXml);
+        } catch (\Exception $e) {
+            return false;
+        }
+
         if (!$stringXml) {
             return false;
         }
@@ -99,7 +104,11 @@ class Xml
         foreach ($parser as $rootNode => $data) {
             $nodes = array();
 
-            $xpath = $xml->xpath($data['xpath']);
+            try {
+                $xpath = $xml->xpath($data['xpath']);
+            } catch (\Exception $e) {
+            }
+
             foreach ($xpath as $xmlElmt) {
                 if (isset($data['node'])) {
                     $nodes[] = $this->parseNode($data['node'], $xmlElmt);
