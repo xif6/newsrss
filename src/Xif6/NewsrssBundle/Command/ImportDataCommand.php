@@ -507,16 +507,18 @@ class ImportDataCommand extends ContainerAwareCommand
     {
         $this->output->writeln('<info>START ImportUserFlux</info>');
         $sql = 'SELECT
-                    idlogin AS user_id,
-                    idnews AS flux_id,
-                    `date` AS display_date,
-                    category AS display_category,
-                    `desc` AS display_description,
-                    nb AS flux_nb,
-                    rang AS rank_nb,
-                    col AS rank_col,
-                    color AS style
+                    log_news.idlogin AS user_id,
+                    log_news.idnews AS flux_id,
+                    log_news.`date` AS display_date,
+                    log_news.category AS display_category,
+                    log_news.`desc` AS display_description,
+                    log_news.nb AS flux_nb,
+                    log_news.rang AS rank_nb,
+                    log_news.col AS rank_col,
+                    log_news.color AS style,
+                    news_perso.url AS url
                 FROM log_news
+                LEFT JOIN news_perso USING (idnews)
                 ORDER BY user_id, rank_nb, rank_col';
 
         $statement = $this->connOld->executeQuery($sql);
@@ -527,7 +529,11 @@ class ImportDataCommand extends ContainerAwareCommand
 
         while ($lognews = $statement->fetch()) {
             $user = $this->em->getRepository('Xif6NewsrssBundle:User')->find($lognews['user_id']);
-            $flux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->find($lognews['flux_id']);
+            if (!empty($lognews['url'])) {
+                $flux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->findOneByUrl($lognews['url']);
+            } else {
+                $flux = $this->em->getRepository('Xif6NewsrssBundle:Flux')->find($lognews['flux_id']);
+            }
 
             if ($user && $flux) {
                 if (!isset($rank[$lognews['user_id']])) {
