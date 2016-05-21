@@ -78,6 +78,7 @@ class UserController extends Controller
 
         $qb
             ->join('uf.flux', 'f')
+            ->join('f.site', 's')
             ->andWhere($qb->expr()->eq('uf.user', ':user'))
             ->setParameter('user', $this->getUser()->getId())
             ->addOrderBy('uf.rank', 'ASC');
@@ -85,7 +86,6 @@ class UserController extends Controller
         $userFlux = $qb
             ->getQuery()
             ->execute();
-//            ->getArrayResult();
 
         $serializer = $this->get('jms_serializer');
         $userFlux = $serializer->serialize($userFlux, 'json');
