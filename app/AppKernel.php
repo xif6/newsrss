@@ -21,7 +21,6 @@ class AppKernel extends Kernel
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
-            new AppBundle\AppBundle(),
             new UserBundle\UserBundle(),
             new NewsrssBundle\NewsrssBundle(),
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
