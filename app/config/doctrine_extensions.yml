@@ -1,0 +1,94 @@
+# services to handle doctrine extensions
+# import it in config.yml
+services:
+    # KernelRequest listener
+#    extension.listener:
+#        class: Acme\DemoBundle\EventListener\DoctrineExtensionListener
+#        calls:
+#            - [ setContainer, [ @service_container ] ]
+#        tags:
+#            # translatable sets locale after router processing
+#            - { name: kernel.event_listener, event: kernel.request, method: onLateKernelRequest, priority: -10 }
+#            # loggable hooks user username if one is in security context
+#            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+
+    # Doctrine Extension listeners to handle behaviors
+    gedmo.listener.tree:
+        class: Gedmo\Tree\TreeListener
+        tags:
+            - { name: doctrine.event_subscriber }
+        calls:
+            - [ setAnnotationReader, [ @annotation_reader ] ]
+
+#    gedmo.listener.translatable:
+#        class: Gedmo\Translatable\TranslatableListener
+#        tags:
+#            - { name: doctrine.event_subscriber }
+#        calls:
+#            - [ setAnnotationReader, [ @annotation_reader ] ]
+#            - [ setDefaultLocale, [ %locale% ] ]
+#            - [ setTranslationFallback, [ false ] ]
+
+    gedmo.listener.reference.mysql:
+        class: Gedmo\References\ReferencesListener
+        tags:
+            - { name: doctrine.event_subscriber }
+        arguments: [ @doctrine_mongodb ]
+        calls:
+            - [ setAnnotationReader, [ @annotation_reader ] ]
+
+    gedmo.listener.reference.mongodb:
+        class: Gedmo\References\ReferencesListener
+        tags:
+            - { name: doctrine_mongodb.odm.event_subscriber }
+        arguments: [ @doctrine ]
+        calls:
+            - [ setAnnotationReader, [ @annotation_reader ] ]
+
+#    gedmo.listener.reference.mysql:
+#        class: Gedmo\References\ReferencesListener
+#        tags:
+#            - { name: doctrine.event_subscriber }
+#        calls:
+#            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+#            - [ registerManager, [ 'document', "@doctrine_mongodb.odm.document_manager" ] ]
+
+#    gedmo.listener.reference.mongodb:
+#         class: Gedmo\References\ReferencesListener
+#         tags:
+#            - { name: doctrine_mongodb.odm.event_subscriber }
+#         calls:
+#            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+#            - [ registerManager, [ 'entity', "@doctrine.orm.entity_manager" ] ]
+
+    gedmo.listener.timestampable:
+        class: Gedmo\Timestampable\TimestampableListener
+        tags:
+            - { name: doctrine.event_subscriber }
+            - { name: doctrine_mongodb.odm.event_subscriber }
+        calls:
+            - [ setAnnotationReader, [ @annotation_reader ] ]
+
+    gedmo.listener.sluggable:
+        class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_subscriber }
+        calls:
+            - [ setAnnotationReader, [ @annotation_reader ] ]
+
+#    gedmo.listener.sortable:
+#        class: Gedmo\Sortable\SortableListener
+#        tags:
+#            - { name: doctrine.event_subscriber }
+#        calls:
+#            - [ setAnnotationReader, [ @annotation_reader ] ]
+#
+#    gedmo.listener.loggable:
+#        class: Gedmo\Loggable\LoggableListener
+#        tags:
+#            - { name: doctrine.event_subscriber }
+#        calls:
+#            - [ setAnnotationReader, [ @annotation_reader ] ]
+#
+

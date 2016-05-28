@@ -1,0 +1,18 @@
+newsrss_category_index:
+    pattern: /{path}-{id}.{_format}
+    defaults:
+        _controller: NewsrssBundle:Category:index
+        _format: html
+    requirements:
+        id: \d+
+        path: ".+"
+        _format: html|json
+
+newsrss_category_arbo:
+    pattern: /arbo.{_format}
+    defaults:
+        _controller: NewsrssBundle:Category:arbo
+        _format: html
+    requirements:
+        _format: html|json
+

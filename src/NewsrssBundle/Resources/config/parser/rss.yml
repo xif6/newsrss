@@ -1,0 +1,139 @@
+parameters:
+    newsrss.parser.xml.class: NewsrssBundle\Parser\Xml
+    newsrss.parser.rss.config:
+        head:
+            xpath:
+                ns:
+                    - /*
+            node:
+                title:
+                    xpath:
+                        ns:
+                            - title
+                            - channel/title
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                description:
+                    xpath:
+                        ns:
+                            - description
+                            - channel/description
+                            - subtitle
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                link:
+                    xpath:
+                        ns:
+                            - link
+                            - link/@href
+                            - guid
+                            - channel/link
+                            - channel/link/@href
+                            - channel/guid
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                    constraints:
+                        - Url
+                date:
+                    xpath:
+                        ns:
+                            - channel/lastBuildDate
+                            - channel/pubDate
+                            - channel/date
+                            - updated
+                        dc:
+                            - channel/dc:date
+                    modifiers:
+                        - localeDateTime
+                    constraints:
+                        - DateTime
+        items:
+            xpath:
+                ns:
+                    - //item
+                    - //entry
+            multiple: true
+            required: true
+            node:
+                title:
+                    xpath:
+                        ns:
+                            - title
+                    required: true
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                description:
+                    xpath:
+                        ns:
+                            - description
+                            - content
+                        content:
+                            - content:encoded
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                category:
+                    xpath:
+                        ns:
+                            - category
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                link:
+                    xpath:
+                        ns:
+                            - guid[not(@isPermaLink="false")]
+                            - link
+                            - link/@href
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                    constraints:
+                        - Url
+                    required: true
+                date:
+                    xpath:
+                        ns:
+                            - lastBuildDate
+                            - pubDate
+                            - date
+                            - updated
+                            - published
+                        dc:
+                            - dc:date
+                        a10:
+                            - a10:updated
+                    modifiers:
+                        - localeDateTime
+                    constraints:
+                        - DateTime
+                image:
+                    xpath:
+                        ns:
+                            - image/link
+                            - logo
+                    modifiers:
+                        - string
+                        - toUtf8
+                        - htmlEntityDecode
+                    constraints:
+                        - Url
+
+services:
+    newsrss.parser.rss:
+        class: %newsrss.parser.xml.class%
+        arguments: [%newsrss.parser.rss.config%, @newsrss.encoding]
+        calls:
+            - [ setValidator , [ @validator ] ]
+            - [ setLocaleDateTime , [ @newsrss.parser.french_date_time ] ]

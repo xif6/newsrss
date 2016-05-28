@@ -1,0 +1,19 @@
+{% extends 'NewsrssBundle::layout.html.twig' %}
+
+{% block content_left %}
+    <ul>
+        {% for category in categories %}
+            <li>
+                <a href="{{ path('newsrss_category_index', { 'id': category.id, 'path': category.path }) }}">{{ category.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for flux in fluxes %}
+            <li>
+                <a href="{{ path('newsrss_flux_index', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    {{ knp_pagination_render(fluxes) }}
+{% endblock %}

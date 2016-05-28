@@ -1,0 +1,24 @@
+site:
+    name:
+        color: <span class="primary-color">News</span><span class="secondary-color">RSS</span>
+newsrss:
+    welcome: Bienvenue sur %site.name.color%
+    whats:  Qu'est ce que NewsRSS ?
+    explain: NewsRSS est le site d'information qui regroupe tous les flux RSS sur les sujets qui vous intéressent.<br />NewsRSS vous permet de créer votre propre page de NEWS.
+    example: Exemple de ce que %site.name.color% vous propose :
+    copyright: Copyright © 2005-%year%, tous droits réservés.
+    cnil: CNIL déclaration N° 1114258
+rss:
+    whats: Qu'est ce qu'un flux RSS ?
+    explain: RSS est un standard basé sur XML qui définit le format de description de données destinées à la syndication de contenu.<br />Ce standard connait un succès croissant et de plus en plus de sites proposent des actualités dynamiques sous ce format.<br />Mais les flux RSS ne sont pas lisibles directement.
+
+test:
+    locale1: fr
+    locale2: fr
+'test machin : lol': rrrrrrrrrrrr4444
+'test ''machin'' : lol': dddddd
+test 'machin' lol: aaaaaaaa55
+
+"test machin\r\nlol": rrr55
+"test machin\nlol": rrr
+"test machin\r\nlol": rrr5599

@@ -1,0 +1,24 @@
+newsrss_user_index:
+    pattern: /
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        _format: html
+        template: 'NewsrssBundle:User:index.html.twig'
+    requirements:
+        _format: html
+
+newsrss_user_fluxes:
+    pattern: /fluxes.{_format}
+    defaults:
+        _controller: NewsrssBundle:User:fluxes
+        _format: json
+    requirements:
+        _format: json
+
+newsrss_user_items:
+    pattern: /items.{_format}
+    defaults:
+        _controller: NewsrssBundle:User:items
+        _format: json
+    requirements:
+        _format: json

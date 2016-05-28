@@ -1,0 +1,29 @@
+imports:
+    - { resource: parser/rss.yml }
+    - { resource: parser/locale_date_time.yml }
+#    - { resource: @NewsrssBundle/Resources/config/crawler.xml }
+    - { resource: crawler.xml }
+    - { resource: encoding.yml }
+
+parameters:
+    newsrss.listener.document.class: NewsrssBundle\EventListener\DocumentListener
+#    newsrss.example.class: NewsrssBundle\Example
+
+services:
+#    newsrss.listener:
+#        class: %newsrss.listener.document.class%
+#        tags:
+#            - { name: doctrine_mongodb.odm.event_listener, event: prePersist }
+#    newsrss.example:
+#        class: %newsrss.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+
+    newsrss.listener.canonical_link_listner:
+        class: NewsrssBundle\EventListener\CanonicalLinkListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, priority: -10 }
+            - { name: kernel.event_listener, event: kernel.exception }
+        arguments: [@annotation_reader, @router]
+
+

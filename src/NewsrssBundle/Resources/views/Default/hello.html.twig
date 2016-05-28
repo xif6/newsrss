@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+{{ app.request.locale }}<br/>
+
+Hello {{ name }}!<br/>
+
+{% trans %}test.locale1{% endtrans %}<br/>
+{% trans %}test.locale2{% endtrans %}<br/>
+{% trans %}test machin : lol{% endtrans %}<br/>
+{% trans %}test 'machin' : lol{% endtrans %}<br/>
+{% trans %}test 'machin' lol{% endtrans %}<br/>
+{% trans %}test machin
+lol{% endtrans %}<br/>
+</body>
+</html>

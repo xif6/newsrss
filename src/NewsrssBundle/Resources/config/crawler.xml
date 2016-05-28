@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <parameters>
+        <parameter key="newsrss.crawler.flux.class">NewsrssBundle\Crawler\Crawler</parameter>
+        <parameter key="newsrss.crawler.flux.xml_dir">%kernel.cache_dir%/newsrss/flux_xml/</parameter>
+        <parameter key="newsrss.crawler.flux.options_request" type="collection">
+            <parameter key="redirect">10</parameter>
+            <parameter key="postredir" type="constant">\http\Client\Curl\POSTREDIR_ALL</parameter>
+            <parameter key="compress">true</parameter>
+            <parameter key="useragent"></parameter>
+            <parameter key="timeout">100</parameter>
+        </parameter>
+    </parameters>
+
+    <services>
+        <service id="newsrss.crawler.flux" class="%newsrss.crawler.flux.class%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+        </service>
+    </services>
+</container>

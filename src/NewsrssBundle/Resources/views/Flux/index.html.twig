@@ -1,0 +1,27 @@
+{% extends 'NewsrssBundle::layout.html.twig' %}
+
+{% block content_left %}
+    <a href="{{ path('newsrss_flux_index', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
+    <br>
+    <a href="{{ flux.url }}">RSS</a>
+    <br>
+    {{ flux.description }}
+    <ul>
+        {% for category in flux.categories %}
+            <li>
+                <a href="{{ path('newsrss_category_index', { 'id': category.id, 'path': category.path, '_format': 'html' }) }}">{{ category.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for siteFlux in flux.site.flux %}
+            {% if flux.id != siteFlux.id %}
+                <li>
+                    <a href="{{ path('newsrss_flux_index', { 'id': siteFlux.id, 'slug': siteFlux.slug }) }}">{{ siteFlux.id }} {{ siteFlux.name }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    {{ render(path('newsrss_item', { 'id': flux.id, 'type': 'default' })) }}
+{% endblock content_left %}

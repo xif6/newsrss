@@ -1,0 +1,7 @@
+<ol>
+    {% for flux in fluxes %}
+        <li>
+            <a href="{{ path('newsrss_flux_index', { 'id': flux.id, 'slug': flux.slug }) }}">{{ flux.name }}</a>
+        </li>
+    {% endfor %}
+</ol>

@@ -1,0 +1,42 @@
+fos_elastica:
+    clients:
+        default: { host: localhost, port: 9200 }
+        # add url for bug vendor/friendsofsymfony/elastica-bundle/FOS/ElasticaBundle/DependencyInjection/Configuration.php:99
+    serializer: ~
+    indexes:
+        newsrss:
+            client: default
+            settings:
+                index:
+                    analysis:
+                        analyzer:
+                            default: # analyzer name default for default analyzer for ALL index
+                                type: snowball
+                                language: French
+                            custom_french_analyzer:
+                                type: custom
+                                tokenizer: letter
+                                filter: ["asciifolding", "lowercase", "french_stem", "stop_fr"]
+                        filter:
+                            stop_fr:
+                                type: "stop"
+                                stopwords: ["l", "m", "t", "qu", "n", "s", "j", "d"]
+            types:
+                flux:
+                    mappings:
+                        name: { boost: 10 }
+                    persistence:
+                        elastica_to_model_transformer:
+                            query_builder_method: createSearchQueryBuilder
+                        driver: orm # orm, mongodb, propel are available
+                        model:  NewsrssBundle\Entity\Flux
+                        provider: ~
+                        listener: ~ # by default, listens to "insert", "update" and "delete"
+                        finder: ~
+                category:
+                    persistence:
+                        driver: orm # orm, mongodb, propel are available
+                        model:  NewsrssBundle\Entity\Category
+                        provider: ~
+                        listener: ~ # by default, listens to "insert", "update" and "delete"
+                        finder: ~

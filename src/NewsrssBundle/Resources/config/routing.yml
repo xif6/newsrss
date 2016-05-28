@@ -1,0 +1,33 @@
+newsrss_annotation:
+    resource: "@NewsrssBundle/Controller"
+
+newsrss_homepage:
+    pattern: /
+    defaults:
+        _controller: NewsrssBundle:Default:index
+
+newsrss_category:
+    resource: "@NewsrssBundle/Resources/config/routing/category.yml"
+    prefix: /category
+
+newsrss_flux:
+    resource: "@NewsrssBundle/Resources/config/routing/flux.yml"
+    prefix: /flux
+
+newsrss_item:
+    resource: "@NewsrssBundle/Resources/config/routing/item.yml"
+    prefix: /item
+
+newsrss_user:
+    resource: "@NewsrssBundle/Resources/config/routing/user.yml"
+    prefix: /user
+
+newsrss_search:
+    resource: "@NewsrssBundle/Resources/config/routing/search.yml"
+    prefix: /search
+
+
+
+newsrss_hello:
+    pattern:  /hello/{name}
+    defaults: { _controller: NewsrssBundle:Default:hello }

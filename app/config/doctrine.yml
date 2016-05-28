@@ -1,0 +1,57 @@
+# Doctrine Configuration
+doctrine:
+    dbal:
+        default_connection:     default
+        connections:
+            default:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_name%"
+                user:     "%database_user%"
+                password: "%database_password%"
+                charset:  "%database_charset%"
+                # if using pdo_sqlite as your database driver, add the path in parameters.yml
+                # e.g. database_path: "%kernel.root_dir%/data/data.db3"
+                # path:     "%database_path%"
+            old:
+                driver:   "%database_old_driver%"
+                host:     "%database_old_host%"
+                port:     "%database_old_port%"
+                dbname:   "%database_old_name%"
+                user:     "%database_old_user%"
+                password: "%database_old_password%"
+                charset:  "%database_old_charset%"
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        auto_mapping: true
+
+doctrine_mongodb:
+    connections:
+        default:
+            server:         "%mongodb_server%"
+            options:        {}
+    default_database:       newsrss_sf28
+    document_managers:
+        default:
+            auto_mapping:   true
+
+## START FOR gedmo/doctrine-extensions  ##
+#        mappings:
+#            translatable:
+#                type: annotation
+#                alias: Gedmo
+#                prefix: Gedmo\Translatable\Entity
+#                dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Entity"
+#            loggable:
+#                type: annotation
+#                alias: Gedmo
+#                prefix: Gedmo\Loggable\Entity
+#                dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Loggable/Entity"
+#            tree:
+#                type: annotation
+#                alias: Gedmo
+#                prefix: Gedmo\Tree\Entity
+#                dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Tree/Entity"
+## END FOR gedmo/doctrine-extensions  ##

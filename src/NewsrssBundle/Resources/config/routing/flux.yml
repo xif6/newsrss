@@ -1,0 +1,63 @@
+newsrss_flux_index:
+    pattern: /{id}-{slug}.{_format}
+    defaults:
+        _controller: NewsrssBundle:Flux:index
+        display: true
+        _format: html
+    requirements:
+        id: \d+
+        slug: ".+"
+        _format: html|json
+
+newsrss_flux_user_data:
+    pattern: /user-data.{_format}
+    defaults:
+        _controller: NewsrssBundle:Flux:userData
+        _format: html
+    requirements:
+        _format: html|json
+
+newsrss_flux_user:
+    pattern: /user-data.{_format}
+    defaults:
+        _controller: NewsrssBundle:Flux:userData
+        _format: html
+    requirements:
+        _format: html|json
+
+newsrss_flux_most_users:
+    pattern: /most-users.{_format}
+    defaults:
+        _controller: NewsrssBundle:Flux:mostUsers
+        _format: html
+    requirements:
+        _format: html|json
+
+newsrss_flux_last:
+    pattern: /last.{_format}
+    defaults:
+        _controller: NewsrssBundle:Flux:lastFlux
+        _format: html
+    requirements:
+        _format: html|json
+
+
+
+
+
+
+
+newsrss_flux_add:
+    pattern: /{id}ajout-{slug}.html
+    defaults: { _controller: NewsrssBundle:Flux:add }
+    requirements:
+        id: \d+
+        slug: ".+"
+
+newsrss_flux_del:
+    pattern: /{id}suppr-{slug}.html
+    defaults: { _controller: NewsrssBundle:Flux:del }
+    requirements:
+        id: \d+
+        slug: ".+"
+
