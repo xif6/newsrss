@@ -1,0 +1,28 @@
+{
+  "name": "newsrss",
+  "version": "1.0.0",
+  "dependencies": {
+    "auto-reload-brunch": "^2.7.1",
+    "clean-css-brunch": "^2.0.0",
+    "coffee-script": "^1.10.0",
+    "css-brunch": "^2.6.1",
+    "eslint": "^2.11.0",
+    "eslint-brunch": "^3.6.0",
+    "jshint-brunch": "^2.0.0",
+    "less-brunch": "^2.6.0",
+    "typescript": "^1.8.10",
+    "typescript-brunch": "^0.8.1",
+    "uglify-js-brunch": "^2.0.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xif6/newsrss.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xif6/newsrss/issues"
+  },
+  "homepage": "https://github.com/xif6/newsrss#readme"
+}

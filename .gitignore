@@ -52,3 +52,11 @@
 .*.swp
 .idea
 
+# Dependency directories
+node_modules
+
+### Bower ###
+bower_components
+.bower-cache
+.bower-registry
+.bower-tmp
