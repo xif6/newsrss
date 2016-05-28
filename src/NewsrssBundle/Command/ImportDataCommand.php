@@ -186,6 +186,7 @@ class ImportDataCommand extends ContainerAwareCommand
             $this->progress->advance();
         }
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
     }
 
@@ -238,6 +239,8 @@ class ImportDataCommand extends ContainerAwareCommand
         $urls = array();
         $nbUrlNotExist = 0;
 
+        $batchSize = 20;
+        $i = 0;
         while ($news = $statement->fetch()) {
             if (!preg_match('%^http%', $news['url'])) {
                 $news['url'] = 'http://' . $news['url'];
@@ -281,10 +284,16 @@ class ImportDataCommand extends ContainerAwareCommand
 
             $this->em->persist($flux);
 
+            if ((++$i % $batchSize) === 0) {
+                $this->em->flush();
+                $this->em->clear();
+            }
+
             $this->progress->advance();
         }
 
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
         $this->output->writeln('nbUrlNotExist : ' . $nbUrlNotExist);
         $this->output->writeln('');
@@ -367,6 +376,7 @@ class ImportDataCommand extends ContainerAwareCommand
         }
 
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
     }
 
@@ -416,6 +426,7 @@ class ImportDataCommand extends ContainerAwareCommand
         }
 
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
     }
 
@@ -447,6 +458,7 @@ class ImportDataCommand extends ContainerAwareCommand
         }
 
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
     }
 
@@ -488,6 +500,7 @@ class ImportDataCommand extends ContainerAwareCommand
         }
 
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
 
         $command = $this->getApplication()->find('fos:user:promote');
@@ -556,6 +569,7 @@ class ImportDataCommand extends ContainerAwareCommand
             $this->progress->advance();
         }
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
     }
 
@@ -591,6 +605,7 @@ class ImportDataCommand extends ContainerAwareCommand
             $this->progress->advance();
         }
         $this->em->flush();
+        $this->em->clear();
         $this->progress->finish();
     }
 
