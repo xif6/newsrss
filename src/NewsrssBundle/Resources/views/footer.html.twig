@@ -1,8 +1,6 @@
 <div class="col-sm-12 text-center">
     <p>
-        {% image '@NewsrssBundle/Resources/public/images/newsrss-80-15.jpg' output="images/logo.jpg" %}
-        <img src="{{ asset_url }}" alt="NewsRSS"/>
-        {% endimage %}
+        <img src="bundles/newsrss/images/newsrss-80-15.jpg" alt="NewsRSS"/>
         {% trans with {'%year%': 'now'|date('Y')} %}newsrss.copyright{% endtrans %}
     </p>
 
