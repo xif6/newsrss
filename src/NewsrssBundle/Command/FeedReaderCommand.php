@@ -89,6 +89,7 @@ class FeedReaderCommand extends ContainerAwareCommand
 
     private function cleanString($s)
     {
+        $s = strip_tags($s);
         $s = trim(preg_replace(['/(\r\n|\n|\r)/', '/\s+/'], ' ', $s));
         return html_entity_decode($s, ENT_QUOTES | ENT_HTML5);
     }
