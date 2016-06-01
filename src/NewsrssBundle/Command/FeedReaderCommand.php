@@ -25,34 +25,11 @@ class FeedReaderCommand extends ContainerAwareCommand
         $reader = $this->getContainer()->get('debril.reader');
         $itemRepository = $this->dm->getRepository('NewsrssBundle:Item');
 
-        $url = 'http://www.clubic.com/articles.rss';
-        $url = 'http://www.nextinpact.com/rss/news.xml';
-        $feed = $reader->getFeedContent($url);
-        var_dump($itemRss = $feed->getItems()[0]);
-        $item = new Item();
-        $category = $image = null;
-        if (count($itemRss->getCategories())) {
-            $category = current($itemRss->getCategories())->getName();
-        }
-        if (count($itemRss->getMedias())) {
-            foreach ($itemRss->getMedias() as $media) {
-                if (substr($media->getType(), 0, 5) == 'image') {
-                    $image = $media->geturl();
-                }
-            }
-        }
-        $item
-            ->setTitle($this->cleanString($itemRss->getTitle()))
-            ->setDescription($this->cleanString($itemRss->getDescription()))
-            ->setCategory($category)
-            ->setUrl($itemRss->getLink())
-            ->setDate($itemRss->getUpdated())
-            ->setImage($image);
-
         //$all = $this->em->getRepository('NewsrssBundle:Flux')->findBy(['id' => 686], null/*, 500*/);
         $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findAll();
 
         foreach ($allFlux as $flux) {
+            var_dump($flux->getUrl());
             $feed = $reader->getFeedContent($flux->getUrl());
 
             foreach ($feed->getItems() as $itemRss) {
