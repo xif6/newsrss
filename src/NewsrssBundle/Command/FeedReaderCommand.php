@@ -48,8 +48,6 @@ class FeedReaderCommand extends ContainerAwareCommand
             ->setUrl($itemRss->getLink())
             ->setDate($itemRss->getUpdated())
             ->setImage($image);
-        var_dump($item);
-        die();
 
         //$all = $this->em->getRepository('NewsrssBundle:Flux')->findBy(['id' => 686], null/*, 500*/);
         $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findAll();
@@ -83,8 +81,6 @@ class FeedReaderCommand extends ContainerAwareCommand
 
         }
 
-        $feed = $reader->getFeedContent($url);
-        var_dump($feed->getItems()[0]);
     }
 
     private function cleanString($s)
