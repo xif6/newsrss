@@ -21,13 +21,34 @@ class FeedReaderCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->em = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $this->dm = $this->getContainer()->get('doctrine.odm.mongodb.document_manager');
         $reader = $this->getContainer()->get('debril.reader');
         $itemRepository = $this->dm->getRepository('NewsrssBundle:Item');
 
         $url = 'http://www.clubic.com/articles.rss';
         $url = 'http://www.nextinpact.com/rss/news.xml';
         $feed = $reader->getFeedContent($url);
-        var_dump($feed->getItems()[0]);
+        var_dump($itemRss = $feed->getItems()[0]);
+        $item = new Item();
+        $category = $image = null;
+        if (count($itemRss->getCategories())) {
+            $category = current($itemRss->getCategories())->getName();
+        }
+        if (count($itemRss->getMedias())) {
+            foreach ($itemRss->getMedias() as $media) {
+                if (substr($media->getType(), 0, 5) == 'image') {
+                    $image = $media->geturl();
+                }
+            }
+        }
+        $item
+            ->setTitle($itemRss->getTitle())
+            ->setDescription($itemRss->getDescription())
+            ->setCategory($category)
+            ->setUrl($itemRss->getLink())
+            ->setDate($itemRss->getUpdated())
+            ->setImage($image);
+        var_dump($item);
         die();
 
         //$all = $this->em->getRepository('NewsrssBundle:Flux')->findBy(['id' => 686], null/*, 500*/);
@@ -38,15 +59,26 @@ class FeedReaderCommand extends ContainerAwareCommand
 
             foreach ($feed->getItems() as $itemRss) {
                 $item = new Item();
+                $category = $image = null;
+                if (count($itemRss->getCategories())) {
+                    $category = current($itemRss->getCategories())->getName();
+                }
+                if (count($itemRss->getMedias())) {
+                    foreach ($itemRss->getMedias() as $media) {
+                        if (substr($media->getType(), 0, 5) == 'image') {
+                            $image = $media->geturl();
+                        }
+                    }
+                }
                 $item
-                    ->setTitle($itemRss->title)
-                    ->setDescription($itemRss->description)
-                    ->setCategory($itemRss->category)
-                    ->setUrl($itemRss->link)
-                    ->setDate($itemRss->date)
-                    ->setImage($itemRss->image)
+                    ->setTitle($itemRss->getTitle())
+                    ->setDescription($itemRss->getDescription())
+                    ->setCategory($category)
+                    ->setUrl($itemRss->getLink())
+                    ->setDate($itemRss->getUpdated())
+                    ->setImage($image)
                     ->setFluxId($flux->getId());
-                $itemRepository->upsert($item, $flux->head->date);
+                $itemRepository->upsert($item, $itemRss->getUpdated());
             }
 
         }
