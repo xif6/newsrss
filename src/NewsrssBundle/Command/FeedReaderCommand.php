@@ -42,8 +42,8 @@ class FeedReaderCommand extends ContainerAwareCommand
             }
         }
         $item
-            ->setTitle($itemRss->getTitle())
-            ->setDescription($itemRss->getDescription())
+            ->setTitle($this->cleanString($itemRss->getTitle()))
+            ->setDescription($this->cleanString($itemRss->getDescription()))
             ->setCategory($category)
             ->setUrl($itemRss->getLink())
             ->setDate($itemRss->getUpdated())
@@ -71,8 +71,8 @@ class FeedReaderCommand extends ContainerAwareCommand
                     }
                 }
                 $item
-                    ->setTitle($itemRss->getTitle())
-                    ->setDescription($itemRss->getDescription())
+                    ->setTitle($this->cleanString($itemRss->getTitle()))
+                    ->setDescription($this->cleanString($itemRss->getDescription()))
                     ->setCategory($category)
                     ->setUrl($itemRss->getLink())
                     ->setDate($itemRss->getUpdated())
@@ -85,6 +85,12 @@ class FeedReaderCommand extends ContainerAwareCommand
 
         $feed = $reader->getFeedContent($url);
         var_dump($feed->getItems()[0]);
+    }
+
+    private function cleanString($s)
+    {
+        $s = trim(preg_replace(['/(\r\n|\n|\r)/', '/\s+/'], ' ', $s));
+        return html_entity_decode($s, ENT_QUOTES | ENT_HTML5);
     }
 
 
