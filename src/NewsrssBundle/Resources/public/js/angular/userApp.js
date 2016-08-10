@@ -1,8 +1,6 @@
 'use strict';
 
-angular.module('userApp', [
-        /*'ui.bootstrap'*/
-    ])
+angular.module('userApp', [])
     .controller('IndexCtrl',
         ['$scope', '$filter', '$http',
             function ($scope, $filter, $http) {

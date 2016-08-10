@@ -124,7 +124,6 @@ class FluxRequest extends Request
 
 
                 $file = fopen($this->getPath(), 'c');
-                var_dump($this->getPath());
                 if (flock($file, LOCK_EX)) {
                     $file = fopen($this->getPath(), 'c');
                     flock($file, LOCK_EX);

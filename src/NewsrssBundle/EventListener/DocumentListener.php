@@ -16,4 +16,4 @@ class DocumentListener
             $dm->getRepository(get_class($document))->checkUnique($document);
         }
     }
-} 
+}

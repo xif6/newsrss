@@ -17,7 +17,6 @@ class DefaultController extends Controller
      */
     public function timeAction($time)
     {
-        sleep($time);
         return $this->render('NewsrssBundle:Default:hello.html.twig', array('name' => 'time'));
     }
 

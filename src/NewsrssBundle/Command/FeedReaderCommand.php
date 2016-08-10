@@ -4,10 +4,12 @@ namespace NewsrssBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Filesystem\Filesystem;
 use NewsrssBundle\Document\Item;
+use Symfony\Component\Security\Acl\Exception\Exception;
 
 class FeedReaderCommand extends ContainerAwareCommand
 {
@@ -15,7 +17,13 @@ class FeedReaderCommand extends ContainerAwareCommand
     {
         $this
             ->setName('newsrss:feed-reader')
-            ->setDescription('Read feed');
+            ->setDescription('Read feed')
+            ->addOption(
+                'all',
+                null,
+                InputOption::VALUE_NONE,
+                'Parse ALL flux (include flux without user)'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -26,11 +34,22 @@ class FeedReaderCommand extends ContainerAwareCommand
         $itemRepository = $this->dm->getRepository('NewsrssBundle:Item');
 
         //$all = $this->em->getRepository('NewsrssBundle:Flux')->findBy(['id' => 686], null/*, 500*/);
-        $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findAll();
+        if ($input->getOption('all')) {
+            $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findAll();
+        } else {
+            $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findWithUser();
+        }
 
         foreach ($allFlux as $flux) {
-            var_dump($flux->getUrl());
-            $feed = $reader->getFeedContent($flux->getUrl());
+            $output->writeln($flux->getUrl());
+            try {
+                $feed = $reader->getFeedContent($flux->getUrl(), $flux->getHttp()->getUpdatedSucces());
+            } catch (\Exception $e) {
+                $output->writeln('ERROR :' . $e->getMessage());
+                continue;
+            }
+            $flux->getHttp()->setUpdatedSucces(new \DateTime());
+            $this->em->flush();
 
             foreach ($feed->getItems() as $itemRss) {
                 $item = new Item();

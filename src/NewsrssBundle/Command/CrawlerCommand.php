@@ -50,7 +50,7 @@ class CrawlerCommand extends ContainerAwareCommand
             $crawler->add($fluxRequest);
             $crawler->send();
 
-            $this->em->flush();
+            $this->em->flush($fluxRequest);
             $lockFile->flock(LOCK_UN);
         }
     }
