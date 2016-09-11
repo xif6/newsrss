@@ -63,6 +63,7 @@ class ImportDataCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $start = microtime(true);
         $text = '';
         $this->input = $input;
         $this->output = $output;
@@ -104,32 +105,32 @@ class ImportDataCommand extends ContainerAwareCommand
 
 
         if ($this->isRun('site')) {
-            $this->ImportSite();
+            $this->importSite();
         }
         if ($this->isRun('flux')) {
-            $this->ImportFlux();
+            $this->importFlux();
         }
         if ($this->isRun('flux_http')) {
-            $this->ImportFluxHttp();
+            $this->importFluxHttp();
         }
         if ($this->isRun('category')) {
-            $this->ImportCategory();
+            $this->importCategory();
         }
         if ($this->isRun('flux_category')) {
-            $this->ImportFluxCategory();
+            $this->importFluxCategory();
         }
         if ($this->isRun('user')) {
-            $this->ImportUser();
+            $this->importUser();
         }
         if ($this->isRun('user_flux')) {
-            $this->ImportUserFlux();
+            $this->importUserFlux();
         }
         if ($this->isRun('search_user')) {
-            $this->ImportSearchUser();
+            $this->importSearchUser();
         }
 
         $this->output->writeln(
-            '<info>EXECUTION TIME : ' . number_format(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 2) . ' s</info>'
+            '<info>EXECUTION TIME : ' . number_format(microtime(true) - $start, 2) . ' s</info>'
         );
     }
 
@@ -149,9 +150,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import site from old database
      */
-    protected function ImportSite()
+    protected function importSite()
     {
-        $this->output->writeln('<info>START ImportSite</info>');
+        $this->output->writeln('<info>START importSite</info>');
         $sql = 'SELECT * FROM (
                     (SELECT
                         site AS name_and_url,
@@ -193,9 +194,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import flux from old database
      */
-    protected function ImportFlux()
+    protected function importFlux()
     {
-        $this->output->writeln('<info>START ImportFlux</info>');
+        $this->output->writeln('<info>START importFlux</info>');
         $sql = 'SELECT * FROM (
                     SELECT
                         idnews AS id,
@@ -302,9 +303,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import fluxhttp from old database
      */
-    protected function ImportFluxHttp()
+    protected function importFluxHttp()
     {
-        $this->output->writeln('<info>START ImportFluxHttp</info>');
+        $this->output->writeln('<info>START importFluxHttp</info>');
         $sql = 'SELECT
                     idnews AS id,
                     statut AS status_code,
@@ -383,9 +384,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import category from old database
      */
-    protected function ImportCategory()
+    protected function importCategory()
     {
-        $this->output->writeln('<info>START ImportCategory</info>');
+        $this->output->writeln('<info>START importCategory</info>');
         $sql = 'SELECT
                     idrub AS id,
                     idrub1 AS parent_id,
@@ -433,9 +434,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import fluxcategory from old database
      */
-    protected function ImportFluxCategory()
+    protected function importFluxCategory()
     {
-        $this->output->writeln('<info>START ImportFluxCategory</info>');
+        $this->output->writeln('<info>START importFluxCategory</info>');
         $sql = 'SELECT
                     idnews AS flux_id,
                     idrub AS category_id
@@ -465,9 +466,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import user from old database
      */
-    protected function ImportUser()
+    protected function importUser()
     {
-        $this->output->writeln('<info>START ImportUser</info>');
+        $this->output->writeln('<info>START importUser</info>');
         $sql = 'SELECT
                     idlogin AS id,
                     log AS username,
@@ -516,9 +517,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import userflux from old database
      */
-    public function ImportUserFlux()
+    public function importUserFlux()
     {
-        $this->output->writeln('<info>START ImportUserFlux</info>');
+        $this->output->writeln('<info>START importUserFlux</info>');
         $sql = 'SELECT
                     log_news.idlogin AS user_id,
                     log_news.idnews AS flux_id,
@@ -576,9 +577,9 @@ class ImportDataCommand extends ContainerAwareCommand
     /**
      * Import searchuser from old database
      */
-    public function ImportSearchUser()
+    public function importSearchUser()
     {
-        $this->output->writeln('<info>START ImportSearchUser</info>');
+        $this->output->writeln('<info>START importSearchUser</info>');
 
         $sql = 'SELECT
                     recherche AS query,

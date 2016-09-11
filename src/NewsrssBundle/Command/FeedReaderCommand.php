@@ -41,11 +41,11 @@ class FeedReaderCommand extends ContainerAwareCommand
         }
 
         foreach ($allFlux as $flux) {
-            var_dump($flux->getUrl());
+            $output->writeln($flux->getUrl());
             try {
                 $feed = $reader->getFeedContent($flux->getUrl(), $flux->getHttp()->getUpdatedSucces());
             } catch (\Exception $e) {
-                var_dump('ERROR', $e->getMessage());
+                $output->writeln('ERROR :' . $e->getMessage());
                 continue;
             }
             $flux->getHttp()->setUpdatedSucces(new \DateTime());

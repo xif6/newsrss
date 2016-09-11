@@ -88,7 +88,7 @@ class CanonicalLinkListener
         }
     }
 
-    protected function getParameters(array $params, $request, $name = null)
+    protected function getParameters(array $params, Request $request, $name = null)
     {
         if ($name) {
             $object = $request->attributes->get($name);

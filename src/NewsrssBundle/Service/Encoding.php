@@ -23,7 +23,7 @@ class Encoding
      */
     protected $htmlEntityMaps = [];
 
-    function __construct()
+    public function __construct()
     {
         $this->detectOrder = mb_detect_order();
     }

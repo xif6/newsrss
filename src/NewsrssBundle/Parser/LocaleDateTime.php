@@ -26,7 +26,7 @@ class LocaleDateTime
     /**
      * @param array $regex
      */
-    function __construct(Array $conf)
+    public function __construct(Array $conf)
     {
         $this->regexPattern = array_column($conf['regex'], 'pattern');
         $this->regexReplacement = array_column($conf['regex'], 'replacement');
@@ -68,5 +68,4 @@ class LocaleDateTime
     {
         return preg_replace($this->regexPattern, $this->regexReplacement, $string);
     }
-
-} 
+}

@@ -60,7 +60,6 @@ class FluxRepository extends EntityRepository
             ->setParameter('display', true)
             ->setParameter('category', $categoryId);
         if ($andWhere) {
-            var_dump($andWhere);
             foreach ($andWhere as $field => $value) {
                 $qb->andWhere($qb->expr()->eq('f.' . $field, ':' . $field))
                     ->setParameter($field, $value);
@@ -134,29 +133,11 @@ class FluxRepository extends EntityRepository
      */
     public function mostUsersDQL($limit = 10, $withNbUsers = false)
     {
-        // same request to DQL
-        $rsm = new ResultSetMappingBuilder($this->_em);
-        $rsm->addRootEntityFromClassMetadata('NewsrssBundle:Flux', 'f');
-        if ($withNbUsers) {
-            $rsm->addScalarResult('nbUsers', 'nbUsers');
-        }
-        $rsm->addJoinedEntityFromClassMetadata(
-            'NewsrssBundle:FluxHttp',
-            'fh',
-            'f',
-            'http',
-            ['id' => 'flux_http_id', 'created_at' => 'created_at_fh', 'updated_at' => 'updated_at_fh']
-        );
-        $sql = 'SELECT ' . $rsm . ', count(*) AS nbUsers
-                FROM flux f
-                INNER JOIN user_flux uf ON f.id = uf.flux_id
-                LEFT JOIN flux_http fh ON f.id = fh.flux_id
-                WHERE f.display = true
-                GROUP BY f.id
-                ORDER BY nbUsers DESC
-                LIMIT ' . $limit;
-        $query = $this->_em->createNativeQuery($sql, $rsm);
-        $fluxes = $query->getResult();
+        $qb = $this->createQueryBuilder('f');
+        $qb->innerjoin('f.userFlux', 'uf');
+        $fluxes = $qb
+            ->getQuery()
+            ->execute();
 
         return $fluxes;
     }

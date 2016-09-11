@@ -35,7 +35,7 @@ class ParserCommand extends ContainerAwareCommand
         //$finder->files()->name('rss.xml')->depth(1)->size('> 0k')->sortByModifiedTime()->in('/tmp/');
 
         foreach ($finder as $fileInfo) {
-            var_dump($fileInfo->getRealpath() /* , $fileInfo*/);
+            $output->writeln($fileInfo->getRealpath());
             if ($fileInfo->isFile() && $fileInfo->isReadable() && $fileInfo->getSize()) {
                 $file = $fileInfo->openFile('r');
                 if (!$file->flock(LOCK_EX | LOCK_NB)) {
@@ -50,7 +50,7 @@ class ParserCommand extends ContainerAwareCommand
                 if ($a) {
                     $this->saveItems($a, $this->getFluxId($fileInfo->getFilename()));
                 } else {
-                    var_dump('ERROR PARSE REQUIRE');
+                    $output->writeln('ERROR PARSE REQUIRE');
                 }
                 $fs->remove($fileInfo->getRealpath());
                 $file->flock(LOCK_UN);

@@ -1,7 +1,5 @@
 'use strict';
 
-//console.log(angular);
-
 angular.module('userApp', [])
     .controller('IndexCtrl',
         ['$scope', '$filter', '$http',

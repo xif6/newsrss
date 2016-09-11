@@ -51,7 +51,6 @@
 
 *~
 .*.swp
-.idea
 
 # Dependency directories
 node_modules
@@ -61,3 +60,4 @@ bower_components
 .bower-cache
 .bower-registry
 .bower-tmp
+

@@ -158,7 +158,7 @@ class Xml
             || stripos($string, '<html') !== false
             || strripos($string, '</html>') !== false
         ) {
-            var_dump('ERROR');
+            echo 'ERROR';
             return false;
         }
         $string = str_replace('&amp;', '&', $string);
