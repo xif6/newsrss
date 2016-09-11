@@ -27,6 +27,21 @@ angular.module('userApp', [])
                     }
                     return '';
                 };
+
+                $scope.today = function (date) {
+                    var today = new Date();
+                    var date = new Date(date);
+                    today.setHours(0);
+                    today.setMinutes(0);
+                    today.setSeconds(0);
+                    today.setMilliseconds(0);
+                    date.setHours(0);
+                    date.setMinutes(0);
+                    date.setSeconds(0);
+                    date.setMilliseconds(0);
+
+                    return (today.getTime() == date.getTime()) ? 'today' : '';
+                };
             }
         ])
 

@@ -8,7 +8,7 @@
             <div class="panel-heading"><a href="{{ flux.flux.site.url }}" target="_blank">{{ flux.flux.name }}</a><a href="{{ flux.flux.url }}" target="_blank" class="pull-right">RSS</a></div>
             <div class="panel-body">
                 <div ng-repeat="item in items['flux_' + flux.flux.id]" ng-class="separateDate(item.date, items['flux_' + flux.flux.id][$index - 1].date)">
-                    <span>{{ item.date | date : 'dd/MM HH:mm' }} : </span><a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
+                    <span ng-class="today(item.date)">{{ item.date | date : 'dd/MM HH:mm' }} : </span><a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
                 </div>
             </div>
         </div>
