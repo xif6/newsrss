@@ -51,6 +51,7 @@
 
 *~
 .*.swp
+*.orig
 
 # Dependency directories
 node_modules
