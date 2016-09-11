@@ -8,6 +8,7 @@ imports:
 parameters:
     newsrss.listener.document.class: NewsrssBundle\EventListener\DocumentListener
     debril.parser.xml.class: NewsrssBundle\Protocol\Parser\XmlParser
+    debril.parser.atom.class: NewsrssBundle\Protocol\Parser\AtomParser
 #    newsrss.example.class: NewsrssBundle\Example
 
 services:
@@ -30,5 +31,4 @@ services:
     debril.parser.xml:
         class: %debril.parser.xml.class%
         arguments: [@newsrss.encoding]
-
 

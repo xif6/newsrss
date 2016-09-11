@@ -13,6 +13,9 @@ use NewsrssBundle\Service\Encoding;
  */
 class XmlParser extends BaseXmlParser
 {
+    protected $asciiCodeError = [0, 8, 9];
+    protected $charError = [];
+
 
     /**
      * @param LocaleDateTime $localeDateTime
@@ -20,6 +23,9 @@ class XmlParser extends BaseXmlParser
     public function __construct(Encoding $mbString)
     {
         $this->mbString = $mbString;
+        foreach ($this->asciiCodeError as $asciiCode) {
+            $this->charError[] = chr($asciiCode);
+        }
     }
 
     /**
@@ -72,6 +78,7 @@ class XmlParser extends BaseXmlParser
         if ($lastError) {
             switch ($lastError->code) {
                 case 9: // Error XML_ERR_INVALID_CHAR : encoding error
+                    $string = str_replace($this->charError, ' ', $string);
                     $string = $this->mbString->convert($string, strtoupper($domDocument->encoding));
                     $domDocument->loadXML($string);
                     break;

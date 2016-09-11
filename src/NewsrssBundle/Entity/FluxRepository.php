@@ -113,10 +113,14 @@ class FluxRepository extends EntityRepository
         return $fluxes;
     }
 
-    public function findWithUser()
+    public function findWithUser($user = null)
     {
         $qb = $this->createQueryBuilder('f');
         $qb->innerjoin('f.userFlux', 'uf');
+        if ($user) {
+            $qb->andWhere($qb->expr()->eq('uf.user', ':user'))
+                ->setParameter('user', $user);
+        }
         $fluxes = $qb
             ->getQuery()
             ->execute();

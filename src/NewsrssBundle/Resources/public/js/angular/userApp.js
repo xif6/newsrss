@@ -20,6 +20,13 @@ angular.module('userApp', [])
                     $scope.fluxes = fluxes;
                     $scope.update();
                 });
+
+                $scope.separateDate = function (current, old) {
+                    if (typeof old != 'undefined') {
+                        return (current.split('T')[0] != old.split('T')[0]) ? 'separator' : '';
+                    }
+                    return '';
+                };
             }
         ])
 

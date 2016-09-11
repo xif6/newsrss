@@ -23,6 +23,18 @@ class FeedReaderCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Parse ALL flux (include flux without user)'
+            )
+            ->addOption(
+                'id',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'ID flux'
+            )
+            ->addOption(
+                'user',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'ID uesr'
             );
     }
 
@@ -33,9 +45,12 @@ class FeedReaderCommand extends ContainerAwareCommand
         $reader = $this->getContainer()->get('debril.reader');
         $itemRepository = $this->dm->getRepository('NewsrssBundle:Item');
 
-        //$all = $this->em->getRepository('NewsrssBundle:Flux')->findBy(['id' => 686], null/*, 500*/);
         if ($input->getOption('all')) {
             $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findAll();
+        } elseif ($fluxId = $input->getOption('id')) {
+            $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findBy(['id' => $fluxId]);
+        } elseif ($userId = $input->getOption('user')) {
+            $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findWithUser($userId);
         } else {
             $allFlux = $this->em->getRepository('NewsrssBundle:Flux')->findWithUser();
         }

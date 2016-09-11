@@ -316,3 +316,6 @@
     font-weight: bold;
 }
 
+.separator {
+    border-top: 1px solid #bdbdbd;
+}
