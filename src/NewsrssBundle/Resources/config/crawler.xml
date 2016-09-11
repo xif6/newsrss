@@ -2,6 +2,7 @@
 
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!--
 
     <parameters>
         <parameter key="newsrss.crawler.flux.class">NewsrssBundle\Crawler\Crawler</parameter>
@@ -20,4 +21,6 @@
             <argument type="service" id="doctrine.orm.entity_manager"/>
         </service>
     </services>
+-->
+
 </container>

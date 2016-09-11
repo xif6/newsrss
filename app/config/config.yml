@@ -33,8 +33,6 @@ framework:
         handler_id:  ~
     fragments:       ~
     http_method_override: true
-    assets:
-        base_path: '/assets'
 
 # Twig Configuration
 twig:

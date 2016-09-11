@@ -114,6 +114,17 @@ class FluxRepository extends EntityRepository
         return $fluxes;
     }
 
+    public function findWithUser()
+    {
+        $qb = $this->createQueryBuilder('f');
+        $qb->innerjoin('f.userFlux', 'uf');
+        $fluxes = $qb
+            ->getQuery()
+            ->execute();
+
+        return $fluxes;
+    }
+
     /**
      * Flux that have the most users (in DQL query)
      *
