@@ -9,6 +9,7 @@ parameters:
     newsrss.listener.document.class: NewsrssBundle\EventListener\DocumentListener
     debril.parser.xml.class: NewsrssBundle\Protocol\Parser\XmlParser
     debril.parser.atom.class: NewsrssBundle\Protocol\Parser\AtomParser
+    debril.parser.rss.class: NewsrssBundle\Protocol\Parser\RssParser
 #    newsrss.example.class: NewsrssBundle\Example
 
 services:

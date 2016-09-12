@@ -292,11 +292,12 @@
 
 .panel > .panel-body span {
     font-size: .8em;
-    color: #bdbdbd;
+    color: #777777;
 }
 
 .panel > .panel-body .today {
     color: #000;
+    font-weight: bold;
 }
 
 .panel > .panel-body .separator {
@@ -315,6 +316,9 @@
     background-color: #9C27B0;
 }
 
+.panel > .panel-body a:visited span {
+    color: #bdbdbd;
+}
 .panel > .panel-body a:visited {
     color: #bdbdbd;
     text-decoration: none;
