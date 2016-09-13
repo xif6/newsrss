@@ -58,7 +58,7 @@ class FeedReaderCommand extends ContainerAwareCommand
         foreach ($allFlux as $flux) {
             $output->writeln($flux->getUrl());
             try {
-                $feed = $reader->getFeedContent($flux->getUrl(), $flux->getHttp()->getUpdatedSucces());
+                $feed = $reader->getFeedContent($flux->getUrl()/*, $flux->getHttp()->getUpdatedSucces()*/);
             } catch (\Exception $e) {
                 $output->writeln('ERROR :' . $e->getMessage());
                 continue;
