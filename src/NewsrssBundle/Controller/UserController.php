@@ -12,11 +12,39 @@ use NewsrssBundle\Annotation\CanonicalLink;
 use NewsrssBundle\Entity\Flux;
 use NewsrssBundle\Entity\UserFlux;
 use \Doctrine\ORM\Query;
+use NewsrssBundle\Document\Item;
 
 use Doctrine\Common\Collections\Criteria;
 
 class UserController extends Controller
 {
+    /**
+     * @param int $fluxId
+     * @return Response
+     */
+    public function itemAction($fluxId)
+    {
+        $userFlux = $this->getDoctrine()
+            ->getRepository('NewsrssBundle:UserFlux')
+            ->findOneBy(
+                array(
+                    'user' => $this->getUser()->getId(),
+                    'flux' => $fluxId
+                )
+            );
+        $items = $this->get('doctrine_mongodb')
+            ->getRepository('NewsrssBundle:Item')
+            ->findBy(
+                array('flux_id' => $userFlux->getFlux()->getId()),
+                array('date' => 'DESC'),
+                $userFlux->getFluxNb()
+            );
+
+        $serializer = $this->get('jms_serializer');
+        $items = $serializer->serialize($items, 'json');
+        return new Response($items);
+    }
+
     /**
      */
     public function itemsAction()

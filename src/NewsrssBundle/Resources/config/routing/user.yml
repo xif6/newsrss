@@ -1,5 +1,5 @@
 newsrss_user_index:
-    pattern: /
+    path: /
     defaults:
         _controller: FrameworkBundle:Template:template
         _format: html
@@ -8,7 +8,7 @@ newsrss_user_index:
         _format: html
 
 newsrss_user_fluxes:
-    pattern: /fluxes.{_format}
+    path: /fluxes.{_format}
     defaults:
         _controller: NewsrssBundle:User:fluxes
         _format: json
@@ -16,9 +16,17 @@ newsrss_user_fluxes:
         _format: json
 
 newsrss_user_items:
-    pattern: /items.{_format}
+    path: /items.{_format}
     defaults:
         _controller: NewsrssBundle:User:items
+        _format: json
+    requirements:
+        _format: json
+
+newsrss_user_item:
+    path: /item/{fluxId}.{_format}
+    defaults:
+        _controller: NewsrssBundle:User:item
         _format: json
     requirements:
         _format: json

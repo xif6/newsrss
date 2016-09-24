@@ -2,7 +2,7 @@ newsrss_annotation:
     resource: "@NewsrssBundle/Controller"
 
 newsrss_homepage:
-    pattern: /
+    path: /
     defaults:
         _controller: NewsrssBundle:Default:index
 
@@ -29,5 +29,5 @@ newsrss_search:
 
 
 newsrss_hello:
-    pattern:  /hello/{name}
+    path:  /hello/{name}
     defaults: { _controller: NewsrssBundle:Default:hello }

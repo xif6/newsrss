@@ -9,10 +9,18 @@ angular.module('userApp', [])
                 $scope.items = {};
 
                 $scope.update = function (params) {
+                    $scope.items = {};
                     $http.get(userAppCfg.url.items, {'params': params}).success(function (items) {
                         angular.forEach(items, function (item, fluxId) {
                             $scope.items[fluxId] = item;
                         });
+                    });
+                };
+
+                $scope.updateOne = function (fluxId) {
+                    $scope.items['flux_' + fluxId] = [];
+                    $http.get(userAppCfg.url.item.replace(0, fluxId)).success(function (item) {
+                        $scope.items['flux_' + fluxId] = item
                     });
                 };
 

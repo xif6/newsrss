@@ -34,15 +34,15 @@ class AtomParser extends BaseAtomParser
         $namespaces = $xmlBody->getNamespaces(true);
 
         foreach ($xmlBody->entry as $xmlElement) {
-            $updated = $xmlElement->updated ?: $xmlElement->published;
-            $itemFormat = isset($itemFormat) ? $itemFormat : $this->guessDateFormat($updated);
+            $dateElement = $xmlElement->published ?: $xmlElement->updated;
+            $itemFormat = isset($itemFormat) ? $itemFormat : $this->guessDateFormat($dateElement);
 
             $item = $this->newItem();
             $item->setTitle($xmlElement->title)
                 ->setPublicId($xmlElement->id)
                 ->setSummary($this->parseContent($xmlElement->summary))
                 ->setDescription($this->parseContent($xmlElement->content))
-                ->setUpdated(static::convertToDateTime($updated, $itemFormat));
+                ->setUpdated(static::convertToDateTime($dateElement, $itemFormat));
 
             $item->setLink($this->detectLink($xmlElement, 'alternate'));
 
@@ -75,12 +75,12 @@ class AtomParser extends BaseAtomParser
         $feed->setTitle($xmlBody->title);
         $feed->setDescription($xmlBody->subtitle);
 
-        $updated = $xmlBody->updated ?: $xmlBody->published;
+        $dateFeed = $xmlBody->published ?: $xmlBody->updated;
         $date = new \DateTime();
 
         try {
-            $format = $this->guessDateFormat($updated);
-            $date = static::convertToDateTime($updated, $format);
+            $format = $this->guessDateFormat($dateFeed);
+            $date = static::convertToDateTime($dateFeed, $format);
         } catch (\Exception $e) {
         }
         $feed->setLastModified($date);

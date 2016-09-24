@@ -3,9 +3,19 @@
 {% block body %}
     <div class="container-fluid" ng-app="userApp" ng-controller="IndexCtrl">
         {% verbatim %}
+    <button class="btn btn-default btn-xs" ng-click="update()">
+        <span class="glyphicon glyphicon-refresh"></span>
+        Refresh All
+    </button>
     <div class="col-fluid col-fluid-xl-4 col-fluid-lg-3 col-fluid-md-2 col-fluid-sm-1">
         <div ng-repeat="flux in fluxes" class="panel panel-{{ flux.style || 'default' }} col-fluid-cell" ng-class="" id="id-{{ flux.flux.id }}">
-            <div class="panel-heading"><a href="{{ flux.flux.site.url }}" target="_blank">{{ flux.flux.name }}</a><a href="{{ flux.flux.url }}" target="_blank" class="pull-right">RSS</a></div>
+            <div class="panel-heading">
+                <a href="{{ flux.flux.site.url }}" target="_blank">{{ flux.flux.name }}</a>
+                <div class="pull-right">
+                    <a class="glyphicon glyphicon-refresh" ng-click="updateOne(flux.flux.id)"></a>
+                    <a href="{{ flux.flux.url }}" target="_blank">RSS</a>
+                </div>
+            </div>
             <div class="panel-body">
                 <div ng-repeat="item in items['flux_' + flux.flux.id]" ng-class="separateDate(item.date, items['flux_' + flux.flux.id][$index - 1].date)">
                     <a href="{{ item.url }}" target="_blank"><span ng-class="today(item.date)">{{ item.date | date : 'dd/MM HH:mm' }} : </span>{{ item.title }}</a>
@@ -44,6 +54,7 @@
         userAppCfg = {
             url: {
                 items: '{{ path('newsrss_user_items') }}',
+                item: '{{ path('newsrss_user_item', {fluxId: 0}) }}',
                 fluxes: '{{ path('newsrss_user_fluxes') }}'
             }
         };

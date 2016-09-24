@@ -1,7 +1,7 @@
 imports:
     - { resource: parser/rss.yml }
     - { resource: parser/locale_date_time.yml }
-#    - { resource: @NewsrssBundle/Resources/config/crawler.xml }
+#    - { resource: '@NewsrssBundle/Resources/config/crawler.xml' }
     - { resource: crawler.xml }
     - { resource: encoding.yml }
 
@@ -19,7 +19,7 @@ services:
 #            - { name: doctrine_mongodb.odm.event_listener, event: prePersist }
 #    newsrss.example:
 #        class: %newsrss.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+#        arguments: ['@service_id', "plain_value", %parameter%]
 
 
     newsrss.listener.canonical_link_listner:
@@ -27,9 +27,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, priority: -10 }
             - { name: kernel.event_listener, event: kernel.exception }
-        arguments: [@annotation_reader, @router]
+        arguments: ['@annotation_reader', '@router']
 
     debril.parser.xml:
         class: %debril.parser.xml.class%
-        arguments: [@newsrss.encoding]
+        arguments: ['@newsrss.encoding']
+
+    newsrss.converter.doctrine.mongodb:
+        class: Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter
+        arguments: ['@doctrine_mongodb']
+        tags:
+            - { name: request.param_converter }
 

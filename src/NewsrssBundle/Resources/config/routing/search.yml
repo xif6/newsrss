@@ -1,5 +1,5 @@
 newsrss_search_index:
-    pattern: .{_format}
+    path: .{_format}
     defaults:
         _controller: NewsrssBundle:Search:index
         _format: html
