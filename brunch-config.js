@@ -27,7 +27,7 @@ exports.config = {
     },
     plugins: {
         copycat: {
-            "fonts": ['bower_components/bootstrap/fonts'],
+            "fonts": ['bower_components/bootstrap/fonts', 'bower_components/bootstrap-material-design-icons/fonts'],
             // "images": ["someDirectoryInProject", "bower_components/some_package/assets/images"],
             // verbose : true, //shows each file that is copied to the destination directory
             onlyChanged: true //only copy a file if it's modified time has changed (only effective when using brunch watch)

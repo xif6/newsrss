@@ -332,14 +332,18 @@
     font-weight: bold;
 }
 
-a.glyphicon,
-a.glyphicon:hover {
+.panel-heading .pull-right .material-icons {
+    font-size: 18px;
+}
+
+a.material-icons,
+a.material-icons:hover {
     text-decoration: none;
     cursor: pointer;
 }
 
-.btn:hover > .glyphicon-refresh,
-.glyphicon-refresh:hover {
+.btn:hover > .material-icons.rotate,
+.material-icons.rotate:hover {
     -webkit-animation-name: rotate;
     -webkit-animation-duration: 1s;
     -webkit-animation-iteration-count: infinite;

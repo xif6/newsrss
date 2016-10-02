@@ -4,7 +4,7 @@
     <div class="container-fluid" ng-app="userApp" ng-controller="IndexCtrl">
         {% verbatim %}
     <button class="btn btn-default btn-xs" ng-click="update()">
-        <span class="glyphicon glyphicon-refresh"></span>
+        <span class="material-icons rotate">refresh</span>
         Refresh All
     </button>
     <div class="col-fluid col-fluid-xl-4 col-fluid-lg-3 col-fluid-md-2 col-fluid-sm-1">
@@ -12,8 +12,8 @@
             <div class="panel-heading">
                 <a href="{{ flux.flux.site.url }}" target="_blank">{{ flux.flux.name }}</a>
                 <div class="pull-right">
-                    <a class="glyphicon glyphicon-refresh" ng-click="updateOne(flux.flux.id)"></a>
-                    <a href="{{ flux.flux.url }}" target="_blank">RSS</a>
+                    <a class="material-icons rotate" ng-click="updateOne(flux.flux.id)">refresh</a>
+                    <a class="material-icons" href="{{ flux.flux.url }}" target="_blank">rss_feed</a>
                 </div>
             </div>
             <div class="panel-body">
