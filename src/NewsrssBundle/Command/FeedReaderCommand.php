@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Filesystem\Filesystem;
 use NewsrssBundle\Document\Item;
+use NewsrssBundle\Entity\FluxHttp;
 use Symfony\Component\Security\Acl\Exception\Exception;
 
 class FeedReaderCommand extends ContainerAwareCommand
@@ -62,6 +63,9 @@ class FeedReaderCommand extends ContainerAwareCommand
             } catch (\Exception $e) {
                 $output->writeln('ERROR :' . $e->getMessage());
                 continue;
+            }
+            if (!$flux->getHttp()) {
+                $flux->setHttp(new FluxHttp());
             }
             $flux->getHttp()->setUpdatedSucces(new \DateTime());
             $this->em->flush();
