@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new NewsrssBundle\NewsrssBundle(),
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
             new Debril\RssAtomBundle\DebrilRssAtomBundle(),
+            new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
