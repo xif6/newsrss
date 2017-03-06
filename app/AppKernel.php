@@ -26,6 +26,7 @@ class AppKernel extends Kernel
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
             new Debril\RssAtomBundle\DebrilRssAtomBundle(),
             new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

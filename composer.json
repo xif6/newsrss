@@ -32,7 +32,8 @@
         "friendsofsymfony/elastica-bundle": "^3.1",
         "csa/guzzle-bundle": "^2.1",
         "debril/rss-atom-bundle": "^2.4",
-        "lexik/jwt-authentication-bundle": "^2.1"
+        "lexik/jwt-authentication-bundle": "^2.1",
+        "nelmio/cors-bundle": "^1.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

@@ -1,0 +1,32 @@
+newsrss_api_user_index:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        _format: html
+        template: 'NewsrssBundle:User:index.html.twig'
+    requirements:
+        _format: html
+
+newsrss_api_user_fluxes:
+    path: /fluxes.{_format}
+    defaults:
+        _controller: NewsrssBundle:User:fluxes
+        _format: json
+    requirements:
+        _format: json
+
+newsrss_api_user_items:
+    path: /items.{_format}
+    defaults:
+        _controller: NewsrssBundle:User:items
+        _format: json
+    requirements:
+        _format: json
+
+newsrss_api_user_item:
+    path: /item/{fluxId}.{_format}
+    defaults:
+        _controller: NewsrssBundle:User:item
+        _format: json
+    requirements:
+        _format: json
