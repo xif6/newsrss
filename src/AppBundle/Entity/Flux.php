@@ -43,6 +43,23 @@ class Flux
      */
     private $name;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="rank", type="smallint")
+     * @Assert\Type(type="int")
+     */
+    private $rank = 1;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="fluxes", cascade={"persist", "merge"})
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     * ORM\JoinColumn(referencedColumnName="id", nullable=false)
+     */
+    private $user;
+
 
     /**
      * Get id
@@ -100,6 +117,51 @@ class Flux
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set rank
+     *
+     * @param integer $rank
+     * @return Flux
+     */
+    public function setRank($rank)
+    {
+        $this->rank = $rank;
+
+        return $this;
+    }
+
+    /**
+     * Get rank
+     *
+     * @return integer
+     */
+    public function getRank()
+    {
+        return $this->rank;
+    }
+
+    /**
+     * Set user
+     *
+     * @param User $user
+     * @return Flux
+     */
+    public function setUser(User $user = null)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
 
