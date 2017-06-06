@@ -6,12 +6,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations as REST;
+use FOS\RestBundle\Controller\FOSRestController;
 
 /**
  * @REST\Prefix("v1")
  * @REST\NamePrefix("api_v1_")
  */
-class DefaultController extends Controller
+class DefaultController extends FOSRestController
 {
     /**
      * @REST\Get("/flux")
