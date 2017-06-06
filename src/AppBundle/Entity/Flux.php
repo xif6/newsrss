@@ -24,9 +24,16 @@ class Flux
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $url;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $name;
 
 
     /**
@@ -61,6 +68,30 @@ class Flux
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Flux
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }
 
