@@ -9,3 +9,9 @@ api:
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+
+apitest:
+    resource: AppBundle\Controller\ApiController
+    type: rest
+    prefix: apitest
