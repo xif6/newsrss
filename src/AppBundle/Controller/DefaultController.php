@@ -5,23 +5,18 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use FOS\RestBundle\Controller\Annotations as REST;
-use FOS\RestBundle\Controller\FOSRestController;
 
-/**
- * @REST\Prefix("v1")
- * @REST\NamePrefix("api_v1_")
- */
-class DefaultController extends FOSRestController
+class DefaultController extends Controller
 {
     /**
-     * @REST\Get("/flux")
+     * @Route("/", name="homepage")
      */
-    public function getFluxAction(Request $request)
+    public function indexAction(Request $request)
     {
-        $fluxes = $this->getDoctrine()->getRepository('AppBundle:Flux')
-            ->findAll();
-        $view = $this->view($fluxes, 200);
-        return $view;
+        dump($this->container);
+        // replace this example code with whatever you need
+        return $this->render('default/index.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+        ]);
     }
 }
