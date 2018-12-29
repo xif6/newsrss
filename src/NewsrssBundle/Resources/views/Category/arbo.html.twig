@@ -1,14 +1,16 @@
 {% macro recursiveCategories(categories) %}
+    {% import _self as arbo_self %}
     <ul>
         {% for category in categories %}
             <li>
                 <a href="{{ path('newsrss_category_index', { 'id': category.id, 'path': category.path, '_format': 'html' }) }}">{{ category.name }}</a>
                 {% if category.__children %}
-                    {{ _self.recursiveCategories(category.__children) }}
+                    {{ arbo_self.recursiveCategories(category.__children) }}
                 {% endif %}
             </li>
         {% endfor %}
     </ul>
 {% endmacro %}
 
-{{ _self.recursiveCategories(categories) }}
+{% import _self as arbo_self %}
+{{ arbo_self.recursiveCategories(categories) }}

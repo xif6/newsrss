@@ -28,13 +28,14 @@
         "gedmo/doctrine-extensions": "dev-wip-v2.4.0",
         "knplabs/knp-menu-bundle": "^2.1",
         "knplabs/knp-paginator-bundle": "^2.5",
-        "jms-serializer/serializer-bundle": "^1.1",
         "friendsofsymfony/elastica-bundle": "^3.1",
         "csa/guzzle-bundle": "^2.1",
         "debril/rss-atom-bundle": "^2.4",
         "lexik/jwt-authentication-bundle": "^2.1",
         "nelmio/cors-bundle": "^1.5",
-        "alcaeus/mongo-php-adapter": "^1.1"
+        "alcaeus/mongo-php-adapter": "^1.1",
+        "jms-serializer/serializer-bundle": "1.1.4",
+        "doctrine/instantiator": "~1.0.3"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

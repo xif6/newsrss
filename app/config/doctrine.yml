@@ -35,7 +35,7 @@ doctrine_mongodb:
         default:
             server:         "%mongodb_server%"
             options:        {}
-            #default_database:       newsrss_sf28
+    default_database:       newsrss_sf28
     document_managers:
         default:
             auto_mapping:   true
