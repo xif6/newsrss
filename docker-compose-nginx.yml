@@ -1,0 +1,101 @@
+version: '3.7'
+
+services:
+    mysql:
+        image: mysql
+        restart: always
+        command: ["--default-authentication-plugin=mysql_native_password"]
+        networks:
+            - web
+        volumes:
+            - ../../data/newsrss_sf28/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: Fr1ng3
+            MYSQL_DATABASE: newsrss_sf28
+            MYSQL_USER: newsrss
+            MYSQL_PASSWORD: coucou
+
+    mongo:
+        image: mongo
+        restart: always
+        networks:
+            - web
+        volumes:
+            - ../../data/newsrss_sf28/mongo:/data/db
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: Fr1ng3
+
+    mongo-express:
+        image: mongo-express
+        restart: always
+        networks:
+            - web
+        ports:
+            - 8081:8081
+        depends_on:
+            - mongo
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: Fr1ng3
+
+    node:
+        image: node
+        #restart: always
+        networks:
+            - web
+        working_dir: /usr/src/app
+        volumes:
+            - .:/usr/src/app
+
+    php:
+        build:
+            context: .
+            target: php
+        restart: always
+        networks:
+            - web
+        depends_on:
+            - mysql
+            - mongo
+        volumes:
+            - .:/var/www/html
+              #            - ./logs/symfony:/var/www/html/app/log
+
+    nginx:
+        image: nginx
+        restart: always
+        networks:
+            - nginx-proxy
+            - web
+        ports:
+            - 8888:80
+        depends_on:
+            - php
+              #        links:
+              #            - php
+        volumes:
+                #            - ./logs/nginx:/var/log/nginx
+            - .:/var/www/html
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        environment:
+            - VIRTUAL_HOST=sf28d.newsrss.net
+            - LETSENCRYPT_HOST=sf28d.newsrss.net
+            - LETSENCRYPT_EMAIL=francois@newsrss.net
+
+
+              #    elk:
+              #        image: willdurand/elk
+              #        ports:
+              #            - "81:80"
+              #        volumes:
+              #            - ./elk/logstash:/etc/logstash
+              #            - ./elk/logstash/patterns:/opt/logstash/patterns
+              #            - ./logs/symfony:/var/www/html/app/log
+              #            - ./logs/nginx:/var/log/nginx
+
+networks:
+    web:
+    nginx-proxy:
+        external: true
+ 
