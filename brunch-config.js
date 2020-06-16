@@ -34,6 +34,7 @@ exports.config = {
         }
     },
     modules: {
-        wrapper: 'amd'
+        wrapper: 'commonjs',
+        definition: 'commonjs'
     }
 };
