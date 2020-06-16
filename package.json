@@ -27,5 +27,9 @@
   "bugs": {
     "url": "https://github.com/xif6/newsrss/issues"
   },
-  "homepage": "https://github.com/xif6/newsrss#readme"
+  "homepage": "https://github.com/xif6/newsrss#readme",
+  "scripts": {
+    "postinstall": "bower install --allow-root",
+    "build": "brunch build --production"
+  }
 }
