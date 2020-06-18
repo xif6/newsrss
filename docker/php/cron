@@ -1,1 +1,1 @@
-*/30 * * * * www-data cd /var/www/html && /usr/local/bin/php app/console --env=prod newsrss:feed-reader --user=1 1>>/var/log/cron/newsrss-feed.out 2>>/var/log/cron/newsrss-feed.err
+*/30 * * * * www-data cd /var/www/html && /usr/local/bin/php app/console newsrss:feed-reader --user=1 1>>/var/log/cron/newsrss-feed.out 2>>/var/log/cron/newsrss-feed.err
