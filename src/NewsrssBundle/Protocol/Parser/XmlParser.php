@@ -40,10 +40,8 @@ class XmlParser extends BaseXmlParser
         try {
             $xml = new \SimpleXMLElement($xmlString);
         } catch (\Exception $e) {
-            try {
-                $xml = new \SimpleXMLElement($this->recoverXml($xmlString));
-            } catch (\Exception $e) {
-            }
+            // throws if the string can't be recovered as xml
+            $xml = new \SimpleXMLElement($this->recoverXml($xmlString));
         }
         return $xml;
     }
