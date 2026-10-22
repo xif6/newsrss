@@ -18,7 +18,7 @@ services:
             MYSQL_PASSWORD: coucou
 
     mongo:
-        image: mongo
+        image: mongo:5.0
         restart: always
         networks:
             - web
@@ -81,16 +81,16 @@ services:
             - .:/var/www/html
             - ./docker/nginx/conf.d:/etc/nginx/conf.d
         labels:
-            - traefik.http.routers.sf28d-http.rule=Host(`sf28d.newsrss.net`)
-            - traefik.http.routers.sf28d-http.entryPoints=http
-            - traefik.http.routers.sf28d-http.middlewares=https-redirect@file
-            - traefik.http.routers.sf28d-https.rule=Host(`sf28d.newsrss.net`)
-            - traefik.http.routers.sf28d-https.tls=true
-            - traefik.http.routers.sf28d-https.tls.certresolver=letsencrypt
-            - traefik.http.routers.sf28d-https.entryPoints=https
+            - traefik.http.routers.sf28e-http.rule=Host(`sf28e.newsrss.net`)
+            - traefik.http.routers.sf28e-http.entryPoints=http
+            - traefik.http.routers.sf28e-http.middlewares=https-redirect@file
+            - traefik.http.routers.sf28e-https.rule=Host(`sf28e.newsrss.net`)
+            - traefik.http.routers.sf28e-https.tls=true
+            - traefik.http.routers.sf28e-https.tls.certresolver=letsencrypt
+            - traefik.http.routers.sf28e-https.entryPoints=https
 #        environment:
-#            - VIRTUAL_HOST=sf28d.newsrss.net
-#            - LETSENCRYPT_HOST=sf28d.newsrss.net
+#            - VIRTUAL_HOST=sf28e.newsrss.net
+#            - LETSENCRYPT_HOST=sf28e.newsrss.net
 #            - LETSENCRYPT_EMAIL=francois@newsrss.net
 
 

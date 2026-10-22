@@ -64,7 +64,8 @@ class ItemRepository extends DocumentRepository
                     $update->field($field)->set($value);
                     break;
             }
-        }
+	}
+	try {
         $update->addAnd(
             $qb->expr()->field('flux_id')->equals($itemData['fluxId'])
                 ->addOr($qb->expr()->field('title')->equals($itemData['title']))
@@ -73,6 +74,7 @@ class ItemRepository extends DocumentRepository
             ->upsert(true)
             ->getQuery()
             ->execute();
+	} catch (\Exception $e) {return;}
 
         if ($emptyDate) { // update date if null by current date
             $this->createQueryBuilder()->update()

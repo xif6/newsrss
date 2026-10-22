@@ -4,8 +4,8 @@
   "dependencies": {
     "auto-reload-brunch": "^2.7.1",
     "bower": "^1.8.8",
-    "brunch": "^3.0.0",
-    "clean-css-brunch": "^3.0.0",
+    "brunch": "2.8.0",
+    "clean-css-brunch": "2.0.0",
     "coffee-script": "^1.12.7",
     "copycat-brunch": "^1.1.1",
     "css-brunch": "^2.10.0",
